@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head id="head">
+  <meta charset="UTF-8">
+  <meta name="description" content="Igor Blog">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title id="title">
+    Wien Rundumadum 2024
+    - Blog sulla corsa
+  </title>
+  <link rel="stylesheet" type="text/css" href="/fonts.css">
+  <link rel="stylesheet" type="text/css" href="/fira_code.css">
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <link rel="stylesheet" type="text/css" href="/highlight.css">
+  <script src="/js/htmx.min.js"></script>
+</head>
+
+<body>
+  <nav id="menu" class="centered">
+    <a href="/">Home</a>
+    •
+    <a href="/autore/">Autore</a>
+    •
+    <a href="/statistiche/">Statistiche</a>
+    •
+    <a href="https://corsa.invido.it/" target="_blank">Tools Corsa</a>
+    •
+    <a href="https://invido.it/" target="_blank">Invido</a>
+  </nav>
+  <div id="content">
+
+    <h1 class="title">Wien Rundumadum 2024</h1>
+    <h4>
+      Pubblicato il:
+      <span>01/12/2024</span>
+    </h4>
+    <div id="page">
+      <p>Per l’undicesima volta consecutiva sono riuscito a terminare il giro attorno a Vienna. Questa volta ho
+        impiegato 16h:52’ per portare a termine i 130 km previsti con 1800 D+.<br>Mai stato così lento, però dopo tre
+        mesi di DNF a raffica, finalmente sono riuscito a terminare una gara. Che sia di buon auspicio per la prossima
+        stagione. Come da buon corridore evoluto, ho postato durante tutta la gara dei Video su TikTok (16 clip)</p>
+    </div>
+    <h3>Altri Posts</h3>
+    <nav>
+      <div></div>
+      <div>
+        •
+        <a href="/blog/2024/11-08-Prossima gara_Wien_Rundumadum/">Prossima gara: Wien Rundumadum</a>
+      </div>
+    </nav>
+    <h3>Discussione</h3>
+    <p>
+    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+      <label for="name">Nome</label>
+      <input name="name" value="max" type="text" placeholder="Name">
+      <label for="email">Email</label>
+      <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
+        value="max@top.it" placeholder="Email">
+      <span class="error"></span>
+
+      <label for="website">Sito</label>
+      <input name="website" value="invido.it" type="text" placeholder="Web Site">
+      <label for="comment">Commento</label>
+      <textarea id="comment" type="text" name="message" placeholder="Inserisci commento..."></textarea>
+      <button>Pubblica</button>
+    </form>
+    </p>
+  </div>
+</body>
+
+</html>

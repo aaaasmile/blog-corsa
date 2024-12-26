@@ -1,0 +1,42 @@
+{{define "base"}}
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Blog Admin" />
+
+  <title>Blog Admin</title>
+
+  <!-- css local-->
+  <link href="./static/vue/css/local.css?{{.Buildnr}}" rel="stylesheet">
+  <link rel="shortcut icon" href="./static/vue/image/favicon.ico" type="image/vnd.microsoft.icon">
+
+  <!-- vuetify -->
+  <link href="./static/vue/js/ext/fontcss.css?{{.Buildnr}}" rel="stylesheet">
+  <link href="./static/vue/js/ext/vuetify.min.css?{{.Buildnr}}" rel="stylesheet">
+  <link href="./static/vue/js/ext/icon.css?{{.Buildnr}}" rel="stylesheet"> 
+  <link href="./static/vue/js/ext/materialdesignicons.min.css?{{.Buildnr}}" rel="stylesheet">
+
+  <!-- dev/prod vue -->
+  <script src="{{.RootUrl}}static/vue/js/ext/{{.VueLibName}}?{{.Buildnr}}"></script>
+  <script src="{{.RootUrl}}static/vue/js/ext/vue-resource.js?{{.Buildnr}}"></script>
+  
+  <!-- vuetify after vue-->
+  <script src="./static/vue/js/ext/{{.VuetifyLibName}}?{{.Buildnr}}"></script>
+  <script src="./static/vue/js/ext/vue-router.js?{{.Buildnr}}"></script>
+  <script src="./static/vue/js/ext/vuex.js?{{.Buildnr}}"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+<script>
+  window.myapp = { buildnr: "{{.Buildnr}}", servername: "{{.ServerName}}" }
+</script>
+<script type="module">
+  import { app } from './static/vue/js/vue/main.js?{{.Buildnr}}'
+</script>
+
+</html>
+{{end}}
