@@ -126,5 +126,6 @@ todo
 ## Links utili
 
 - https://hypermedia.systems/more-htmx-patterns/
+- https://wiki.selfhtml.org/wiki/Formulare/Benutzereingaben_zug%C3%A4nglich_gestalten
 
 
