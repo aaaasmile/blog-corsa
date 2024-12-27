@@ -1,0 +1,51 @@
+{{define "head" -}}
+<p>
+<details>
+    <summary>6 Commenti</summary>
+    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+        <fieldset>
+            <label for="fname">Nome</label>
+            <input name="name" value="Anonimo" type="text" placeholder="Name">
+            <label for="fname">Email</label>
+            <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
+                value="" placeholder="Email">
+            <span class="error"></span>
+            <textarea id="comment" type="text" name="message" rows="4" cols="50"
+                placeholder="Inserisci un commento..."></textarea>
+        </fieldset>
+        <fieldset>
+            <button type="submit">Pubblica</button>
+        </fieldset>
+    </form>
+{{end}}
+
+{{define "foot"}}
+</details>
+</p>
+{{- end}}
+
+
+{{define "tree"}}
+    <p>
+    <ul>
+        <li> Commento 1
+            <ul>
+                <li>Risposta 1.2 <button>Rispondi</button></li>
+                <li>Risposta 1.3
+                    <ul>
+                        <li>
+                            <p><strong>Max de Gan</strong>, <small>Ottobre 2024 alle ore 17:54</small></p>
+                            Risposta 1.3.2
+                            <button>Rispondi</button>
+                        </li>
+                    </ul>
+                    <button>Rispondi</button>
+                </li>
+            </ul>
+            <button>Rispondi</button>
+        </li>
+        <li> Commento 2 <button>Rispondi</button></li>
+        <li> Commento 3 <button>Rispondi</button></li>
+    </ul>
+    </p>
+{{- end}}

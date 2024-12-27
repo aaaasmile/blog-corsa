@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"corsa-blog/conf"
 	"corsa-blog/idl"
 	"corsa-blog/util"
@@ -34,7 +35,7 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	remPath := ""
 	gh.lastPath, remPath = getURLForRoute(req.RequestURI)
 	if gh.debug {
-		log.Println("Check the last path ", gh.lastPath)
+		log.Println("Check the last path ", gh.lastPath, remPath)
 	}
 
 	if isRootPattern(gh.lastPath) {
@@ -74,7 +75,29 @@ func isRootPattern(lastPath string) bool {
 
 func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, id string) error {
 	log.Println("get comments for id ", id)
-	return nil
+
+	templName := "templates/get/comments.html"
+	var partHeader, partTree, partFoot, partMerged bytes.Buffer
+	tmplBodyMail := template.Must(template.New("DocPart").ParseFiles(templName))
+	cmtItem := idl.CmtItem{}
+
+	if err := tmplBodyMail.ExecuteTemplate(&partHeader, "head", cmtItem); err != nil {
+		return err
+	}
+	if err := tmplBodyMail.ExecuteTemplate(&partTree, "tree", cmtItem); err != nil {
+		return err
+	}
+
+	if err := tmplBodyMail.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
+		return err
+	}
+	partHeader.WriteTo(&partMerged)
+	partTree.WriteTo(&partMerged)
+	partFoot.WriteTo(&partMerged)
+
+	_, err := w.Write(partMerged.Bytes())
+
+	return err
 }
 
 func (gh *GetHandler) handleGetValidateEmail(w http.ResponseWriter, req *http.Request) error {
