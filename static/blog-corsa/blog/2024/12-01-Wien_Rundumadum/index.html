@@ -27,39 +27,38 @@
         padding: 1em;
       }
 
-      legend {
-        margin-top: 1em;
-        font-weight: bold;
-        background: gold;
-        border-top: thin solid #999;
-      }
-
-      label {
-        text-align: right;
-        margin-right: 0.5em;
-      }
-
-      label::after {
-        content: ": ";
-      }
-
-      input {
-        margin: 0 0 1em .5em;
-        padding: .2em .5em;
-        width: 65%;
-        background-color: #fffbf0;
-        border: thin solid #e7c157;
-      }
-
       textarea {
-        margin: 0 0 1em .5em;
-        padding: .2em .5em;
-        width: 95%;
         resize: none;
       }
 
       button {
         align-self: self-end;
+      }
+
+      .fancy-input {
+        margin: 1em 0 1em 0;
+        position: relative;
+      }
+
+      .fancy-input label {
+        position: absolute;
+        background: #fff;
+        padding: 0 .5em;
+        font-size: .8em;
+        top: -.6em;
+        left: .5em;
+        transition: all .3s ease;
+      }
+
+      .fancy-input label.like-placeholder {
+        color: #666;
+        font-size: 1em;
+        top: .5em;
+        left: .5em;
+      }
+
+      .fancy-input input {
+        padding: .5em;
       }
     }
   </style>
@@ -99,16 +98,17 @@
     </nav>
     <p>
     <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
-      <fieldset>
+      <div class="fancy-input">
         <label for="fname">Nome</label>
-        <input name="name" value="max" type="text" placeholder="Name">
+        <input name="name" type="text">
+      </div>
+      <div class="fancy-input">
         <label for="fname">Email</label>
-        <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
-          value="max@top.it" placeholder="Email">
+        <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email">
         <span class="error"></span>
-        <textarea id="comment" type="text" name="message" rows="4" cols="50"
-          placeholder="Inserisci commento..."></textarea>
-      </fieldset>
+      </div>
+      <textarea id="comment" type="text" name="message" rows="4" cols="50"
+        placeholder="Inserisci commento..."></textarea>
       <fieldset>
         <button type="submit">Pubblica</button>
       </fieldset>
@@ -141,5 +141,31 @@
     </p>
   </div>
 </body>
+
+<script>
+  var fancyInputElements = document.querySelectorAll('.fancy-input input');
+  for (var i = 0; i < fancyInputElements.length; i++) {
+    scaleLabel(fancyInputElements[i], true);
+    fancyInputElements[i].addEventListener('focus', function () {
+      scaleLabel(this, false)
+    });
+    fancyInputElements[i].addEventListener('blur', function () {
+      scaleLabel(this, true)
+    });
+  }
+
+  function scaleLabel(element, isLikePlaceholder) {
+    if (isLikePlaceholder) {
+      if (element.value === '') {
+        element.parentNode.querySelector('label')
+          .classList.add('like-placeholder');
+      }
+    } else {
+      element.parentNode.querySelector('label')
+        .classList.remove('like-placeholder');
+    }
+  }
+
+</script>
 
 </html>
