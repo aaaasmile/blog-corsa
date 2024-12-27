@@ -14,6 +14,28 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   <link rel="stylesheet" type="text/css" href="/highlight.css">
   <script src="/js/htmx.min.js"></script>
+  <style>
+    .postcomment input {
+      border: 1px solid #CCC;
+      font-size: 1.0rem;
+    }
+
+    .postcomment textarea {
+      border: 1px solid #CCC;
+      resize: none;
+      font-size: 1.0rem;
+    }
+
+    .postcomment button {
+      border: 1px solid #CCC;
+      font-family: sans-serif;
+      font-size: 0.8rem;
+    }
+
+    .error {
+      color: #CCCC49 !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -51,20 +73,46 @@
     </nav>
     <h3>Discussione</h3>
     <p>
-    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true" class="postcomment">
       <label for="name">Nome</label>
-      <input name="name" value="max" type="text" placeholder="Name">
+      <input name="name" value="max" type="text" placeholder="Name"><br>
       <label for="email">Email</label>
       <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
         value="max@top.it" placeholder="Email">
-      <span class="error"></span>
+      <span class="error"></span><br>
 
       <label for="website">Sito</label>
-      <input name="website" value="invido.it" type="text" placeholder="Web Site">
+      <input name="website" value="invido.it" type="text" placeholder="Web Site"><br>
       <label for="comment">Commento</label>
-      <textarea id="comment" type="text" name="message" placeholder="Inserisci commento..."></textarea>
+      <textarea id="comment" type="text" name="message" rows="4" cols="50"
+        placeholder="Inserisci commento..."></textarea><br>
       <button>Pubblica</button>
     </form>
+    </p>
+    <p>
+    <details>
+      <summary>3 Commenti</summary>
+      <ul>
+        <li> Commento 1
+          <ul>
+            <li>Risposta 1.2</li>
+            <li>Risposta 1.3
+              <ul>
+                <li>
+                  <p><strong>Max de Gan</strong>, <small>Ottobre 2024 alle ore 17:54</small></p>
+                  Risposta 1.3.2
+                  <button>Rispondi</button>
+                </li>
+              </ul>
+
+            </li>
+          </ul>
+        </li>
+        <li> Commento 2 </li>
+        <li> Commento 3 </li>
+      </ul>
+    </details>
+
     </p>
   </div>
 </body>

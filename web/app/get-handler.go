@@ -63,6 +63,9 @@ func (gh *GetHandler) handleGetValidateEmail(w http.ResponseWriter, req *http.Re
 	if gh.debug {
 		log.Printf("email to validate is %s, language: %s", email, lang)
 	}
+	if email == "" {
+		return nil
+	}
 	if _, err := mail.ParseAddress(email); err != nil {
 		if gh.debug {
 			log.Println("email is invalid", err)

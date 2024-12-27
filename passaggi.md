@@ -123,4 +123,8 @@ ho usato Visual Code Remote nella directory ~/build/corsa-blog.
 ## nginx proxy
 todo
 
+## Links utili
+
+- https://hypermedia.systems/more-htmx-patterns/
+
 
