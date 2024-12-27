@@ -16,18 +16,32 @@
   <script src="/js/htmx.min.js"></script>
   <style>
     .postcomment input {
-      border: 1px solid #CCC;
+      border: 1px solid #202124;
+      padding: 18.5px 14px;
+      color: #F4F8FC;
       font-size: 1.0rem;
+      background: #22262B;
+      border-radius: 8px;
+    }
+
+    .jss1 {
+      top: -85px;
+      border-radius: inherit;
+      position: relative;
+    }
+
+    .jss2 {
+      max-width: 1000px;
+      height: 65px;
+      transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
     }
 
     .postcomment textarea {
-      border: 1px solid #CCC;
       resize: none;
       font-size: 1.0rem;
     }
 
     .postcomment button {
-      border: 1px solid #CCC;
       font-family: sans-serif;
       font-size: 0.8rem;
     }
@@ -74,16 +88,26 @@
     <h3>Discussione</h3>
     <p>
     <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true" class="postcomment">
-      <label for="name">Nome</label>
-      <input name="name" value="max" type="text" placeholder="Name"><br>
-      <label for="email">Email</label>
+      <input name="name" value="max" type="text" placeholder="Name">
+      <fieldset class="jss1">
+        <legend class="jss2">
+          <span>Nome</span>
+        </legend>
+      </fieldset>
       <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
         value="max@top.it" placeholder="Email">
+      <fieldset>
+        <legend>
+          <span>Email</span>
+        </legend>
+      </fieldset>
       <span class="error"></span><br>
-
-      <label for="website">Sito</label>
       <input name="website" value="invido.it" type="text" placeholder="Web Site"><br>
-      <label for="comment">Commento</label>
+      <fieldset>
+        <legend>
+          <span>Sito</span>
+        </legend>
+      </fieldset>
       <textarea id="comment" type="text" name="message" rows="4" cols="50"
         placeholder="Inserisci commento..."></textarea><br>
       <button>Pubblica</button>
