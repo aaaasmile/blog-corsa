@@ -98,25 +98,24 @@
       </div>
     </nav>
     <p>
+    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+      <fieldset>
+        <label for="fname">Nome</label>
+        <input name="name" value="max" type="text" placeholder="Name">
+        <label for="fname">Email</label>
+        <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
+          value="max@top.it" placeholder="Email">
+        <span class="error"></span>
+        <textarea id="comment" type="text" name="message" rows="4" cols="50"
+          placeholder="Inserisci commento..."></textarea>
+      </fieldset>
+      <fieldset>
+        <button type="submit">Pubblica</button>
+      </fieldset>
+    </form>
+    <p>
     <details>
       <summary>6 Commenti</summary>
-      <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
-        <fieldset>
-          <label for="fname">Nome</label>
-          <input name="name" value="max" type="text" placeholder="Name">
-          <label for="fname">Email</label>
-          <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email"
-            type="email" value="max@top.it" placeholder="Email">
-          <span class="error"></span>
-          <textarea id="comment" type="text" name="message" rows="4" cols="50"
-            placeholder="Inserisci commento..."></textarea>
-        </fieldset>
-        <fieldset>
-          <button>Pubblica</button>
-        </fieldset>
-      </form>
-      <p>
-
       <ul>
         <li> Commento 1
           <ul>
