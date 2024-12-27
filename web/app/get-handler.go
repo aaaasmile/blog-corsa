@@ -31,7 +31,8 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 
 	log.Println("GET requested ", u)
 
-	gh.lastPath = getURLForRoute(req.RequestURI)
+	remPath := ""
+	gh.lastPath, remPath = getURLForRoute(req.RequestURI)
 	if gh.debug {
 		log.Println("Check the last path ", gh.lastPath)
 	}
@@ -41,6 +42,9 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	}
 	if isValidateEmail(gh.lastPath) {
 		return gh.handleGetValidateEmail(w, req)
+	}
+	if id, ok := isComments(gh.lastPath, remPath); ok {
+		return gh.handleComments(w, req, id)
 	}
 
 	*status = http.StatusNotFound
@@ -52,9 +56,25 @@ func isValidateEmail(lastPath string) bool {
 	return strings.HasPrefix(lastPath, "validatoremail")
 }
 
+func isComments(lastPath string, remPath string) (string, bool) {
+	if !strings.HasPrefix(lastPath, "comments") {
+		return "", false
+	}
+	arr := strings.Split(remPath, "/")
+	if len(arr) > 0 {
+		return arr[len(arr)-1], true
+	}
+	return "", false
+}
+
 func isRootPattern(lastPath string) bool {
 	str := strings.ReplaceAll(conf.Current.RootURLPattern, "/", "")
 	return strings.HasPrefix(lastPath, str)
+}
+
+func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, id string) error {
+	log.Println("get comments for id ", id)
+	return nil
 }
 
 func (gh *GetHandler) handleGetValidateEmail(w http.ResponseWriter, req *http.Request) error {
@@ -101,17 +121,26 @@ func (gh *GetHandler) handleGetApp(w http.ResponseWriter) error {
 	return nil
 }
 
-func getURLForRoute(uri string) string {
+func getURLForRoute(uri string) (string, string) {
 	arr := strings.Split(uri, "/")
+	remPath := ""
 	//fmt.Println("split: ", arr, len(arr))
 	for i := len(arr) - 1; i >= 0; i-- {
 		ss := arr[i]
+		if i > 0 {
+			if remPath == "" {
+				remPath = arr[i-1]
+			} else {
+				remPath = fmt.Sprintf("%s/%s", remPath, arr[i-1])
+			}
+
+		}
 		if ss != "" {
 			if !strings.HasPrefix(ss, "?") {
-				//fmt.Printf("Url for route is %s\n", ss)
-				return ss
+				//fmt.Printf("Url for route is %s, remPath is: %s \n", ss, remPath)
+				return ss, remPath
 			}
 		}
 	}
-	return uri
+	return uri, remPath
 }

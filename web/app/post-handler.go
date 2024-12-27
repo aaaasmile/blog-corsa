@@ -27,9 +27,10 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 	if err != nil {
 		return err
 	}
-	ph.lastPath = getURLForRoute(req.RequestURI)
+	remPath := ""
+	ph.lastPath, remPath = getURLForRoute(req.RequestURI)
 	if ph.debug {
-		log.Println("[POST] uri requested is: ", ph.lastPath)
+		log.Println("[POST] uri requested is: ", ph.lastPath, remPath)
 		log.Println("[POST] Body is: ", string(rawbody))
 	}
 
