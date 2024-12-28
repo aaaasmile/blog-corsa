@@ -37,6 +37,10 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 		log.Println("Check the last path ", gh.lastPath, remPath)
 	}
 
+	if isHeadNav(gh.lastPath) {
+		return gh.handleHeadNav(w)
+	}
+
 	if isRootPattern(gh.lastPath) {
 		return gh.handleGetApp(w)
 	}
@@ -70,6 +74,10 @@ func isComments(lastPath string, remPath string) (string, bool) {
 func isRootPattern(lastPath string) bool {
 	str := strings.ReplaceAll(conf.Current.RootURLPattern, "/", "")
 	return strings.HasPrefix(lastPath, str)
+}
+
+func isHeadNav(lastPath string) bool {
+	return strings.HasPrefix(lastPath, "headnav")
 }
 
 func (gh *GetHandler) handleGetValidateEmail(w http.ResponseWriter, req *http.Request) error {
@@ -109,11 +117,16 @@ func (gh *GetHandler) handleGetApp(w http.ResponseWriter) error {
 
 	tmplIndex := template.Must(template.New("AppIndex").ParseFiles(util.GetFullPath(templName)))
 
-	err := tmplIndex.ExecuteTemplate(w, "base", pagectx)
-	if err != nil {
-		return err
+	return tmplIndex.ExecuteTemplate(w, "base", pagectx)
+}
+
+func (gh *GetHandler) handleHeadNav(w http.ResponseWriter) error {
+	if gh.debug {
+		log.Println("provides the header nav")
 	}
-	return nil
+	templName := "templates/get/headnav.html"
+	tmplIndex := template.Must(template.New("Nav").ParseFiles(util.GetFullPath(templName)))
+	return tmplIndex.ExecuteTemplate(w, "headnav", struct{}{})
 }
 
 func getURLForRoute(uri string) (string, string) {
