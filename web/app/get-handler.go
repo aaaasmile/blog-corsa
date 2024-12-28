@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"corsa-blog/conf"
 	"corsa-blog/idl"
 	"corsa-blog/util"
@@ -71,33 +70,6 @@ func isComments(lastPath string, remPath string) (string, bool) {
 func isRootPattern(lastPath string) bool {
 	str := strings.ReplaceAll(conf.Current.RootURLPattern, "/", "")
 	return strings.HasPrefix(lastPath, str)
-}
-
-func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, id string) error {
-	log.Println("get comments for id ", id)
-
-	templName := "templates/get/comments.html"
-	var partHeader, partTree, partFoot, partMerged bytes.Buffer
-	tmplBodyMail := template.Must(template.New("DocPart").ParseFiles(templName))
-	cmtItem := idl.CmtItem{}
-
-	if err := tmplBodyMail.ExecuteTemplate(&partHeader, "head", cmtItem); err != nil {
-		return err
-	}
-	if err := tmplBodyMail.ExecuteTemplate(&partTree, "tree", cmtItem); err != nil {
-		return err
-	}
-
-	if err := tmplBodyMail.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
-		return err
-	}
-	partHeader.WriteTo(&partMerged)
-	partTree.WriteTo(&partMerged)
-	partFoot.WriteTo(&partMerged)
-
-	_, err := w.Write(partMerged.Bytes())
-
-	return err
 }
 
 func (gh *GetHandler) handleGetValidateEmail(w http.ResponseWriter, req *http.Request) error {

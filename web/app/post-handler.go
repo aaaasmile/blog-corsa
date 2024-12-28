@@ -9,12 +9,6 @@ import (
 	"time"
 )
 
-type ServiceHandler struct {
-	w     http.ResponseWriter
-	req   *http.Request
-	debug bool
-}
-
 type PostHandler struct {
 	debug    bool
 	lastPath string
@@ -34,17 +28,24 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 		log.Println("[POST] Body is: ", string(rawbody))
 	}
 
-	if isPostNewComment(ph.lastPath) {
-		return ph.handleFormNewComment(w, req)
+	if id, ok := isPostNewComment(ph.lastPath, remPath); ok {
+		return ph.handleFormNewComment(w, req, id)
 	}
 
 	elapsed := time.Since(ph.start)
-	log.Printf("Service total call duration: %v\n", elapsed)
+	log.Printf("Ignored request. Total call duration: %v\n", elapsed)
 	return nil
 }
 
-func isPostNewComment(s string) bool {
-	return strings.HasSuffix(s, "newcomment")
+func isPostNewComment(lastPath, remPath string) (string, bool) {
+	if !strings.HasPrefix(lastPath, "newcomment") {
+		return "", false
+	}
+	arr := strings.Split(remPath, "/")
+	if len(arr) > 0 {
+		return arr[len(arr)-1], true
+	}
+	return "", false
 }
 
 func writeJsonResp(w http.ResponseWriter, resp interface{}) error {
