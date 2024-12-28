@@ -6,12 +6,22 @@
   <meta name="description" content="IgorRun Blog">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="title">IgorRun - Blog</title>
-  <link rel="stylesheet" type="text/css"  href="/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
   <script src="/js/htmx.min.js"></script>
 </head>
 
 <body>
-  <span hx-get="/blog-admin/headnav" hx-trigger="load"></span>
+  <nav id="menu" class="centered">
+    <a href="/">Home</a>
+    •
+    <a href="/pages/autore/">Autore</a>
+    •
+    <a href="/pages/statistiche/">Statistiche</a>
+    •
+    <a href="https://corsa.invido.it/" target="_blank">Tools Corsa</a>
+    •
+    <a href="https://invido.it/" target="_blank">Invido</a>
+  </nav>
   <article>
     <h1 class="centered title">Stesosopra Blog</h1>
     <h2 class="centered subtitle">Per caso, un bredese a Vienna. Di corsa</h2>
