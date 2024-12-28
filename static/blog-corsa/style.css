@@ -112,7 +112,7 @@ nav a:hover {
   text-decoration: underline;
 }
 
-#content {
+article {
   align-self: center;
   box-sizing: border-box;
   padding: 0 30px;
