@@ -329,3 +329,10 @@ form {
     align-self: self-end;
   }
 }
+
+.alignright {
+  text-align: right;
+  align-self: center;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+}
