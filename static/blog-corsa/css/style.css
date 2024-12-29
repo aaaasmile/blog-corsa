@@ -338,21 +338,39 @@ form {
 }
 
 footer {
-  align-self: center;
+  padding-left: 3em;
+  padding-right: 3em;
+  nav {
+    padding-top: 1rem;
+    font-weight: lighter;
+    font-size: small;
+    display: grid;
+    row-gap: 1em;
+    grid-template-columns: 1fr;
+    border-top: 2px solid rgb(51, 51, 51);
+  }
+
+  p {
+    font-size: x-small;
+  }
+
+  a {
+    font-weight: lighter;
+    font-size: smaller;
+  }
 }
 
 figure {
   border: thin #222 solid;
   display: flex;
   flex-flow: column;
-  /* padding: 5px; */
   max-width: 300px;
   margin: auto;
 
   img {
     max-width: 300px;
   }
-  
+
   figcaption {
     background-color: #222;
     color: #fff;
@@ -362,9 +380,12 @@ figure {
   }
 }
 
-.vertstack{
+.vertstack {
   display: grid;
   row-gap: 1em;
   grid-template-columns: auto;
 }
 
+.copyright {
+  font-size: xx-small;
+}

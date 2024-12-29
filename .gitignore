@@ -2,3 +2,5 @@ data.json
 config_custom.toml
 *.exe
 *.bin
+*.jpg
+*.png
