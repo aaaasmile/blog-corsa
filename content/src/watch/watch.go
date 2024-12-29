@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -66,6 +67,30 @@ func (wwa *WatcherMdHtml) doWatch() error {
 		return err
 	}
 	defer watcher.Close()
+	err = watcher.Add(wwa.dirContent)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	lastWriteEv := time.Now()
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return fmt.Errorf("watch event failed")
+			}
+			//log.Println("event:", event)
+			if event.Has(fsnotify.Write) {
+				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
+					log.Println("WRITE modified file:", event.Name)
+					lastWriteEv = time.Now()
+				}
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return err
+			}
+			log.Println("error:", err)
+		}
+	}
 }
