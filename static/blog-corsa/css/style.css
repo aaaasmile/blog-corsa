@@ -330,7 +330,7 @@ form {
   }
 }
 
-.alignright {
+.postnav {
   text-align: right;
   align-self: center;
   display: grid;
@@ -340,6 +340,7 @@ form {
 footer {
   padding-left: 3em;
   padding-right: 3em;
+
   nav {
     padding-top: 1rem;
     font-weight: lighter;
@@ -357,6 +358,10 @@ footer {
   a {
     font-weight: lighter;
     font-size: smaller;
+  }
+
+  path {
+    fill: rgb(162, 162, 162)
   }
 }
 
