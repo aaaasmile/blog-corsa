@@ -12,7 +12,7 @@ func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, i
 	lang := req.URL.Query().Get("lang")
 	log.Printf("get comments for id=%s, lang=%s", id, lang)
 
-	// TODO read comments from data file
+	// TODO read comments from data
 
 	templName := "templates/cmt/get-comments.html"
 	var partHeader, partTree, partFoot, partMerged bytes.Buffer

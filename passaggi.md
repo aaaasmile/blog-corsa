@@ -191,6 +191,8 @@ todo
 
 - https://hypermedia.systems/more-htmx-patterns/
 - https://wiki.selfhtml.org/wiki/Formulare/Benutzereingaben_zug%C3%A4nglich_gestalten
-- Image server: https://github.com/johan-st/go-image-server/blob/main/api.go#L111
+- https://github.com/johan-st/go-image-server/blob/main/api.go#L111
+- https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html
+- https://akismet.com/plan/personal/
 
 
