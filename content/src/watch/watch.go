@@ -146,7 +146,7 @@ func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
 		output, _ := os.Create(ff_full)
 		defer output.Close()
 		dst := image.NewRGBA(image.Rect(0, 0, original_image.Bounds().Max.X/2, original_image.Bounds().Max.Y/2))
-		draw.NearestNeighbor.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
+		draw.CatmullRom.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
 		jpOpt := jpeg.Options{Quality: 100}
 		jpeg.Encode(output, dst, &jpOpt)
 		log.Println("image created: ", ff_full)
