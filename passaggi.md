@@ -1,26 +1,87 @@
 # Corsa Blog
-Un service per gestire il mio blog della corsa con i commenti.
+Un service per gestire il mio blog sulla corsa.
+L'intenzione è quella di rimpiazzare completamente il mio sito https://stesosopra.blogspot.com/.
+
+## Blog Corsa Static-Html
+La parte testuale che fornisce il blog sulla corsa è situata in static/blog-corsa.
+Questa è una subdirectory generata in gran parte automaticamente. Ho iniziato ad usare Zine,
+per poi abbandonarlo quando la generazione dell'html è diventata complessa.
+
+La URL di riferimento del blog è  http://localhost:5572. 
+Nota che è una URL root. Non può essere in 
+un path che non sia / in quanto il codice html generato richiede questo tipo di percorso.
+
+### Creare il contenuto Html
+Per creare i post html uso il generatore che si trova in content/src.
+Nella sottodirectory Content metto tutti i vari post in una directory singola.
+Qui ho il mio file _mdhtml_ e i vari files delle immagini relative al post. 
+Il file mdhtml contiene solo la parte all'interno del tag article principale.
+
+L'ho chiamato mdhtml in quanto, come nei files md, c'è una parte di dati in testa seguita da
+una parte in html. Il testo dell'articolo lo edito in html per avere la massima flessibilità
+di generazione del codice html. La parte di dati mi serve solo per quei campi che hanno bisogno
+di un valore eplicito, altrimenti ci sono spazi per delle ambiguità nella generazione del codice. 
+
+Per quanto mi riguarda, usando un html strettamente semantico, non vedo il bisogno di editare il post
+in md con tutte le restrizioni del caso. Qui vengono generati i files statici della directory _posts_.
+
+I contenuti della directory _pages_ li creo manualmente.
+
+Il file _index.html_ in blog-corsa avrà una parte generata automaticamante quando aggiorno i post.
+
+### Editare un post
+In src/Content si lancia il watcher, che agisce quando il file mdhtml cambia. Oppure viene inserita un'immagine o rinominata. Per esempio se voglio modificare il file 24-11-08-ProssimaGara.mdhtml:
+
+    cd ./content/src
+    go run .\main.go -config ..\..\config.toml  -watch -target ..\2024\11\08\
+Poi mentre cambio il file 24-11-08-ProssimaGara.mdhtml, mi piazzo col browser su:
+
+    http://localhost:5572/posts/2024/11/24-11-08-ProssimaGara/
+per vedere il cambiamenti nell'output statico dopo un browser reload
+
+### Abbandono di un generatore statico standard
+Ho abbandonato Zine per diversi motivi. Voglio editare dei files html manualmente, almeno alcuni.
+Altri li voglio generare editando, però, solo alcune parti in html e non in md.
+Il contenuto dei post voglio metterlo anche in un db per avere la full search out of the box.
+Il db mi serve, oltre che per i commenti, anche per inserire dei post in runtime alla fine dell'articolo
+che sono correlati all'articolo appena letto. Nel sito blogspot, invece, la navigazione è sempre lineare,
+tranne quando l'utente epsplicitamente ne cerca un altro.
+
+Altro tema è la gestione delle immagini. In blogspot, quando eseguo un upload di un'immagine,
+ne viene creata una copia delle dimensioni di 320 pixels in larghezza. Questo è anche il compito
+del mio generatore. Quando un'immagine va a finire nella directory del mio post, viene creata una
+copia delle dimensioni di 320 pixel in larghezza.
+
+Non ho idea se sia possibile usare un generatore come Hugo o Jeckill per la mia applicazione.
+Ho trovato più divertente crearne uno mio.
+
+## Immagini
+Quondo ho una serie di immagini da inserire nel post, uso il seguente html:
+
+    <section class="vertstack">
+      <figure>
+        <a href="tabella.png"><img src="tabella_320.png" alt="Tabella finale" /></a>
+        <figcaption>Tabella finale</figcaption>
+      </figure>
+      <figure>
+        <a href="partenza.jpg"><img src="partenza_320.jpg" alt="Appena partiti" /></a>
+        <figcaption>Appena partiti</figcaption>
+      </figure>
+    </section>
+Per questo ho bisogno delle immagini in formato ridotto _xxx\_320_.
+Qui si vede che le immagini sono nella stessa directory del post in quanto non riutilizzo mai
+la stessa immagine in un altro post.
 
 ## Commenti
+I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,
+i commenti vengono mostrati tramite htmx in fase di rendering sul browser.
+
+### Flow del nuovo commento
 Quando viene postato un commento sul blog, esso viene dapprima esaminato con il
 service [askimet](https://akismet.com/plan/personal/) per vedere se è uno spam.
 Se non lo è viene mandata una notifica via mail e/o telegram per approvare il commento.
 
-## Dashboard Admin
-La parte che riguarda l'amministrazione del blog è gestita con vue in modalità single page.
-Per contro, la parte testuale dei vari post è generata staticamente in html.
-Al momento la Dashboard mi serve solo per gestire i commenti. POtrebbe, però, essere usata per
-creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione statica di html con Zine,
-anche se la fase di preview mi sembra molto complessa da gestire all'interno del browser.
-La URL di riferimento è: http://localhost:5572/blog-admin/
-
-## Blog Corsa Static-Html
-La parte testuale che fornisce il blog sulla corsa è situata in static/blog-corsa.
-Questa è una subdirectory totalmente autonoma generata automaticamente. Al momento uso Zine.
-L'output è per esempio in D:\scratch\zig\zine\blog-corsa\zig-out   
-La URL di riferimento è  http://localhost:5572. Nota che è una URL root. Non può essere in 
-un path che non sia / in quanto il codice html generato da Zine usa tutti i path relativi a root.
-
+### Rendering dei commenti di un Post
 Uso htmx per avere il fetch delle parti dinamiche, come per esempio i commenti di un post, nella
 parte statica html. Nota che in questi casi i servizi come _commento_, che si trova su [gitlab.com/commento](https://gitlab.com/commento/commento), usa un approccio differente. Vale a dire i commenti vengono
 visualizzati usanto una request via javascript al server di Commento, il quale risponde con un json.
@@ -28,6 +89,14 @@ Il file javascript sul client crea poi on-demand il codice html che viene aggiun
 Commento.js è un file di 60k non min.  
 
 Quando uso htmx, invece, il server fornisce la parte html già creata senza passare da json. 
+
+## Dashboard Admin
+La parte che riguarda l'amministrazione del blog è gestita con vue in modalità single page.
+Per contro, la parte testuale dei vari post è generata staticamente in html.
+Al momento la Dashboard non esegue nulle. Mi servirebbe per moderare i commenti. 
+Successivamente potrebbe essere usata per
+creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione statica di html.
+La URL di riferimento è: http://localhost:5572/blog-admin/
 
 ### TODO
 - config_custom.toml va cryptato nel valore di diversi campi
@@ -103,11 +172,6 @@ ExecStartPre=/bin/chmod 755 /var/log/corsa-blog
 StandardOutput=syslog
 StandardError=syslog
 ```
-
-## Data.json
-Nel file data.json ho messo la lista dei commenti. Non uso un database in quanto i
-commenti da gestire sono molto pochi e possono essere benissimo scritti in un unico file.
-
 
 ### config_custom.toml
 È il file che mi esegue un ovveride del file config.toml. 

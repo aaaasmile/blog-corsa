@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"image/png"
 	"log"
 	"os"
 	"os/signal"
@@ -99,10 +100,10 @@ func (wwa *WatcherMdHtml) doWatch() error {
 			if event.Has(fsnotify.Create) {
 				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 					log.Println("Create file:", event.Name)
-					lastWriteEv = time.Now()
 					if err := wwa.processNewImage(event.Name); err != nil {
 						return err
 					}
+					lastWriteEv = time.Now() // important because a new jpg image is created
 				}
 			}
 			if event.Has(fsnotify.Rename) {
@@ -136,21 +137,60 @@ func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
 	if err != nil {
 		return err
 	}
+	newWidth := 320
+	base_ff := filepath.Base(newFname)
+	ff := strings.Replace(base_ff, ext, "", 1)
 	if isJpeg {
-		original_image, err := jpeg.Decode(bytes.NewReader(imageBytes))
-		if err != nil {
+		ff = fmt.Sprintf("%s_%d.jpg", ff, newWidth)
+	} else if isPng {
+		ff = fmt.Sprintf("%s_%d.png", ff, newWidth)
+	} else {
+		return fmt.Errorf("image format %s not supported", ext)
+	}
+	ff_full := filepath.Join(wwa.dirContent, ff)
+
+	var original_image image.Image
+	if isJpeg {
+		if original_image, err = jpeg.Decode(bytes.NewReader(imageBytes)); err != nil {
 			return err
 		}
-		ff := "your_image_resized.jpg_trf"
-		ff_full := filepath.Join(wwa.dirContent, ff)
-		output, _ := os.Create(ff_full)
-		defer output.Close()
-		dst := image.NewRGBA(image.Rect(0, 0, original_image.Bounds().Max.X/2, original_image.Bounds().Max.Y/2))
-		draw.CatmullRom.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
-		jpOpt := jpeg.Options{Quality: 100}
-		jpeg.Encode(output, dst, &jpOpt)
-		log.Println("image created: ", ff_full)
+	} else if isPng {
+		if original_image, err = png.Decode(bytes.NewReader(imageBytes)); err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("image format %s not supported", ext)
 	}
+	if original_image.Bounds().Max.X <= newWidth {
+		log.Println("image is already on resize width or smaller", newWidth)
+		return nil
+	}
+
+	output, _ := os.Create(ff_full)
+	defer output.Close()
+	log.Println("current image size ", original_image.Bounds().Max)
+	ratiof := float32(original_image.Bounds().Max.X) / float32(newWidth)
+	if ratiof == 0.0 {
+		return fmt.Errorf("invalid source image, attempt division by zero")
+	}
+	newHeightf := float32(original_image.Bounds().Max.Y) / ratiof
+	newHeight := int(newHeightf)
+	log.Printf("new rect width %d height %d ratio %f ", newWidth, newHeight, ratiof)
+	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+	draw.CatmullRom.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
+	if isJpeg {
+		jpOpt := jpeg.Options{Quality: 100}
+		if err = jpeg.Encode(output, dst, &jpOpt); err != nil {
+			return err
+		}
+	} else if isPng {
+		if err = png.Encode(output, dst); err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("image format %s not supported", ext)
+	}
+	log.Println("image created: ", ff_full)
 
 	return nil
 }
