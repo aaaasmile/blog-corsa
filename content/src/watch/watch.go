@@ -6,14 +6,21 @@ import (
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/fsnotify/fsnotify"
 )
 
-func RunWatcher(configfile string, targetFile string) error {
-	if targetFile == "" {
-		return fmt.Errorf("target file is empty")
+type WatcherMdHtml struct {
+	debug      bool
+	dirContent string
+}
+
+func RunWatcher(configfile string, targetDir string) error {
+	if targetDir == "" {
+		return fmt.Errorf("target dir is empty")
 	}
-	log.Println("watching ", targetFile)
-	if _, err := os.Stat(targetFile); err != nil {
+	log.Println("watching ", targetDir)
+	if _, err := os.Stat(targetDir); err != nil {
 		return err
 	}
 	if _, err := conf.ReadConfig(configfile); err != nil {
@@ -22,14 +29,14 @@ func RunWatcher(configfile string, targetFile string) error {
 
 	chShutdown := make(chan struct{}, 1)
 	go func(chs chan struct{}) {
-		// sch := Scheduler{datafileName: conf.Current.DataFileName,
-		// 	simulation: (conf.Current.SimulateAlarm || simulate),
-		// 	debug:      conf.Current.Debug,
-		// }
-		// if err := sch.doSchedule(); err != nil {
-		// 	log.Println("Server is not scheduling anymore: ", err)
-		// 	chs <- struct{}{}
-		// }
+		wwa := WatcherMdHtml{dirContent: targetDir,
+			debug: conf.Current.Debug,
+		}
+		if err := wwa.doWatch(); err != nil {
+			log.Println("Server is not watching anymore because: ", err)
+		}
+		log.Println("watch end")
+		chs <- struct{}{}
 	}(chShutdown)
 
 	sig := make(chan os.Signal, 1)
@@ -43,11 +50,22 @@ loop:
 			log.Println("stop because interrupt")
 			break loop
 		case <-chShutdown:
-			log.Println("stop because service shutdown on scheduling")
-			log.Fatal("Force with an error to restart the service")
+			log.Println("stop because service shutdown on watch")
+			break loop
 		}
 	}
 
 	log.Println("Bye, service")
+	return nil
+}
+
+func (wwa *WatcherMdHtml) doWatch() error {
+	log.Println("setup watch on ", wwa.dirContent)
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer watcher.Close()
+
 	return nil
 }
