@@ -1,14 +1,20 @@
 package watch
 
 import (
+	"bytes"
 	"corsa-blog/conf"
 	"fmt"
+	"image"
+	"image/jpeg"
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"golang.org/x/image/draw"
 )
 
 type WatcherMdHtml struct {
@@ -90,6 +96,18 @@ func (wwa *WatcherMdHtml) doWatch() error {
 					lastWriteEv = time.Now()
 				}
 			}
+			if event.Has(fsnotify.Create) {
+				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
+					log.Println("Create file:", event.Name)
+					lastWriteEv = time.Now()
+					if err := wwa.processNewImage(event.Name); err != nil {
+						return err
+					}
+				}
+			}
+			if event.Has(fsnotify.Rename) {
+				log.Println("Rename file:", event.Name) // remember that is followed by a create event
+			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
 				return err
@@ -97,4 +115,42 @@ func (wwa *WatcherMdHtml) doWatch() error {
 			log.Println("error:", err)
 		}
 	}
+}
+
+func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
+	_, err := os.Stat(newFname)
+	if err != nil {
+		return err
+	}
+
+	ext := filepath.Ext(newFname)
+	log.Println("extension new file ", ext)
+	isPng := strings.HasPrefix(ext, ".png")
+	isJpeg := strings.HasPrefix(ext, ".jpg")
+	if !(isJpeg || isPng) {
+		log.Println("file ignored", newFname)
+		return nil
+	}
+
+	imageBytes, err := os.ReadFile(newFname)
+	if err != nil {
+		return err
+	}
+	if isJpeg {
+		original_image, err := jpeg.Decode(bytes.NewReader(imageBytes))
+		if err != nil {
+			return err
+		}
+		ff := "your_image_resized.jpg_trf"
+		ff_full := filepath.Join(wwa.dirContent, ff)
+		output, _ := os.Create(ff_full)
+		defer output.Close()
+		dst := image.NewRGBA(image.Rect(0, 0, original_image.Bounds().Max.X/2, original_image.Bounds().Max.Y/2))
+		draw.NearestNeighbor.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
+		jpOpt := jpeg.Options{Quality: 100}
+		jpeg.Encode(output, dst, &jpOpt)
+		log.Println("image created: ", ff_full)
+	}
+
+	return nil
 }
