@@ -21,8 +21,12 @@ func RunWatcher(configfile string, targetDir string) error {
 		return fmt.Errorf("target dir is empty")
 	}
 	log.Println("watching ", targetDir)
-	if _, err := os.Stat(targetDir); err != nil {
+	fs, err := os.Stat(targetDir)
+	if err != nil {
 		return err
+	}
+	if !fs.IsDir() {
+		return fmt.Errorf("watch make sense only on a directory with content and images")
 	}
 	if _, err := conf.ReadConfig(configfile); err != nil {
 		return err
