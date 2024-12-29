@@ -17,7 +17,7 @@ func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Req
 	// email := req.Body.Get("email")
 	// name := req.URL.Query().Get("name")
 	// website := req.URL.Query().Get("website")
-	templName := "templates/post/newcomment.html"
+	templName := "templates/cmt/newcomment.html"
 	var partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("Body").ParseFiles(templName))
 	cmtItem := idl.CmtItem{}

@@ -14,7 +14,7 @@ func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, i
 
 	// TODO read comments from data file
 
-	templName := "templates/get/comments.html"
+	templName := "templates/cmt/get-comments.html"
 	var partHeader, partTree, partFoot, partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
 	cmtItem := idl.CmtItem{}

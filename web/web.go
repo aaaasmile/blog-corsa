@@ -111,7 +111,7 @@ loop:
 }
 
 func (sch *ObserveComments) sendNewCommentNtfy(cmt *idl.CmtItem) error {
-	templ := "templates/comment-mail.html"
+	templ := "templates/cmt/comment-mail.html"
 	if err := sendEmail(templ, sch.simulation, cmt); err != nil {
 		return err
 	}
