@@ -342,10 +342,10 @@ footer {
 }
 
 figure {
-  border: thin #c0c0c0 solid;
+  border: thin #222 solid;
   display: flex;
   flex-flow: column;
-  padding: 5px;
+  /* padding: 5px; */
   max-width: 300px;
   margin: auto;
 
@@ -362,4 +362,9 @@ figure {
   }
 }
 
+.vertstack{
+  display: grid;
+  row-gap: 1em;
+  grid-template-columns: auto;
+}
 
