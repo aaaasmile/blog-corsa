@@ -88,7 +88,7 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 				return err
 			}
 			fnstlex = NewFnStatLex()
-		case item.Type == itemVariable:
+		case item.Type == itemVarName:
 			fnstlex.varName = item.Value
 		case item.Type == itemAssign:
 			fnstlex.isAssign = true
@@ -100,7 +100,7 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 			if err := fnstlex.ItemArrayEndStatement(item); err != nil {
 				return err
 			}
-		case item.Type == itemStringValue:
+		case item.Type == itemVarValue:
 			if err := fnstlex.ItemStringValueAssignStatement(item); err != nil {
 				return err
 			}

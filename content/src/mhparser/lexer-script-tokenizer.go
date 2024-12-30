@@ -227,6 +227,8 @@ const (
 	metaCloseCurl = "]"
 	metaComment   = "#"
 	metaCr        = "\r"
+	metaLf        = "\n"
+	metaColon     = ":"
 )
 
 // To add a new keyword follow:
@@ -239,7 +241,7 @@ const (
 	// Internal Types
 	itemText TokenType = iota
 	itemBuiltinFunction
-	itemStringValue
+	itemVarValue
 	itemAssign
 	itemComment
 	itemEmptyString
@@ -250,7 +252,7 @@ const (
 	itemFunctionEnd
 	itemArrayBegin
 	itemArrayEnd
-	itemVariable
+	itemVarName
 	itemParamString
 	itemEOF
 )
@@ -306,14 +308,21 @@ func lexStateInComment(l *L) StateFunc {
 	}
 }
 
-func lexStateAssignInString(l *L) StateFunc {
+func lexStateAssignInValue(l *L) StateFunc {
 	for {
 		switch r := l.next(); {
 		case r == EOFRune:
-			return l.errorf("Expected more stuff (lexStateAssignInString)")
-		case r == '\r' || r == '\n':
 			l.rewind()
-			l.emit(itemStringValue)
+			l.emit(itemVarValue)
+			return nil
+		case r == '\n':
+			l.rewind()
+			l.emit(itemVarValue)
+			l.position += len(metaLf)
+			return lexStateInit
+		case r == '\r':
+			l.rewind()
+			l.emit(itemVarValue)
 			l.position += len(metaCr)
 			return lexStateInit
 		}
@@ -326,24 +335,10 @@ func lexStateAssignRight(l *L) StateFunc {
 		case unicode.IsSpace(r):
 			l.ignore()
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
-			l.emit(itemText)
-			return lexStateAssignInString
+			l.rewind()
+			return lexStateAssignInValue
 		default:
 			return l.errorf("Expect string assign (lexStateAssignRight) or a known function name:  %q (Line %d)", l.source[l.start:l.position], l.scriptLine)
-		}
-	}
-}
-
-func lexStateBeforeAssign(l *L) StateFunc {
-	for {
-		switch r := l.next(); {
-		case unicode.IsSpace(r):
-			l.ignore()
-		case r == ':':
-			l.emit(itemAssign)
-			return lexStateAssignRight
-		default:
-			return l.errorf("Unexpected variable assignment (lexStateBeforeAssign):  %q (Line %d)", l.source[l.start:l.position], l.scriptLine)
 		}
 	}
 }
@@ -353,12 +348,13 @@ func lexStateInVariableAssign(l *L) StateFunc {
 		switch r := l.next(); {
 		case unicode.IsSpace(r):
 			l.rewind()
-			l.emit(itemVariable)
-			return lexStateBeforeAssign
+			l.emit(itemVarName)
+			return lexStateAssignRight
 		case r == ':':
 			l.rewind()
-			l.emit(itemVariable)
-			return lexStateBeforeAssign
+			l.emit(itemVarName)
+			l.position += len(metaColon)
+			return lexStateAssignRight
 		case r == '(':
 			return l.errorf("Unexpected function declaration. Expected variable assignment. Function spelling? %q", l.source[l.start:l.position])
 		case !unicode.IsDigit(r) && !unicode.IsLetter(r):
@@ -383,7 +379,7 @@ func lexStateInit(l *L) StateFunc {
 			return nil
 		case r == '\r' || r == '\n':
 			l.inc_line(r)
-			l.emit(itemEndOfStatement)
+			l.ignore()
 		case unicode.IsSpace(r):
 			l.ignore()
 		case unicode.IsLetter(r):

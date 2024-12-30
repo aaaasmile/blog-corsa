@@ -8,8 +8,8 @@ func (i TokenType) String() string {
 		return "itemText"
 	case itemBuiltinFunction:
 		return "itemBuiltinFunction"
-	case itemStringValue:
-		return "itemStringValue"
+	case itemVarValue:
+		return "itemVarValue"
 	case itemAssign:
 		return "itemAssign"
 	case itemComment:
@@ -32,8 +32,8 @@ func (i TokenType) String() string {
 		return "itemArrayBegin"
 	case itemArrayEnd:
 		return "itemArrayEnd"
-	case itemVariable:
-		return "itemVariable"
+	case itemVarName:
+		return "itemVarName"
 	case itemParamString:
 		return "itemParamString"
 	}
