@@ -361,7 +361,7 @@ func lexStateInVariableAssign(l *L) StateFunc {
 		case r == '(':
 			return l.errorf("Unexpected function declaration. Expected variable assignment. Function spelling? %q", l.source[l.start:l.position])
 		case !unicode.IsDigit(r) && !unicode.IsLetter(r):
-			return l.errorf("[lexStateInVariableAssign] Unexpected variable declaration. Expect = in varaible declaration, found %s ", l.source[l.start:l.position])
+			return l.errorf("[lexStateInVariableAssign] Unexpected charcter '%c' in variable name. Name found '%s'. Please use only digit or letter for a variable name", r, l.source[l.start:l.position])
 		}
 	}
 }

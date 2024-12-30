@@ -187,11 +187,17 @@ func (sn *ScriptGrammar) EvaluateParams() error {
 
 func (sn *ScriptGrammar) setDateTimeFromString(strVal string) error {
 	// expected something like: 2024-11-08 19:00
-	dt, err := time.Parse("2006-01-02 15:00", strVal)
+	arr := strings.Split(strVal, " ")
+	parsStr := "2006-01-02"
+	if len(arr) == 2 {
+		parsStr = "2006-01-02 15:00"
+	}
+	dt, err := time.Parse(parsStr, strVal)
 	if err != nil {
 		return err
 	}
 	sn.Datetime = dt
+
 	return nil
 }
 
