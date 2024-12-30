@@ -95,6 +95,9 @@ func (wwa *WatcherMdHtml) doWatch() error {
 				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 					log.Println("WRITE modified file:", event.Name)
 					lastWriteEv = time.Now()
+					if err := wwa.processMdHtmlChange(event.Name); err != nil {
+						return err
+					}
 				}
 			}
 			if event.Has(fsnotify.Create) {
@@ -116,6 +119,23 @@ func (wwa *WatcherMdHtml) doWatch() error {
 			log.Println("error:", err)
 		}
 	}
+}
+
+func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+	_, err := os.Stat(newFname)
+	if err != nil {
+		return err
+	}
+	ext := filepath.Ext(newFname)
+	if !strings.HasPrefix(ext, ".mdhtml") {
+		log.Println("file ignored", newFname)
+		return nil
+	}
+	htmlBytes, err := os.ReadFile(newFname)
+	if err != nil {
+		return err
+	}
+
 }
 
 func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
