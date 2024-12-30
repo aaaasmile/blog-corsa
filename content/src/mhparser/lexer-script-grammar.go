@@ -58,6 +58,7 @@ type FnStatement struct {
 type ScriptGrammar struct {
 	Html     string
 	Title    string
+	PostId   string
 	Datetime time.Time
 	Norm     map[string]*NormPrg
 	st_id    int
@@ -151,6 +152,29 @@ func (sn *ScriptGrammar) storeStatement(l *L, fnstlex *FnStatLex, nrmPrg *NormPr
 func (sn *ScriptGrammar) GetNextId() int {
 	sn.st_id += 1
 	return sn.st_id
+}
+
+func (sn *ScriptGrammar) EvaluateParams() error {
+	if normMain, ok := sn.Norm["main"]; ok {
+		for _, itemFnSt := range normMain.FnsList {
+			if itemFnSt.IsAssign {
+				if len(itemFnSt.Params) != 1 {
+					return fmt.Errorf("[EvaluateParams] paramter in variabe length is expected to 1")
+				}
+				parItem := itemFnSt.Params[0]
+				if !parItem.IsVariable {
+					return fmt.Errorf("[EvaluateParams] expect variable in assign")
+				}
+				switch parItem.VariableName {
+				case "title":
+					sn.Title = parItem.Value
+				case "id":
+					sn.PostId = parItem.Value
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (sn *ScriptGrammar) CheckNorm() error {

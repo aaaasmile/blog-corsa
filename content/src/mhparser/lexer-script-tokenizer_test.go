@@ -20,4 +20,14 @@ id: 20241108-00`
 	if err != nil {
 		t.Error("Error in parser ", err)
 	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+	}
+	if lex.PostId != "20241108-00" {
+		t.Error("unexpected id", lex.PostId)
+	}
+	if lex.Title != "Prossima gara Wien Rundumadum" {
+		t.Error("unexpected Title", lex.Title)
+	}
 }
