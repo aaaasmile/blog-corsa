@@ -56,13 +56,14 @@ type FnStatement struct {
 }
 
 type ScriptGrammar struct {
-	Html     string
-	Title    string
-	PostId   string
-	Datetime time.Time
-	Norm     map[string]*NormPrg
-	st_id    int
-	Debug    bool
+	Html       string
+	Title      string
+	PostId     string
+	Datetime   time.Time
+	CustomData map[string]string
+	Norm       map[string]*NormPrg
+	st_id      int
+	Debug      bool
 }
 
 func (sn *ScriptGrammar) ParseScript(source string) error {
@@ -155,6 +156,7 @@ func (sn *ScriptGrammar) GetNextId() int {
 }
 
 func (sn *ScriptGrammar) EvaluateParams() error {
+	sn.CustomData = map[string]string{}
 	if normMain, ok := sn.Norm["main"]; ok {
 		for _, itemFnSt := range normMain.FnsList {
 			if itemFnSt.IsAssign {
@@ -170,10 +172,26 @@ func (sn *ScriptGrammar) EvaluateParams() error {
 					sn.Title = parItem.Value
 				case "id":
 					sn.PostId = parItem.Value
+				case "datetime":
+					if err := sn.setDateTimeFromString(parItem.Value); err != nil {
+						return err
+					}
+				default:
+					sn.CustomData[parItem.VariableName] = parItem.Value
 				}
 			}
 		}
 	}
+	return nil
+}
+
+func (sn *ScriptGrammar) setDateTimeFromString(strVal string) error {
+	// expected something like: 2024-11-08 19:00
+	dt, err := time.Parse("2006-01-02 15:00", strVal)
+	if err != nil {
+		return err
+	}
+	sn.Datetime = dt
 	return nil
 }
 

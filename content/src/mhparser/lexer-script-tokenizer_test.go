@@ -18,16 +18,24 @@ id: 20241108-00`
 
 	err = lex.CheckNorm()
 	if err != nil {
-		t.Error("Error in parser ", err)
+		t.Error("Error in parser norm ", err)
+		return
 	}
 	err = lex.EvaluateParams()
 	if err != nil {
 		t.Error("Error in evaluate ", err)
+		return
 	}
 	if lex.PostId != "20241108-00" {
 		t.Error("unexpected id", lex.PostId)
 	}
 	if lex.Title != "Prossima gara Wien Rundumadum" {
 		t.Error("unexpected Title", lex.Title)
+	}
+	if lex.Datetime.Year() != 2024 {
+		t.Error("unexpected Year", lex.Datetime)
+	}
+	if lex.Datetime.Hour() != 19 {
+		t.Error("unexpected Hour", lex.Datetime)
 	}
 }
