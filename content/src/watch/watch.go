@@ -131,11 +131,13 @@ func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 		log.Println("file ignored", newFname)
 		return nil
 	}
-	htmlBytes, err := os.ReadFile(newFname)
+	mdhtml, err := os.ReadFile(newFname)
 	if err != nil {
 		return err
 	}
-
+	log.Println("read: ", mdhtml)
+	// TODO use the parser
+	return nil
 }
 
 func (wwa *WatcherMdHtml) processNewImage(newFname string) error {

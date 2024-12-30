@@ -8,10 +8,11 @@ id: 20241108-00
     problema muscolare dopo soli 15 giri, ecco che arriva il momento dell'ultimo appuntamento stagionale con le
     ultra: il Wien Rundumadum.</p>
   <p>Sarà la mia undicesima partenza, se sarà anche il mio undicesimo arrivo è tutto da vedere.</p>
-  <p>Tracker: [link https://wien-rundumadum-2024-130k.legendstracking.com/]</p>
-  <p>Risultati ufficiali: [link: https://my.raceresult.com/285972/results]</p>
+  <p>Tracker: [link 'https://wien-rundumadum-2024-130k.legendstracking.com/']</p>
+  <p>Risultati ufficiali: [link 'https://my.raceresult.com/285972/results']</p>
 </section>
-[figstack]{
-  AustriaBackyardUltra2024011.jpg, "Partenza mondiale Backyard"
-  backyard_award.png, "Certificato finale"
-}
+#This is a comment. Follow the figure vertical stack
+[figstack
+  'AustriaBackyardUltra2024011.jpg', 'Partenza mondiale Backyard'
+  'backyard_award.png', 'Certificato finale'
+]
