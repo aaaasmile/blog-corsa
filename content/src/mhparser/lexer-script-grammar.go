@@ -240,7 +240,7 @@ func storeWithEmptyFunction(fnstlex *FnStatLex, nrmPrg *NormPrg, sn *ScriptGramm
 		}
 		return nil
 	} else if fnstlex.varName != "" {
-		return fmt.Errorf("[storeStatement] variable %s without statement", fnstlex.varName)
+		return fmt.Errorf("[storeStatement] variable without statement: %s", fnstlex.varName)
 	}
 
 	return nil

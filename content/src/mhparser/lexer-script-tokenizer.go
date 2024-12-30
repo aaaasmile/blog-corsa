@@ -318,13 +318,15 @@ func lexStateAssignInValue(l *L) StateFunc {
 		case r == '\n':
 			l.rewind()
 			l.emit(itemVarValue)
-			l.position += len(metaLf)
-			return lexStateInit
+			return lexStateEndOfStatement
 		case r == '\r':
 			l.rewind()
 			l.emit(itemVarValue)
-			l.position += len(metaCr)
-			return lexStateInit
+			return lexStateEndOfStatement
+		case r == '#':
+			l.rewind()
+			l.emit(itemVarValue)
+			return lexStateInComment
 		}
 	}
 }
@@ -334,6 +336,8 @@ func lexStateAssignRight(l *L) StateFunc {
 		switch r := l.next(); {
 		case unicode.IsSpace(r):
 			l.ignore()
+		case r == ':':
+			l.emit(itemAssign)
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
 			l.rewind()
 			return lexStateAssignInValue
@@ -353,7 +357,6 @@ func lexStateInVariableAssign(l *L) StateFunc {
 		case r == ':':
 			l.rewind()
 			l.emit(itemVarName)
-			l.position += len(metaColon)
 			return lexStateAssignRight
 		case r == '(':
 			return l.errorf("Unexpected function declaration. Expected variable assignment. Function spelling? %q", l.source[l.start:l.position])
