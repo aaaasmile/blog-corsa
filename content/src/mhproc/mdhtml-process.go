@@ -5,27 +5,30 @@ import (
 	"corsa-blog/content/src/mhparser"
 	"fmt"
 	"log"
+	"strings"
 	"text/template"
 	"time"
 )
 
 type MdHtmlProcess struct {
-	debug         bool
-	scrGramm      mhparser.ScriptGrammar
-	HtmlGen       string
-	pageTemplName string
+	debug             bool
+	scrGramm          mhparser.ScriptGrammar
+	HtmlGen           string
+	pageTemplName     string
+	validateMandatory bool
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
 	res := MdHtmlProcess{
-		debug:         debug,
-		pageTemplName: "templates/htmlgen/post.html",
+		debug:             debug,
+		validateMandatory: true,
+		pageTemplName:     "templates/htmlgen/post.html",
 	}
 	return &res
 }
 
 func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
-	log.Println("[ProcessToHtml] is called with a script ", len(script))
+	log.Println("[ProcessToHtml] is called with a script len ", len(script))
 	if script == "" {
 		return fmt.Errorf("[ProcessToHtml] script is empty")
 	}
@@ -44,14 +47,16 @@ func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
 		log.Println("[ProcessToHtml] EvaluateParams error")
 		return err
 	}
-	if mp.scrGramm.Title == "" {
-		return fmt.Errorf("[ProcessToHtml] field 'title' in mdhtml is empty")
-	}
-	if mp.scrGramm.PostId == "" {
-		return fmt.Errorf("[ProcessToHtml] field 'id' in mdhtml is empty")
-	}
-	if mp.scrGramm.Datetime.Year() < 2010 {
-		return fmt.Errorf("[ProcessToHtml] field 'datetime' is empty or invalid")
+	if mp.validateMandatory {
+		if mp.scrGramm.Title == "" {
+			return fmt.Errorf("[ProcessToHtml] field 'title' in mdhtml is empty")
+		}
+		if mp.scrGramm.PostId == "" {
+			return fmt.Errorf("[ProcessToHtml] field 'id' in mdhtml is empty")
+		}
+		if mp.scrGramm.Datetime.Year() < 2010 {
+			return fmt.Errorf("[ProcessToHtml] field 'datetime' is empty or invalid")
+		}
 	}
 	if mp.debug {
 		main_norm := mp.scrGramm.Norm["main"]
@@ -71,7 +76,22 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 			lines = append(lines, stItem.Params[0].ArrayValue...)
 		}
 	}
+	if mp.pageTemplName != "" {
+		return mp.htmlFromTemplate(lines)
+	}
+	mp.HtmlGen = strings.Join(lines, "\n")
+	mp.printGenHTML()
 
+	return nil
+}
+
+func (mp *MdHtmlProcess) printGenHTML() {
+	if mp.debug {
+		fmt.Printf("***HTML***\n%s\n", mp.HtmlGen)
+	}
+}
+
+func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	templName := mp.pageTemplName
 	var partFirst, partSecond, partMerged bytes.Buffer
 	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
@@ -102,9 +122,7 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 	partFirst.WriteTo(&partMerged)
 	partSecond.WriteTo(&partMerged)
 	mp.HtmlGen = partMerged.String()
-	if mp.debug {
-		fmt.Printf("***HTML***\n%s", mp.HtmlGen)
-	}
+	mp.printGenHTML()
 	return nil
 }
 

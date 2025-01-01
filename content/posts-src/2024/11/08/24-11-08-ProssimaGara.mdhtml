@@ -13,6 +13,6 @@ id: 20241108-00
 </section>
 #This is a comment. Follow the figure vertical stack
 [figstack
-  'AustriaBackyardUltra2024011.jpg', 'Partenza mondiale Backyard'
+  'AustriaBackyardUltra2024011.jpg', 'Partenza mondiale Backyard',
   'backyard_award.png', 'Certificato finale'
 ]

@@ -9,7 +9,18 @@ id: 20241108-00
 ---
 <h1>Hello</h1>
 <p>Something to say!</p>`
-	prc := MdHtmlProcess{debug: true, pageTemplName: "../templates/htmlgen/post.html"}
+	prc := MdHtmlProcess{debug: true, validateMandatory: true, pageTemplName: "../templates/htmlgen/post.html"}
+	if err := prc.ProcessToHtml(str); err != nil {
+		t.Error("Process error", err)
+		return
+	}
+}
+
+func TestSimpleHtmlWithNoDataAndTemplate(t *testing.T) {
+	str := `---
+<h1>Hello</h1>
+<p>Something to say!</p>`
+	prc := MdHtmlProcess{debug: true, pageTemplName: ""}
 	if err := prc.ProcessToHtml(str); err != nil {
 		t.Error("Process error", err)
 		return
