@@ -103,7 +103,7 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 	partSecond.WriteTo(&partMerged)
 	mp.HtmlGen = partMerged.String()
 	if mp.debug {
-		fmt.Println("***HTML***\n", mp.HtmlGen)
+		fmt.Printf("***HTML***\n%s", mp.HtmlGen)
 	}
 	return nil
 }
