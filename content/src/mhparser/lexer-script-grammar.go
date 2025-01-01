@@ -65,7 +65,6 @@ type FnStatement struct {
 }
 
 type ScriptGrammar struct {
-	Html       string
 	Title      string
 	PostId     string
 	Datetime   time.Time

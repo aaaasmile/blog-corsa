@@ -5,8 +5,8 @@ import (
 	"corsa-blog/conf"
 	"corsa-blog/idl"
 	"fmt"
-	"html/template"
 	"log"
+	"text/template"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
