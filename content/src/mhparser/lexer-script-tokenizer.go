@@ -254,6 +254,9 @@ const (
 	itemArrayEnd
 	itemVarName
 	itemParamString
+	itemBegMdHtml
+	itemMdHtmlBlock
+	itemMdHtmlBlockLine
 	itemEOF
 )
 
@@ -376,6 +379,9 @@ func lexStateInit(l *L) StateFunc {
 			l.ignore()
 			rlf = l.peek()
 			//fmt.Print("*** peek - next ", rlf)
+		}
+		if nextstate, ok := lexMatchMdHtmlKey(l); ok {
+			return nextstate
 		}
 		switch r := l.next(); {
 		case r == EOFRune:

@@ -75,3 +75,33 @@ frasefamosa : non dire gatto
 		t.Error("custom data missed", lex.CustomData)
 	}
 }
+
+func TestParseSimpleHtml(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+---
+<p>Pa</p>
+`
+
+	lex := ScriptGrammar{
+		Debug: true,
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+	t.Error("stop!")
+}
