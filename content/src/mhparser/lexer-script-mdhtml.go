@@ -93,6 +93,7 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	fnStMdHtml := FnStatement{
 		IsInternal: true,
 		FnName:     stName,
+		Type:       TtHtmlVerbatim,
 		Params:     make([]ParamItem, 1),
 	}
 	linesParam := &fnStMdHtml.Params[0]

@@ -45,14 +45,23 @@ func (pi *ParamItem) clear() {
 	pi.VariableName = ""
 }
 
+type GrammStType int
+
+const (
+	TtData GrammStType = iota
+	TtFunction
+	TtHtmlVerbatim
+)
+
 type FnStatement struct {
 	FnName          string
 	Params          []ParamItem
 	ResHolder       string
-	IsAssign        bool // used for aa : va1 in this case FnName is :
-	IsInternal      bool // function is an internal builtin function e.g. Printf,..
-	HasVariableArgs bool // funtion with variable argument  e.g. Printf
-	IsArray         bool // array of strings
+	IsAssign        bool        // used for aa : va1 in this case FnName is :
+	IsInternal      bool        // function is an internal builtin function e.g. Printf,..
+	HasVariableArgs bool        // funtion with variable argument  e.g. Printf
+	IsArray         bool        // array of strings
+	Type            GrammStType // sub define the type
 }
 
 type ScriptGrammar struct {
@@ -259,8 +268,9 @@ func storeWithFunction(fnstlex *FnStatLex, v DescrFnItem, sn *ScriptGrammar, nrm
 	fncopy := FnStatement{
 		FnName:          fnstlex.fnName,
 		ResHolder:       fnstlex.varName,
-		IsAssign:        false, //fnstlex.isAssign,
+		IsAssign:        false,
 		IsInternal:      v.Internal,
+		Type:            TtFunction,
 		HasVariableArgs: v.VariableArgs,
 		Params:          make([]ParamItem, len(fnstlex.params)),
 	}
@@ -282,6 +292,7 @@ func storeWithEmptyFunction(fnstlex *FnStatLex, nrmPrg *NormPrg, sn *ScriptGramm
 		fncopy := FnStatement{
 			IsAssign: true,
 			IsArray:  fnstlex.isArray,
+			Type:     TtData,
 			Params:   make([]ParamItem, 1),
 		}
 		copy(fncopy.Params, fnstlex.params)
