@@ -82,7 +82,7 @@ datetime: 2024-12-23
 id: 20241108-00
 ---
 <p>Pa</p>
-`
+il nuovo`
 
 	lex := ScriptGrammar{
 		Debug: true,
@@ -103,5 +103,17 @@ id: 20241108-00
 		t.Error("Error in evaluate ", err)
 		return
 	}
-	t.Error("stop!")
+	nrm := lex.Norm["main"]
+	lastFns := len(nrm.FnsList) - 1
+	stFns := nrm.FnsList[lastFns]
+	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
+		t.Error("expected one array param with lines")
+		return
+	}
+	ll := &stFns.Params[0]
+	if len(ll.ArrayValue) != 2 {
+		t.Errorf("expected two html lines, but %d", len(ll.ArrayValue))
+		return
+	}
+	//t.Error("stop!")
 }

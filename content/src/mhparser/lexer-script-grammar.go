@@ -76,11 +76,19 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 	sn.Norm = make(map[string]*NormPrg)
 	nrmPrg := NewProgNorm("main", false, false)
 	sn.Norm[nrmPrg.Name] = nrmPrg
+	processed := false
+	mdHtmlGr := NewMdHtmlGr(sn.Debug)
 	var err error
 	for {
 		item := ll.nextItem()
 		if sn.Debug {
 			fmt.Println("*** type: ", item.Type.String(), item.String())
+		}
+		if processed, err = mdHtmlGr.processItem(item); err != nil {
+			return err
+		}
+		if processed {
+			continue
 		}
 		switch {
 		case item.Type == itemError:
@@ -126,6 +134,9 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 			}
 			if nrmPrg.Name != "main" {
 				return fmt.Errorf("[ParseScript] missed end of function. Do you forget } at the end of a custom function?")
+			}
+			if err = mdHtmlGr.storeMdHtmlStatement(nrmPrg, sn); err != nil {
+				return err
 			}
 			return nil
 		}
