@@ -3,19 +3,20 @@
 <details>
     <summary>6 Commenti</summary>
     <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+        <p class="hint">Puoi usare anche il formato <a href="https://daringfireball.net/projects/markdown/" target="_blank"><i>MarkDown</i></a></p>
         <fieldset>
             <label for="name">Nome</label>
             <input id="name" name="name" value="Anonimo" type="text" placeholder="Nome">
             <label for="email">Email</label>
             <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
                 value="" placeholder="Email">
-            <span class="error"></span>
+            <span id="errmail" class="error"></span>
             <textarea id="comment" name="comment" type="text" name="message" rows="4" cols="50" maxlength="1024" 
                 placeholder="Inserisci un commento..."></textarea>
         </fieldset>
         <fieldset class="cmd">
             <button type="submit">Pubblica</button>
-            <button type="reset">Resetta</button>
+            <button type="reset" onclick="document.getElementById('errmail').innerHTML =''">Resetta</button>
         </fieldset>
     </form>
 {{end}}

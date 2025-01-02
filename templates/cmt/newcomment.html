@@ -3,11 +3,15 @@
     {{if .HasErrors -}}
     <p>Spiacente il commento contiene degli errori ed è stato rifiutato</p>
     <p>Errore: <span class="error">{{.ErrMsg}}</span></p>
+    <button onclick="history.back()">Torna indietro</button>
     {{else -}}
     <p>Grazie {{.Cmt.Name}},</p>
     <p>il tuo commento è stato aggiunto con successo.</p>
-    <p>Testo: <span class="commentOk">{{.Cmt.Comment}}</span> </p>
+    <p>Testo: <fieldset class="commentOk"><span>{{.Cmt.Comment}}</span></fieldset> </p>
+    <section class="horstack">
+        <button onclick="history.back()">OK</button>
+        <button class="delete">Elimina</button>
+    </section>
     {{end -}}
-    <p><button onclick="history.back()">Torna indietro</button></p>
 </article>
 {{end}}

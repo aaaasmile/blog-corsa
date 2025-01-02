@@ -294,6 +294,17 @@ form {
     padding: 1em;
   }
 
+  fieldset.cmd {
+    background-color: #2b2d3b;
+    display: flex;
+    padding: 1em;
+    column-gap: 1em;
+  }
+
+  p.hint{
+    font-size: x-small;
+  }
+
   legend {
     margin-top: 1em;
     font-weight: bold;
@@ -327,6 +338,10 @@ form {
 
   button {
     align-self: self-end;
+  }
+
+  button[type='reset'] {  
+    background-color: #e7c157;
   }
 }
 
@@ -403,3 +418,18 @@ figure {
 .copyright {
   font-size: xx-small;
 }
+
+fieldset.commentOk{
+  background-color: #2b2d3b;
+}
+
+section.horstack{
+  display: grid;
+  column-gap: 14em;
+  grid-template-columns: auto auto;
+
+  button .delete {  
+    background-color: #e7c157;
+  }
+}
+
