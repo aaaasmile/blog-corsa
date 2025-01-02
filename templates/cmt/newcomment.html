@@ -1,10 +1,13 @@
 {{define "base"}}
 <article>
-    <p>
-        Commento aggiunto con successo.
-    </p>
-    <p>
-        <button onclick="history.back()">Torna indietro</button>
-    </p>
+    {{if .HasErrors -}}
+    <p>Spiacente il commento contiene degli errori ed è stato rifiutato</p>
+    <p>Errore: <span class="error">{{.ErrMsg}}</span></p>
+    {{else -}}
+    <p>Grazie {{.Cmt.Name}},</p>
+    <p>il tuo commento è stato aggiunto con successo.</p>
+    <p>Testo: <span class="commentOk">{{.Cmt.Comment}}</span> </p>
+    {{end -}}
+    <p><button onclick="history.back()">Torna indietro</button></p>
 </article>
 {{end}}

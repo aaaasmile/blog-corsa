@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -17,15 +16,10 @@ type PostHandler struct {
 
 func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) error {
 	ph.start = time.Now()
-	rawbody, err := io.ReadAll(req.Body)
-	if err != nil {
-		return err
-	}
 	remPath := ""
 	ph.lastPath, remPath = getURLForRoute(req.RequestURI)
 	if ph.debug {
 		log.Println("[POST] uri requested is: ", ph.lastPath, remPath)
-		log.Println("[POST] Body is: ", string(rawbody))
 	}
 
 	if id, ok := isPostNewComment(ph.lastPath, remPath); ok {

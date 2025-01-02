@@ -3,31 +3,87 @@ package app
 import (
 	"bytes"
 	"corsa-blog/idl"
-	"html/template"
 	"log"
 	"net/http"
+	"net/mail"
+	"text/template"
 	"time"
+
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/russross/blackfriday/v2"
 )
 
 func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Request, id string) error {
 	lang := req.URL.Query().Get("lang")
 	log.Println("process new comment for parent", id, lang)
 	// this is coming from a form inside the static page
+	err := req.ParseForm()
+	if err != nil {
+		return err
+	}
+	email := req.PostFormValue("email")
+	name := req.PostFormValue("name")
+	commentMd := req.PostFormValue("comment")
+	if ph.debug {
+		log.Println("orig comment:", commentMd)
+		log.Println("name, email:", name, email)
+	}
+	unsafeComment := blackfriday.Run([]byte(commentMd))
+	htmlCmt := bluemonday.UGCPolicy().SanitizeBytes(unsafeComment)
+	if ph.debug {
+		log.Println("transformed html comment:", string(htmlCmt))
+	}
 
-	// email := req.Body.Get("email")
-	// name := req.URL.Query().Get("name")
-	// website := req.URL.Query().Get("website")
+	errMsg := ""
+	cmtItem := &idl.CmtItem{
+		Email:   email,
+		Name:    name,
+		Comment: string(htmlCmt),
+	}
+	if len(htmlCmt) == 0 {
+		errMsg = "commento vuoto"
+		return ph.renderResNewComment(cmtItem, errMsg, w)
+	}
+
+	if email != "" {
+		if _, err := mail.ParseAddress(email); err != nil {
+			errMsg = "inidirizzo email non valido"
+			return ph.renderResNewComment(cmtItem, errMsg, w)
+		}
+	}
+	if name == "" {
+		if _, err := mail.ParseAddress(email); err != nil {
+			errMsg = "il nome è vuoto"
+			return ph.renderResNewComment(cmtItem, errMsg, w)
+		}
+	}
+
+	return ph.renderResNewComment(cmtItem, errMsg, w)
+}
+
+func (ph *PostHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg string, w http.ResponseWriter) error {
+	ctx := struct {
+		Cmt       *idl.CmtItem
+		ErrMsg    string
+		HasErrors bool
+	}{
+		Cmt:       cmtItem,
+		ErrMsg:    errMsg,
+		HasErrors: (errMsg != ""),
+	}
+	//fmt.Println("*** ctx: ", *ctx.Cmt)
+
 	templName := "templates/cmt/newcomment.html"
 	var partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("Body").ParseFiles(templName))
-	cmtItem := idl.CmtItem{}
-	if err := tmplBody.ExecuteTemplate(&partMerged, "base", cmtItem); err != nil {
+	if err := tmplBody.ExecuteTemplate(&partMerged, "base", ctx); err != nil {
 		return err
 	}
 
 	elapsed := time.Since(ph.start)
-	//fmt.Println("response: ", partMerged.String())
+
 	log.Printf("Service total call duration: %v\n", elapsed)
 	_, err := w.Write(partMerged.Bytes())
+	//fmt.Println("response: ", partMerged.String())
 	return err
 }

@@ -4,17 +4,18 @@
     <summary>6 Commenti</summary>
     <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
         <fieldset>
-            <label for="fname">Nome</label>
-            <input name="name" value="Anonimo" type="text" placeholder="Name">
-            <label for="fname">Email</label>
+            <label for="name">Nome</label>
+            <input id="name" name="name" value="Anonimo" type="text" placeholder="Nome">
+            <label for="email">Email</label>
             <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
                 value="" placeholder="Email">
             <span class="error"></span>
-            <textarea id="comment" type="text" name="message" rows="4" cols="50"
+            <textarea id="comment" name="comment" type="text" name="message" rows="4" cols="50" maxlength="1024" 
                 placeholder="Inserisci un commento..."></textarea>
         </fieldset>
-        <fieldset>
+        <fieldset class="cmd">
             <button type="submit">Pubblica</button>
+            <button type="reset">Resetta</button>
         </fieldset>
     </form>
 {{end}}
