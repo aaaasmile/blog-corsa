@@ -16,7 +16,6 @@ import (
 func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Request, id string) error {
 	lang := req.URL.Query().Get("lang")
 	log.Println("process new comment for parent", id, lang)
-	// this is coming from a form inside the static page
 	err := req.ParseForm()
 	if err != nil {
 		return err
