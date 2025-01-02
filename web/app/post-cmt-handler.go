@@ -28,7 +28,7 @@ func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Req
 		log.Println("orig comment:", commentMd)
 		log.Println("name, email:", name, email)
 	}
-	unsafeComment := blackfriday.Run([]byte(commentMd))
+	unsafeComment := blackfriday.Run([]byte(commentMd), blackfriday.WithNoExtensions())
 	htmlCmt := bluemonday.UGCPolicy().SanitizeBytes(unsafeComment)
 	if ph.debug {
 		log.Println("transformed html comment:", string(htmlCmt))
