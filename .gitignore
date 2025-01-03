@@ -4,3 +4,5 @@ config_custom.toml
 *.bin
 *.jpg
 *.png
+cert/igorrun.cert
+cert/igorrun.key
