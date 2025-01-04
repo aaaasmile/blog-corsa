@@ -5,6 +5,7 @@ import (
 	"corsa-blog/content/src/mhparser"
 	"fmt"
 	"log"
+	"path"
 	"strings"
 	"text/template"
 	"time"
@@ -14,7 +15,7 @@ type MdHtmlProcess struct {
 	debug             bool
 	scrGramm          mhparser.ScriptGrammar
 	HtmlGen           string
-	pageTemplName     string
+	templDir          string
 	validateMandatory bool
 }
 
@@ -22,7 +23,7 @@ func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
 	res := MdHtmlProcess{
 		debug:             debug,
 		validateMandatory: true,
-		pageTemplName:     "templates/htmlgen/post.html",
+		templDir:          "templates/htmlgen",
 	}
 	return &res
 }
@@ -76,7 +77,7 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 			lines = append(lines, stItem.Params[0].ArrayValue...)
 		}
 	}
-	if mp.pageTemplName != "" {
+	if mp.templDir != "" {
 		return mp.htmlFromTemplate(lines)
 	}
 	mp.HtmlGen = strings.Join(lines, "\n")
@@ -92,7 +93,7 @@ func (mp *MdHtmlProcess) printGenHTML() {
 }
 
 func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
-	templName := mp.pageTemplName
+	templName := path.Join(mp.templDir, "post.html")
 	var partFirst, partSecond, partMerged bytes.Buffer
 	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
 	CtxFirst := struct {

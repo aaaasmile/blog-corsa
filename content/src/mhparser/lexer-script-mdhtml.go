@@ -3,10 +3,14 @@ package mhparser
 import (
 	"fmt"
 	"strings"
+	"unicode"
 )
 
 func lexStateMdHtmlOnLine(l *L) StateFunc {
 	for {
+		if nextSt, ok := lexMatchFnKey(l); ok {
+			return nextSt
+		}
 		switch r := l.next(); {
 		case r == EOFRune:
 			l.emit(itemMdHtmlBlock)
@@ -17,6 +21,66 @@ func lexStateMdHtmlOnLine(l *L) StateFunc {
 			l.inc_line(r)
 			l.next()
 			l.ignore()
+		}
+	}
+}
+func lexStateAfterString(l *L) StateFunc {
+	for {
+		switch r := l.next(); {
+		case r == EOFRune || r == '\r' || r == '\n':
+			return l.errorf("[lexStateAfterString] Expected next param or close curl")
+		case r == ',':
+			l.emit(itemSeparator)
+			return lexStateInParamString
+		case r == ']':
+			l.emit(itemEndOfBlock)
+			return lexStateMdHtmlBeforeStm
+		case r == '\'':
+			l.emit(itemParamString)
+		case unicode.IsSpace(r):
+			l.ignore()
+		default:
+			return l.errorf("[lexStateAfterString] Malformed end of parameter: %s", l.source[l.start:l.position])
+		}
+	}
+}
+
+func lexStateInParamString(l *L) StateFunc {
+	ll := 0
+	for {
+		rleos := l.peek()
+		//fmt.Println("***> ", rleos, ll)
+		if ll == 0 && rleos == '\'' {
+			l.emit(itemEmptyString)
+			return lexStateAfterString
+		}
+
+		switch r := l.next(); {
+		case r == EOFRune || r == '\r' || r == '\n':
+			return l.errorf("[lexStateInParamString] expected end of string")
+		case r == '\'':
+			l.rewind()
+			l.emit(itemParamString)
+			return lexStateAfterString
+		default:
+			ll += 1
+		}
+	}
+}
+
+func lexStateLinkBeforeBegStr(l *L) StateFunc {
+	for {
+		switch r := l.next(); {
+		case unicode.IsSpace(r):
+			l.ignore()
+		case r == '\r' || r == '\n':
+			l.inc_line(r)
+			l.ignore()
+		case r == '\'':
+			l.emit(itemText)
+			return lexStateInParamString
+		default:
+			return l.errorf("[lexStateBeforeCurl] Expected ( but got %s (Line %d)", l.source[l.start:l.position], l.scriptLine)
 		}
 	}
 }
@@ -49,15 +113,48 @@ func lexMatchMdHtmlKey(l *L) (StateFunc, bool) {
 	return nil, false
 }
 
+// -- common subtype
+type mdhtLineNode struct {
+	line string
+}
+
+func (n mdhtLineNode) String() string {
+	return n.line
+}
+
+// -- derived type Link Simple
+type mdhtLinkSimpleNode struct {
+	mdhtLineNode
+	before_link string
+	href_arg    string
+}
+
+func (ln mdhtLinkSimpleNode) Transform() error {
+	// TODO use template to generate the  <a> tag
+	res := fmt.Sprintf("%s", ln.before_link)
+	ln.line = res
+	return nil
+}
+
+// -- Interfaces for Polymorphism
+type IMdhtmlLineNode interface {
+	String() string
+}
+
+type IMdhtmlTransfNode interface {
+	IMdhtmlLineNode
+	Transform() error
+}
+
 type MdHtmlGram struct {
-	Lines       []string
+	Nodes       []IMdhtmlLineNode
 	isMdHtmlCtx bool
 	debug       bool
 }
 
 func NewMdHtmlGr(debug bool) *MdHtmlGram {
 	item := MdHtmlGram{
-		Lines: make([]string, 0),
+		Nodes: make([]IMdhtmlLineNode, 0),
 		debug: debug,
 	}
 	return &item
@@ -73,9 +170,9 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 	}
 	switch {
 	case item.Type == itemMdHtmlBlockLine:
-		mh.Lines = append(mh.Lines, item.Value)
+		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
 	case item.Type == itemMdHtmlBlock:
-		mh.Lines = append(mh.Lines, item.Value)
+		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
 	case item.Type == itemEOF:
 		return false, nil
 	default:
@@ -86,7 +183,7 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 
 func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar) error {
 	if mh.debug {
-		fmt.Println("*** storeMdHtmlStatement ", len(mh.Lines))
+		fmt.Println("*** storeMdHtmlStatement ", len(mh.Nodes))
 	}
 
 	stName := "mdhtml"
@@ -100,7 +197,17 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	linesParam.Label = "Lines"
 	linesParam.IsArray = true
 	linesParam.ArrayValue = make([]string, 0)
-	linesParam.ArrayValue = append(linesParam.ArrayValue, mh.Lines...)
+	for _, node := range mh.Nodes {
+		trans, ok := node.(IMdhtmlTransfNode)
+		if ok {
+			if err := trans.Transform(); err != nil {
+				return err
+			}
+			linesParam.ArrayValue = append(linesParam.ArrayValue, trans.String())
+		} else {
+			linesParam.ArrayValue = append(linesParam.ArrayValue, node.String())
+		}
+	}
 
 	nrmPrg.FnsList = append(nrmPrg.FnsList, fnStMdHtml)
 	nrm_st_name, err := nrmPrg.statementInNormMap(stName, scrGr, len(nrmPrg.FnsList)-1)
@@ -108,5 +215,16 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 		fmt.Println("*** storeMdHtmlStatement norm name", nrm_st_name)
 	}
 	return err
+}
 
+func lexMatchFnKey(l *L) (StateFunc, bool) {
+	for _, v := range l.descrFns {
+		k := fmt.Sprintf("[%s", v.KeyName)
+		if strings.HasPrefix(l.source[l.position:], k) { // make sure to parse the longest keyword first
+			l.position += len(k)
+			l.emitCustFn(v.ItemTokenType, v.CustomID)
+			return lexStateLinkBeforeBegStr, true
+		}
+	}
+	return nil, false
 }

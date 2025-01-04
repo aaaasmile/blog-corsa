@@ -42,6 +42,10 @@ func (i TokenType) String() string {
 		return "itemMdHtmlBlock"
 	case itemMdHtmlBlockLine:
 		return "itemMdHtmlBlockLine"
+	case itemSeparator:
+		return "itemSeparator"
+	case itemEndOfBlock:
+		return "itemEndOfBlock"
 	}
 	return fmt.Sprintf("TokenType %d undef", i)
 }

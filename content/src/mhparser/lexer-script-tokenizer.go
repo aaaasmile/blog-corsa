@@ -2,7 +2,6 @@ package mhparser
 
 import (
 	"fmt"
-	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -257,6 +256,8 @@ const (
 	itemBegMdHtml
 	itemMdHtmlBlock
 	itemMdHtmlBlockLine
+	itemSeparator
+	itemEndOfBlock
 	itemEOF
 )
 
@@ -399,16 +400,4 @@ func lexStateInit(l *L) StateFunc {
 			return l.errorf("Character is not suitable for any statement %s", l.source[l.start:])
 		}
 	}
-}
-
-func lexMatchFnKey(l *L) bool {
-	for _, v := range l.descrFns {
-		k := v.KeyName
-		if strings.HasPrefix(l.source[l.position:], k) { // make sure to parse the longest keyword first
-			l.position += len(k)
-			l.emitCustFn(v.ItemTokenType, v.CustomID)
-			return true
-		}
-	}
-	return false
 }
