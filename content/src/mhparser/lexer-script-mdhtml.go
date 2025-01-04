@@ -1,8 +1,11 @@
 package mhparser
 
 import (
+	"bytes"
 	"fmt"
+	"path"
 	"strings"
+	"text/template"
 	"unicode"
 )
 
@@ -129,9 +132,22 @@ type mdhtLinkSimpleNode struct {
 	href_arg    string
 }
 
-func (ln mdhtLinkSimpleNode) Transform() error {
-	// TODO use template to generate the  <a> tag
-	res := fmt.Sprintf("%s", ln.before_link)
+func (ln mdhtLinkSimpleNode) Transform(templDir string) error {
+	templName := path.Join(templDir, "transform.html")
+	tmplPage := template.Must(template.New("Link").ParseFiles(templName))
+	CtxFirst := struct {
+		HrefLink    string
+		DisplayLink string
+	}{
+		HrefLink:    ln.href_arg,
+		DisplayLink: ln.href_arg,
+	}
+	var partFirst bytes.Buffer
+	if err := tmplPage.ExecuteTemplate(&partFirst, "linkbase", CtxFirst); err != nil {
+		return err
+	}
+
+	res := fmt.Sprintf("%s%s", ln.before_link, partFirst.String())
 	ln.line = res
 	return nil
 }
@@ -143,11 +159,12 @@ type IMdhtmlLineNode interface {
 
 type IMdhtmlTransfNode interface {
 	IMdhtmlLineNode
-	Transform() error
+	Transform(templDir string) error
 }
 
 type MdHtmlGram struct {
 	Nodes       []IMdhtmlLineNode
+	_curr_Node  IMdhtmlLineNode
 	isMdHtmlCtx bool
 	debug       bool
 }
@@ -160,7 +177,7 @@ func NewMdHtmlGr(debug bool) *MdHtmlGram {
 	return &item
 }
 
-func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
+func (mh *MdHtmlGram) processItem(ll *L, item Token) (bool, error) {
 	if item.Type == itemBegMdHtml {
 		mh.isMdHtmlCtx = true
 		return true, nil
@@ -173,6 +190,12 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
 	case item.Type == itemMdHtmlBlock:
 		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
+	case item.Type == itemBuiltinFunction:
+		if !isLexfnKey(ll, item.ID) {
+			return false, fmt.Errorf("[MdHtmlGram] function %s is not defined", item.Value)
+		}
+		// TODO recognize link node
+		mh._curr_Node = mdhtLinkSimpleNode{}
 	case item.Type == itemEOF:
 		return false, nil
 	default:
@@ -200,7 +223,7 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	for _, node := range mh.Nodes {
 		trans, ok := node.(IMdhtmlTransfNode)
 		if ok {
-			if err := trans.Transform(); err != nil {
+			if err := trans.Transform(scrGr.TemplDir); err != nil {
 				return err
 			}
 			linesParam.ArrayValue = append(linesParam.ArrayValue, trans.String())

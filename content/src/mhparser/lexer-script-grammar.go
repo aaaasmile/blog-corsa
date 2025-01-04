@@ -72,6 +72,7 @@ type ScriptGrammar struct {
 	Norm       map[string]*NormPrg
 	st_id      int
 	Debug      bool
+	TemplDir   string
 }
 
 func (sn *ScriptGrammar) ParseScript(source string) error {
@@ -90,9 +91,9 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 	for {
 		item := ll.nextItem()
 		if sn.Debug {
-			fmt.Println("*** type: ", item.Type.String(), item.String())
+			fmt.Println("*** type: ", item.Type.String(), item.String(), item.ID)
 		}
-		if processed, err = mdHtmlGr.processItem(item); err != nil {
+		if processed, err = mdHtmlGr.processItem(ll, item); err != nil {
 			return err
 		}
 		if processed {

@@ -22,7 +22,7 @@ func buildDescrInLex(l *L) {
 	arr2 := make([]DescrFnItem, 0, len(arr))
 	for ix, v := range arr {
 		v.ItemTokenType = itemBuiltinFunction
-		v.CustomID = ix
+		v.CustomID = ix + 1
 		arr2 = append(arr2, v)
 	}
 	sort.Slice(arr2, func(i, j int) bool {

@@ -34,7 +34,8 @@ func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
 		return fmt.Errorf("[ProcessToHtml] script is empty")
 	}
 	mp.scrGramm = mhparser.ScriptGrammar{
-		Debug: mp.debug,
+		Debug:    mp.debug,
+		TemplDir: mp.templDir,
 	}
 	if err := mp.scrGramm.ParseScript(script); err != nil {
 		log.Println("[ProcessToHtml] Parser error")
