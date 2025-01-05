@@ -130,7 +130,8 @@ id: 20241108-00
 <p>Tracker: [link 'https://wien-rundumadum-2024-130k.legendstracking.com/']</p>`
 
 	lex := ScriptGrammar{
-		Debug: true,
+		Debug:    true,
+		TemplDir: "../templates/htmlgen",
 	}
 	err := lex.ParseScript(str)
 	if err != nil {
@@ -161,7 +162,7 @@ id: 20241108-00
 		return
 	}
 	secline := ll.ArrayValue[1]
-	if !strings.Contains(secline, "<a  href") {
+	if !strings.Contains(secline, "<p>Tracker: <a href=\"https://wien-rundumadum-2024-130k.legendstracking.com/\" target=\"_blank\">https://wien-rundumadum-2024-130k.legendstracking.com/</a></p>") {
 		t.Errorf("expected  <a> in generated  html, but %s ", secline)
 	}
 	//t.Error("stop!")

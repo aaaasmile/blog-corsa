@@ -2,6 +2,7 @@ package mhparser
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"path"
 	"strings"
@@ -37,9 +38,9 @@ func lexStateAfterString(l *L) StateFunc {
 			return lexStateInParamString
 		case r == ']':
 			l.emit(itemEndOfBlock)
-			return lexStateMdHtmlBeforeStm
+			return lexStateMdHtmlOnLine
 		case r == '\'':
-			l.emit(itemParamString)
+			l.emit(itemText)
 		case unicode.IsSpace(r):
 			l.ignore()
 		default:
@@ -116,23 +117,68 @@ func lexMatchMdHtmlKey(l *L) (StateFunc, bool) {
 	return nil, false
 }
 
-// -- common subtype
+//  ---  Interfaces
+
+// -- Basic
+type IMdhtmlLineNode interface {
+	String() string
+}
+
+// Node with transformations
+type IMdhtmlTransfNode interface {
+	IMdhtmlLineNode
+	Transform(templDir string) error
+	AddParamString(parVal string) error
+	AddblockHtml(val string) error
+}
+
+// -- Basic, implements IMdhtmlLineNode
 type mdhtLineNode struct {
 	line string
 }
 
-func (n mdhtLineNode) String() string {
+func (n *mdhtLineNode) String() string {
 	return n.line
 }
 
-// -- derived type Link Simple
+// -- Link Simple, implements  IMdhtmlTransfNode
+
 type mdhtLinkSimpleNode struct {
 	mdhtLineNode
 	before_link string
 	href_arg    string
+	after_link  string
 }
 
-func (ln mdhtLinkSimpleNode) Transform(templDir string) error {
+func NewLinkSimpleNode(preline string) *mdhtLinkSimpleNode {
+	res := mdhtLinkSimpleNode{}
+	arr := strings.Split(preline, "[")
+	if len(arr) > 0 {
+		res.before_link = arr[0]
+	}
+	return &res
+}
+
+func (ln *mdhtLinkSimpleNode) AddParamString(parVal string) error {
+	if ln.href_arg != "" {
+		return fmt.Errorf("[AddParamString] parameter already set")
+	}
+	ln.href_arg = parVal
+	return nil
+}
+
+func (ln *mdhtLinkSimpleNode) AddblockHtml(val string) error {
+	if ln.after_link != "" {
+		return fmt.Errorf("[AddblockHtml] already set")
+	}
+	ln.after_link = val
+	return nil
+}
+
+func (ln *mdhtLinkSimpleNode) Transform(templDir string) error {
+	if templDir == "" {
+		return fmt.Errorf("[Transform] templ dir is not set")
+	}
 	templName := path.Join(templDir, "transform.html")
 	tmplPage := template.Must(template.New("Link").ParseFiles(templName))
 	CtxFirst := struct {
@@ -147,19 +193,9 @@ func (ln mdhtLinkSimpleNode) Transform(templDir string) error {
 		return err
 	}
 
-	res := fmt.Sprintf("%s%s", ln.before_link, partFirst.String())
+	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
 	ln.line = res
 	return nil
-}
-
-// -- Interfaces for Polymorphism
-type IMdhtmlLineNode interface {
-	String() string
-}
-
-type IMdhtmlTransfNode interface {
-	IMdhtmlLineNode
-	Transform(templDir string) error
 }
 
 type MdHtmlGram struct {
@@ -167,17 +203,19 @@ type MdHtmlGram struct {
 	_curr_Node  IMdhtmlLineNode
 	isMdHtmlCtx bool
 	debug       bool
+	templDir    string
 }
 
-func NewMdHtmlGr(debug bool) *MdHtmlGram {
+func NewMdHtmlGr(templDir string, debug bool) *MdHtmlGram {
 	item := MdHtmlGram{
-		Nodes: make([]IMdhtmlLineNode, 0),
-		debug: debug,
+		Nodes:    make([]IMdhtmlLineNode, 0),
+		debug:    debug,
+		templDir: templDir,
 	}
 	return &item
 }
 
-func (mh *MdHtmlGram) processItem(ll *L, item Token) (bool, error) {
+func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 	if item.Type == itemBegMdHtml {
 		mh.isMdHtmlCtx = true
 		return true, nil
@@ -187,21 +225,62 @@ func (mh *MdHtmlGram) processItem(ll *L, item Token) (bool, error) {
 	}
 	switch {
 	case item.Type == itemMdHtmlBlockLine:
-		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
-	case item.Type == itemMdHtmlBlock:
-		mh.Nodes = append(mh.Nodes, mdhtLineNode{line: item.Value})
-	case item.Type == itemBuiltinFunction:
-		if !isLexfnKey(ll, item.ID) {
-			return false, fmt.Errorf("[MdHtmlGram] function %s is not defined", item.Value)
+		if err := mh.blockHtmlPart(item.Value); err != nil {
+			return false, err
 		}
-		// TODO recognize link node
-		mh._curr_Node = mdhtLinkSimpleNode{}
+	case item.Type == itemMdHtmlBlock:
+		if err := mh.blockHtmlPart(item.Value); err != nil {
+			return false, err
+		}
+	case item.Type == itemLinkSimple:
+		mh._curr_Node = NewLinkSimpleNode(item.Value)
+	case item.Type == itemText:
+		// ignore
+	case item.Type == itemParamString:
+		if err := mh.addParameterString(item.Value); err != nil {
+			return false, err
+		}
+	case item.Type == itemEndOfBlock:
+		if err := mh.endOfBlock(item.Value); err != nil {
+			return false, err
+		}
 	case item.Type == itemEOF:
 		return false, nil
+	case item.Type == itemError:
+		return false, errors.New(item.Value)
 	default:
 		return false, fmt.Errorf("[MdHtmlGram] unsupported statement parser %q", item)
 	}
 	return true, nil
+}
+
+func (mh *MdHtmlGram) blockHtmlPart(val string) error {
+	transf, ok := mh._curr_Node.(IMdhtmlTransfNode)
+	if ok {
+		if err := transf.AddblockHtml(val); err != nil {
+			return err
+		}
+		mh._curr_Node = &mdhtLineNode{line: "undef"}
+	} else {
+		mh.Nodes = append(mh.Nodes, &mdhtLineNode{line: val})
+	}
+	return nil
+}
+
+func (mh *MdHtmlGram) addParameterString(valPar string) error {
+	trans, ok := mh._curr_Node.(IMdhtmlTransfNode)
+	if ok {
+		return trans.AddParamString(valPar)
+	}
+	return fmt.Errorf("param string is not supported")
+}
+
+func (mh *MdHtmlGram) endOfBlock(valPar string) error {
+	if valPar != "]" {
+		return fmt.Errorf("[endOfBlock] end of block not  recognized")
+	}
+	mh.Nodes = append(mh.Nodes, mh._curr_Node)
+	return nil
 }
 
 func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar) error {

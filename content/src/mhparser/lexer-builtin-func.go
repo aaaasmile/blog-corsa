@@ -6,22 +6,23 @@ func buildDescrInLex(l *L) {
 	arr := make([]DescrFnItem, 0)
 
 	fn := DescrFnItem{
-		KeyName: "link",
-		Labels:  []string{"Url"},
+		KeyName:       "link",
+		Labels:        []string{"Url"},
+		ItemTokenType: itemLinkSimple,
 	}
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
 
 	fn = DescrFnItem{
-		KeyName: "figstack",
-		Labels:  []string{},
+		KeyName:       "figstack",
+		ItemTokenType: itemFigStack,
+		Labels:        []string{},
 	}
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
 
 	arr2 := make([]DescrFnItem, 0, len(arr))
 	for ix, v := range arr {
-		v.ItemTokenType = itemBuiltinFunction
 		v.CustomID = ix + 1
 		arr2 = append(arr2, v)
 	}

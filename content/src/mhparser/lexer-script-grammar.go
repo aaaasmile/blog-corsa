@@ -86,14 +86,14 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 	nrmPrg := NewProgNorm("main", false, false)
 	sn.Norm[nrmPrg.Name] = nrmPrg
 	processed := false
-	mdHtmlGr := NewMdHtmlGr(sn.Debug)
+	mdHtmlGr := NewMdHtmlGr(sn.TemplDir, sn.Debug)
 	var err error
 	for {
 		item := ll.nextItem()
 		if sn.Debug {
-			fmt.Println("*** type: ", item.Type.String(), item.String(), item.ID)
+			fmt.Println("*** type: ", item.Type.String(), item.String())
 		}
-		if processed, err = mdHtmlGr.processItem(ll, item); err != nil {
+		if processed, err = mdHtmlGr.processItem(item); err != nil {
 			return err
 		}
 		if processed {

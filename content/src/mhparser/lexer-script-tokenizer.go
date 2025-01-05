@@ -258,6 +258,8 @@ const (
 	itemMdHtmlBlockLine
 	itemSeparator
 	itemEndOfBlock
+	itemFigStack
+	itemLinkSimple
 	itemEOF
 )
 
