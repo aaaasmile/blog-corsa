@@ -315,3 +315,57 @@ hello</p>`
 		t.Errorf("expected  hello</p> in generated  html, but %s ", secline)
 	}
 }
+
+func TestParseHtmlFigStack(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+---
+<p>Ciao</p>
+[figstack
+  'AustriaBackyardUltra2024011.jpg', 'Partenza mondiale Backyard',
+  'backyard_award.png', 'Certificato finale'
+]
+<p>hello</p>`
+
+	lex := ScriptGrammar{
+		Debug:    true,
+		TemplDir: "../templates/htmlgen",
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+	nrm := lex.Norm["main"]
+	lastFns := len(nrm.FnsList) - 1
+	stFns := nrm.FnsList[lastFns]
+	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
+		t.Error("expected one array param with lines")
+		return
+	}
+	ll := &stFns.Params[0]
+	if len(ll.ArrayValue) != 2 {
+		t.Errorf("expected 2 html lines, but %d", len(ll.ArrayValue))
+		return
+	}
+	secline := ll.ArrayValue[0]
+	if !strings.Contains(secline, "<a href=\"https://wien-rundumadum-2024-130k.legendstracking.com/\" target=\"_blank\">https://wien-rundumadum-2024-130k.legendstracking.com/</a><p>") {
+		t.Errorf("expected  <a> in generated  html, but %s ", secline)
+	}
+	secline = ll.ArrayValue[1]
+	if !strings.Contains(secline, "hello</p>") {
+		t.Errorf("expected  hello</p> in generated  html, but %s ", secline)
+	}
+}

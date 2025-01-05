@@ -1,3 +1,14 @@
 {{- define "linkbase" -}}
 <a href="{{.HrefLink}}" target="_blank">{{.DisplayLink}}</a>
 {{- end -}}
+
+{{- define "figstack" -}}
+<section class="vertstack">
+    {{- range .Figures}}
+    <figure>
+        <a href="{{.FullName}}"><img src="{{.ReducedFullName}}" alt="{{.Caption}}" /></a>
+        <figcaption>{{.Caption}}</figcaption>
+    </figure>
+    {{- end}}
+</section>
+{{- end -}}

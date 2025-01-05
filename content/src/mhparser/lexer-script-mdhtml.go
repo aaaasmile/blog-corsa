@@ -134,7 +134,9 @@ type IMdhtmlTransfNode interface {
 
 // -- Basic, implements IMdhtmlLineNode
 type mdhtLineNode struct {
-	line string
+	line        string
+	before_link string
+	after_link  string
 }
 
 func (n *mdhtLineNode) String() string {
@@ -145,9 +147,7 @@ func (n *mdhtLineNode) String() string {
 
 type mdhtLinkSimpleNode struct {
 	mdhtLineNode
-	before_link string
-	href_arg    string
-	after_link  string
+	href_arg string
 }
 
 func NewLinkSimpleNode(preline string) *mdhtLinkSimpleNode {
@@ -198,6 +198,63 @@ func (ln *mdhtLinkSimpleNode) Transform(templDir string) error {
 	return nil
 }
 
+// -- Figure Vertical Stack
+type mdhtFigStackNode struct {
+	mdhtLineNode
+	figItems []string
+}
+
+func NewFigStackNode(preline string) *mdhtFigStackNode {
+	res := mdhtFigStackNode{figItems: make([]string, 0)}
+	arr := strings.Split(preline, "[")
+	if len(arr) > 0 {
+		res.before_link = arr[0]
+	}
+	return &res
+}
+
+func (ln *mdhtFigStackNode) AddParamString(parVal string) error {
+	if parVal == "" {
+		return fmt.Errorf("param is empty")
+	}
+	ln.figItems = append(ln.figItems, parVal)
+	return nil
+}
+
+func (ln *mdhtFigStackNode) AddblockHtml(val string) error {
+	if ln.after_link != "" {
+		return fmt.Errorf("[AddblockHtml] already set")
+	}
+	ln.after_link = val
+	return nil
+}
+
+func (ln *mdhtFigStackNode) Transform(templDir string) error {
+	if templDir == "" {
+		return fmt.Errorf("[Transform] templ dir is not set")
+	}
+	// TODO transform
+	// templName := path.Join(templDir, "transform.html")
+	// tmplPage := template.Must(template.New("FigStack").ParseFiles(templName))
+	// CtxFirst := struct {
+	// 	HrefLink    string
+	// 	DisplayLink string
+	// }{
+	// 	HrefLink:    ln.href_arg,
+	// 	DisplayLink: ln.href_arg,
+	// }
+	// var partFirst bytes.Buffer
+	// if err := tmplPage.ExecuteTemplate(&partFirst, "figstack", CtxFirst); err != nil {
+	// 	return err
+	// }
+
+	// res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
+	// ln.line = res
+	return nil
+}
+
+/////////// ---- Grammar
+
 type MdHtmlGram struct {
 	Nodes       []IMdhtmlLineNode
 	_curr_Node  IMdhtmlLineNode
@@ -234,6 +291,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		}
 	case item.Type == itemLinkSimple:
 		mh._curr_Node = NewLinkSimpleNode(item.Value)
+	case item.Type == itemFigStack:
+		mh._curr_Node = NewFigStackNode(item.Value)
 	case item.Type == itemText:
 		// ignore
 	case item.Type == itemParamString:
