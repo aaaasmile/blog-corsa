@@ -141,7 +141,19 @@ func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
 	arr[last_ix] = last_dir
 	dir_stack := []string{arr[last_ix-3], arr[last_ix-2], arr[last_ix-1], arr[last_ix]}
 	log.Println("dir structure for output ", dir_stack)
+	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
+		return err
+	}
 
+	return nil
+}
+
+func (mp *MdHtmlProcess) checkOrCreateOutDir(dir_stack []string) error {
+	dir_path := mp.RootStaticDir
+	for _, item := range dir_stack {
+		dir_path = path.Join(dir_path, item)
+		log.Println("check if out dir is here ", dir_path)
+	}
 	return nil
 }
 

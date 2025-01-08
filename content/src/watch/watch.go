@@ -20,8 +20,10 @@ import (
 )
 
 type WatcherMdHtml struct {
-	debug      bool
-	dirContent string
+	debug         bool
+	dirContent    string
+	staticBlogDir string
+	postSubDir    string
 }
 
 func RunWatcher(configfile string, targetDir string) error {
@@ -42,10 +44,12 @@ func RunWatcher(configfile string, targetDir string) error {
 
 	chShutdown := make(chan struct{}, 1)
 	go func(chs chan struct{}) {
-		wwa := WatcherMdHtml{dirContent: targetDir,
-			debug: conf.Current.Debug,
+		wmh := WatcherMdHtml{dirContent: targetDir,
+			debug:         conf.Current.Debug,
+			staticBlogDir: conf.Current.StaticBlogDir,
+			postSubDir:    conf.Current.PostSubDir,
 		}
-		if err := wwa.doWatch(); err != nil {
+		if err := wmh.doWatch(); err != nil {
 			log.Println("Server is not watching anymore because: ", err)
 		}
 		log.Println("watch end")
@@ -72,14 +76,14 @@ loop:
 	return nil
 }
 
-func (wwa *WatcherMdHtml) doWatch() error {
-	log.Println("setup watch on ", wwa.dirContent)
+func (wmh *WatcherMdHtml) doWatch() error {
+	log.Println("setup watch on ", wmh.dirContent)
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return err
 	}
 	defer watcher.Close()
-	err = watcher.Add(wwa.dirContent)
+	err = watcher.Add(wmh.dirContent)
 	if err != nil {
 		return err
 	}
@@ -96,7 +100,7 @@ func (wwa *WatcherMdHtml) doWatch() error {
 				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 					log.Println("WRITE modified file:", event.Name)
 					lastWriteEv = time.Now()
-					if err := wwa.processMdHtmlChange(event.Name); err != nil {
+					if err := wmh.processMdHtmlChange(event.Name); err != nil {
 						return err
 					}
 				}
@@ -104,7 +108,7 @@ func (wwa *WatcherMdHtml) doWatch() error {
 			if event.Has(fsnotify.Create) {
 				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 					log.Println("Create file:", event.Name)
-					if err := wwa.processNewImage(event.Name); err != nil {
+					if err := wmh.processNewImage(event.Name); err != nil {
 						return err
 					}
 					lastWriteEv = time.Now() // important because a new jpg image is created
@@ -122,7 +126,13 @@ func (wwa *WatcherMdHtml) doWatch() error {
 	}
 }
 
-func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+	if wmh.staticBlogDir == "" {
+		return fmt.Errorf("static blog dir config is empty")
+	}
+	if wmh.postSubDir == "" {
+		return fmt.Errorf("post sub dir config is empty")
+	}
 	_, err := os.Stat(newFname)
 	if err != nil {
 		return err
@@ -143,14 +153,14 @@ func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 		return nil
 	}
 	log.Println("html created with size: ", len(prc.HtmlGen))
-	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", conf.Current.StaticBlogDir, conf.Current.PostSubDir)
+	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
 	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
+func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	_, err := os.Stat(newFname)
 	if err != nil {
 		return err
@@ -179,7 +189,7 @@ func (wwa *WatcherMdHtml) processNewImage(newFname string) error {
 	} else {
 		return fmt.Errorf("image format %s not supported", ext)
 	}
-	ff_full := filepath.Join(wwa.dirContent, ff)
+	ff_full := filepath.Join(wmh.dirContent, ff)
 
 	var original_image image.Image
 	if isJpeg {
