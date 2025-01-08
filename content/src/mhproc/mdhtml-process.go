@@ -17,6 +17,7 @@ type MdHtmlProcess struct {
 	HtmlGen           string
 	templDir          string
 	validateMandatory bool
+	RootStaticDir     string
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
@@ -125,6 +126,22 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	partSecond.WriteTo(&partMerged)
 	mp.HtmlGen = partMerged.String()
 	mp.printGenHTML()
+	return nil
+}
+
+func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
+	arr := strings.Split(sourceName, "\\")
+	if len(arr) < 4 {
+		return fmt.Errorf("soure filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml")
+	}
+	log.Println("Processing stack from source ", arr)
+	last_ix := len(arr) - 1
+	ext := path.Ext(arr[last_ix])
+	last_dir := strings.Replace(arr[last_ix], ext, "", -1)
+	arr[last_ix] = last_dir
+	dir_stack := []string{arr[last_ix-3], arr[last_ix-2], arr[last_ix-1], arr[last_ix]}
+	log.Println("dir structure for output ", dir_stack)
+
 	return nil
 }
 

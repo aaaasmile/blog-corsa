@@ -143,6 +143,10 @@ func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 		return nil
 	}
 	log.Println("html created with size: ", len(prc.HtmlGen))
+	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", conf.Current.StaticBlogDir, conf.Current.PostSubDir)
+	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
+		return err
+	}
 	return nil
 }
 

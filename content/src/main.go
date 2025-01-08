@@ -15,7 +15,7 @@ import (
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
-	var ww = flag.Bool("watch", false, "Watch the mdhtml file and generate the html")
+	var watchdir = flag.Bool("watch", false, "Watch the mdhtml file and generate the html")
 	var target = flag.String("target", "", "file to watch")
 	flag.Parse()
 
@@ -23,7 +23,7 @@ func main() {
 		fmt.Printf("%s, version: %s", idl.Appname, idl.Buildnr)
 		os.Exit(0)
 	}
-	if *ww {
+	if *watchdir {
 		if err := watch.RunWatcher(*configfile, *target); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
