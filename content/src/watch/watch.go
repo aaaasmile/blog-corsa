@@ -3,6 +3,7 @@ package watch
 import (
 	"bytes"
 	"corsa-blog/conf"
+	"corsa-blog/content/src/mhproc"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -135,8 +136,13 @@ func (wwa *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("read: ", mdhtml)
-	// TODO use the parser
+	//log.Println("read: ", mdhtml)
+	prc := mhproc.NewMdHtmlProcess(false)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("HTML error: ", err)
+		return nil
+	}
+	log.Println("html created with size: ", len(prc.HtmlGen))
 	return nil
 }
 

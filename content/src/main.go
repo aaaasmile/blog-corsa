@@ -11,7 +11,7 @@ import (
 
 // Example command line and the target should be a directory with one post and multiple images:
 //
-//	go run .\main.go -config ..\..\config.toml  -watch -target -target ..\2024\11\08\
+//	go run .\main.go -config ..\..\config_custom.toml  -watch -target ..\posts-src\2024\11\08\
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
