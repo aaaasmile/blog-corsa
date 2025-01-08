@@ -5,6 +5,7 @@ import (
 	"corsa-blog/content/src/mhparser"
 	"fmt"
 	"log"
+	"os"
 	"path"
 	"strings"
 	"text/template"
@@ -18,6 +19,7 @@ type MdHtmlProcess struct {
 	templDir          string
 	validateMandatory bool
 	RootStaticDir     string
+	target_dir        string
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
@@ -140,11 +142,31 @@ func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
 	last_dir := strings.Replace(arr[last_ix], ext, "", -1)
 	arr[last_ix] = last_dir
 	dir_stack := []string{arr[last_ix-3], arr[last_ix-2], arr[last_ix-1], arr[last_ix]}
-	log.Println("dir structure for output ", dir_stack)
+	if mp.debug {
+		log.Println("dir structure for output ", dir_stack)
+	}
 	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
 		return err
 	}
+	log.Println("target dir", mp.target_dir)
+	if err := mp.createIndexHtml(); err != nil {
+		return err
+	}
+	return nil
+}
 
+func (mp *MdHtmlProcess) createIndexHtml() error {
+	fname := path.Join(mp.target_dir, "index.html")
+	f, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString(mp.HtmlGen); err != nil {
+		return err
+	}
+	log.Println("file created ", fname)
 	return nil
 }
 
@@ -152,8 +174,19 @@ func (mp *MdHtmlProcess) checkOrCreateOutDir(dir_stack []string) error {
 	dir_path := mp.RootStaticDir
 	for _, item := range dir_stack {
 		dir_path = path.Join(dir_path, item)
-		log.Println("check if out dir is here ", dir_path)
+		//log.Println("check if out dir is here ", dir_path)
+		if info, err := os.Stat(dir_path); err == nil && info.IsDir() {
+			if mp.debug {
+				log.Println("dir exist", dir_path)
+			}
+		} else {
+			if mp.debug {
+				log.Println("create dir", dir_path)
+			}
+			os.MkdirAll(dir_path, 0700)
+		}
 	}
+	mp.target_dir = dir_path
 	return nil
 }
 
