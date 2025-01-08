@@ -20,6 +20,7 @@ type MdHtmlProcess struct {
 	validateMandatory bool
 	RootStaticDir     string
 	target_dir        string
+	source_dir        string
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
@@ -152,7 +153,20 @@ func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
 	if err := mp.createIndexHtml(); err != nil {
 		return err
 	}
+	src_arr := make([]string, 0)
+	src_arr = append(src_arr, arr[0:last_ix]...)
+	mp.source_dir = strings.Join(src_arr, "\\")
+	log.Println("source dir", mp.source_dir)
+	if err := mp.synchSourceDirWithTarget(); err != nil {
+		return err
+	}
 	return nil
+}
+
+func (mp *MdHtmlProcess) synchSourceDirWithTarget() error {
+	// TODO
+	return fmt.Errorf("synchSourceDirWithTarget is not implemented")
+	//return nil
 }
 
 func (mp *MdHtmlProcess) createIndexHtml() error {
