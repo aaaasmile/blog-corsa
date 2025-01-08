@@ -272,6 +272,7 @@ type DescrFnItem struct {
 	VariableArgs  bool
 	InfoDet       string
 	Labels        []string
+	IsMultiline   bool
 }
 type DescrFns []DescrFnItem
 

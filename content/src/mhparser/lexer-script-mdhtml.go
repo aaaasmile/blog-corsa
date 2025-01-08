@@ -35,7 +35,7 @@ func lexStateAfterString(l *L) StateFunc {
 			return l.errorf("[lexStateAfterString] Expected next param or close curl")
 		case r == ',':
 			l.emit(itemSeparator)
-			return lexStateInParamString
+			return lexStateSingleBeforeBegStr
 		case r == ']':
 			l.emit(itemEndOfBlock)
 			return lexStateMdHtmlOnLine
@@ -45,6 +45,28 @@ func lexStateAfterString(l *L) StateFunc {
 			l.ignore()
 		default:
 			return l.errorf("[lexStateAfterString] Malformed end of parameter: %s", l.source[l.start:l.position])
+		}
+	}
+}
+
+func lexStateMultiAfterString(l *L) StateFunc {
+	for {
+		switch r := l.next(); {
+		case r == EOFRune || r == '\r' || r == '\n':
+			l.ignore()
+			l.inc_line(r)
+		case r == ',':
+			l.emit(itemSeparator)
+			return lexStateMultiBeforeBegStr
+		case r == ']':
+			l.emit(itemEndOfBlock)
+			return lexStateMdHtmlOnLine
+		case r == '\'':
+			l.emit(itemText)
+		case unicode.IsSpace(r):
+			l.ignore()
+		default:
+			return l.errorf("[lexStateMultiAfterString] Malformed end of parameter: %s", l.source[l.start:l.position])
 		}
 	}
 }
@@ -72,19 +94,58 @@ func lexStateInParamString(l *L) StateFunc {
 	}
 }
 
-func lexStateLinkBeforeBegStr(l *L) StateFunc {
+func lexStateMultiInParamString(l *L) StateFunc {
+	ll := 0
+	for {
+		rleos := l.peek()
+		//fmt.Println("***> ", rleos, ll)
+		if ll == 0 && rleos == '\'' {
+			l.emit(itemEmptyString)
+			return lexStateMultiAfterString
+		}
+
+		switch r := l.next(); {
+		case r == EOFRune || r == '\r' || r == '\n':
+			return l.errorf("[lexStateMultiInParamString] expected end of string inside a single line")
+		case r == '\'':
+			l.rewind()
+			l.emit(itemParamString)
+			return lexStateMultiAfterString
+		default:
+			ll += 1
+		}
+	}
+}
+
+func lexStateSingleBeforeBegStr(l *L) StateFunc {
 	for {
 		switch r := l.next(); {
 		case unicode.IsSpace(r):
 			l.ignore()
 		case r == '\r' || r == '\n':
-			l.inc_line(r)
-			l.ignore()
+			return l.errorf("[lexStateSingleBeforeBegStr] Expected next param string")
 		case r == '\'':
 			l.emit(itemText)
 			return lexStateInParamString
 		default:
-			return l.errorf("[lexStateBeforeCurl] Expected ( but got %s (Line %d)", l.source[l.start:l.position], l.scriptLine)
+			return l.errorf("[lexStateSingleBeforeBegStr] Expected ( but got %s (Line %d)", l.source[l.start:l.position], l.scriptLine)
+		}
+	}
+}
+
+func lexStateMultiBeforeBegStr(l *L) StateFunc {
+	for {
+		switch r := l.next(); {
+		case unicode.IsSpace(r):
+			l.ignore()
+		case r == '\r' || r == '\n':
+			l.ignore()
+			l.inc_line(r)
+		case r == '\'':
+			l.emit(itemText)
+			return lexStateMultiInParamString
+		default:
+			return l.errorf("[lexStateMultiBeforeBegStr] Expected ( but got %s (Line %d)", l.source[l.start:l.position], l.scriptLine)
 		}
 	}
 }
@@ -229,27 +290,56 @@ func (ln *mdhtFigStackNode) AddblockHtml(val string) error {
 	return nil
 }
 
+type figure struct {
+	FullName        string
+	ReducedFullName string
+	Caption         string
+}
+
+func (fg *figure) calcReduced() error {
+	ext := path.Ext(fg.FullName)
+	if ext == "" {
+		return fmt.Errorf("[calcReduced] extension on %s is empty, this is not supported", fg.FullName)
+	}
+	bare_name := strings.Replace(fg.FullName, ext, "", -1)
+	fg.ReducedFullName = fmt.Sprintf("%s_320%s", bare_name, ext)
+	return nil
+}
+
 func (ln *mdhtFigStackNode) Transform(templDir string) error {
 	if templDir == "" {
 		return fmt.Errorf("[Transform] templ dir is not set")
 	}
-	// TODO transform
-	// templName := path.Join(templDir, "transform.html")
-	// tmplPage := template.Must(template.New("FigStack").ParseFiles(templName))
-	// CtxFirst := struct {
-	// 	HrefLink    string
-	// 	DisplayLink string
-	// }{
-	// 	HrefLink:    ln.href_arg,
-	// 	DisplayLink: ln.href_arg,
-	// }
-	// var partFirst bytes.Buffer
-	// if err := tmplPage.ExecuteTemplate(&partFirst, "figstack", CtxFirst); err != nil {
-	// 	return err
-	// }
+	figs := make([]figure, 0)
+	is_next_caption := false
+	new_fig := figure{}
+	for _, item := range ln.figItems {
+		if !is_next_caption {
+			new_fig = figure{FullName: item}
+			if err := new_fig.calcReduced(); err != nil {
+				return err
+			}
+			is_next_caption = true
+		} else {
+			new_fig.Caption = item
+			is_next_caption = false
+			figs = append(figs, new_fig)
+		}
+	}
+	templName := path.Join(templDir, "transform.html")
+	tmplPage := template.Must(template.New("FigStack").ParseFiles(templName))
+	CtxFirst := struct {
+		Figures []figure
+	}{
+		Figures: figs,
+	}
+	var partFirst bytes.Buffer
+	if err := tmplPage.ExecuteTemplate(&partFirst, "figstack", CtxFirst); err != nil {
+		return err
+	}
 
-	// res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
-	// ln.line = res
+	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
+	ln.line = res
 	return nil
 }
 
@@ -294,6 +384,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 	case item.Type == itemFigStack:
 		mh._curr_Node = NewFigStackNode(item.Value)
 	case item.Type == itemText:
+		// ignore
+	case item.Type == itemSeparator:
 		// ignore
 	case item.Type == itemParamString:
 		if err := mh.addParameterString(item.Value); err != nil {
@@ -384,7 +476,10 @@ func lexMatchFnKey(l *L) (StateFunc, bool) {
 		if strings.HasPrefix(l.source[l.position:], k) { // make sure to parse the longest keyword first
 			l.position += len(k)
 			l.emitCustFn(v.ItemTokenType, v.CustomID)
-			return lexStateLinkBeforeBegStr, true
+			if v.IsMultiline {
+				return lexStateMultiBeforeBegStr, true
+			}
+			return lexStateSingleBeforeBegStr, true
 		}
 	}
 	return nil, false

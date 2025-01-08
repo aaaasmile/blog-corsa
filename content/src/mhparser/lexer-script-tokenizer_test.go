@@ -356,16 +356,24 @@ id: 20241108-00
 		return
 	}
 	ll := &stFns.Params[0]
-	if len(ll.ArrayValue) != 2 {
-		t.Errorf("expected 2 html lines, but %d", len(ll.ArrayValue))
+	if len(ll.ArrayValue) != 3 {
+		t.Errorf("expected 3 html lines, but %d", len(ll.ArrayValue))
 		return
 	}
 	secline := ll.ArrayValue[0]
-	if !strings.Contains(secline, "<a href=\"https://wien-rundumadum-2024-130k.legendstracking.com/\" target=\"_blank\">https://wien-rundumadum-2024-130k.legendstracking.com/</a><p>") {
-		t.Errorf("expected  <a> in generated  html, but %s ", secline)
+	if !strings.Contains(secline, "<p>Ciao</p>") {
+		t.Errorf("expected <p>Ciao</p> in generated  html, but %s ", secline)
 	}
 	secline = ll.ArrayValue[1]
-	if !strings.Contains(secline, "hello</p>") {
-		t.Errorf("expected  hello</p> in generated  html, but %s ", secline)
+	if !strings.Contains(secline, `<a href="AustriaBackyardUltra2024011.jpg"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>`) {
+		t.Errorf("expected AustriaBackyardUltra2024011 in generated  html, but %s ", secline)
+	}
+	if !strings.Contains(secline, `<a href="backyard_award.png"><img src="backyard_award_320.png" alt="Certificato finale" /></a>`) {
+		t.Errorf("expected backyard_award.png in generated  html, but %s ", secline)
+	}
+
+	secline = ll.ArrayValue[2]
+	if !strings.Contains(secline, "<p>hello</p>") {
+		t.Errorf("expected  <p>hello</p> in generated  html, but %s ", secline)
 	}
 }

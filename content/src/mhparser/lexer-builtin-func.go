@@ -9,6 +9,7 @@ func buildDescrInLex(l *L) {
 		KeyName:       "link",
 		Labels:        []string{"Url"},
 		ItemTokenType: itemLinkSimple,
+		IsMultiline:   false,
 	}
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
@@ -17,6 +18,7 @@ func buildDescrInLex(l *L) {
 		KeyName:       "figstack",
 		ItemTokenType: itemFigStack,
 		Labels:        []string{},
+		IsMultiline:   true,
 	}
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
