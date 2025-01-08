@@ -18,31 +18,6 @@ type ParamItem struct {
 	IsModificable bool
 	IsOverwrite   bool
 	IsArray       bool
-	_touched      bool
-}
-
-func (pi *ParamItem) setVariableName(name string) {
-	pi.VariableName = name
-	pi.IsVariable = true
-	pi._touched = true
-}
-
-func (pi *ParamItem) setStringValue(value string) {
-	pi.Value = value
-	pi._touched = true
-}
-
-func (pi *ParamItem) touched() bool {
-	return pi._touched
-}
-
-func (pi *ParamItem) clear() {
-	pi._touched = false
-	pi.IsVariable = false
-	pi.IsArgument = false
-	pi.Value = ""
-	pi.Label = ""
-	pi.VariableName = ""
 }
 
 type GrammStType int

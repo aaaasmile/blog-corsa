@@ -88,7 +88,6 @@ type L struct {
 	// custom
 	descrFns   DescrFns
 	scriptLine int
-	open_curls int
 }
 
 // NewL creates a returns a lexer ready to parse the given source code.
@@ -206,36 +205,13 @@ func (l *L) errorf(format string, args ...interface{}) StateFunc {
 	return nil
 }
 
-func (l *L) open_curl() int {
-	l.open_curls++
-	return l.open_curls
-}
-
-func (l *L) close_curl() int {
-	l.open_curls--
-	return l.open_curls
-}
-
 // //////////////////////////////////////////////////////////////////////
-// / Lexer Custom Part for specific task (NAV source code info parser)
-// Qui comincia la sezione specifica del parser, anche se un paio di campi li ho aggiunti al lexer L
-const (
-	metaArgSep    = ","
-	metaString    = "'"
-	metaOpenCurl  = "["
-	metaCloseCurl = "]"
-	metaComment   = "#"
-	metaCr        = "\r"
-	metaLf        = "\n"
-	metaColon     = ":"
-)
+// / Lexer Custom Part for specific task
 
 // To add a new keyword follow:
 // 1) add a new item into the DescrFnItem
 // 2) build and run a test with the new keyword
-// 3) adapt the hrisc visual code extension
-// For not internal functions, the Keyname should be supported in backend into the bdslite interface
-// TokenType to String is manually done into the file token_type_string.go (no stringer anymore because is not working here)
+// TokenType to String is manually done into the file token_type_string.go (no stringer anymore because has changed its usage)
 const (
 	// Internal Types
 	itemText TokenType = iota

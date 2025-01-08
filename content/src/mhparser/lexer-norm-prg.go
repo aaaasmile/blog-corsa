@@ -12,41 +12,6 @@ type NormPrg struct {
 	IsCustomFunction bool
 }
 
-type normNode struct {
-	prg  *NormPrg
-	next *normNode
-}
-
-type normStack struct {
-	start *normNode
-}
-
-func (ns *normStack) Pop() *NormPrg {
-	if ns.start == nil {
-		return nil
-	} else {
-		node := ns.start
-		ns.start = ns.start.next
-		return node.prg
-	}
-}
-
-func (ns *normStack) Push(prg *NormPrg) {
-	node := normNode{prg: prg}
-	if ns.start == nil {
-		ns.start = &node
-	} else {
-		node.next = ns.start
-		ns.start = &node
-	}
-}
-
-func (np *NormPrg) setArguments(fnst *FnStatLex) {
-	for _, v := range fnst.params {
-		np.Arguments = append(np.Arguments, v.VariableName)
-	}
-}
-
 func NewProgNorm(name_st string, left_block, right_block bool) *NormPrg {
 	ret := &NormPrg{
 		Name:          name_st,
