@@ -219,6 +219,7 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 }
 
 func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+	start := time.Now()
 	if wmh.staticBlogDir == "" {
 		return fmt.Errorf("[processMdHtmlChange] static blog dir config is empty")
 	}
@@ -244,7 +245,6 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 		log.Println("[processMdHtmlChange] HTML error: ", err)
 		return nil
 	}
-	log.Println("[processMdHtmlChange] html created with size: ", len(prc.HtmlGen))
 	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
 	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
 		return err
@@ -252,5 +252,6 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
 		return err
 	}
+	log.Printf("[processMdHtmlChange] update traget html with size %d, duration %s ", len(prc.HtmlGen), time.Since(start))
 	return nil
 }
