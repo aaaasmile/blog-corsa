@@ -239,9 +239,9 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 }
 
 func (mh *MdHtmlGram) blockHtmlPart(val string) error {
-	transf, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
+	tt, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
 	if ok {
-		if err := transf.AddblockHtml(val); err != nil {
+		if err := tt.AddblockHtml(val); err != nil {
 			return err
 		}
 		mh._curr_Node = trans.NewMdhtLineNode("undef")
@@ -252,9 +252,9 @@ func (mh *MdHtmlGram) blockHtmlPart(val string) error {
 }
 
 func (mh *MdHtmlGram) addParameterString(valPar string) error {
-	trans, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
+	tt, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
 	if ok {
-		return trans.AddParamString(valPar)
+		return tt.AddParamString(valPar)
 	}
 	return fmt.Errorf("param string is not supported")
 }
@@ -284,12 +284,12 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	linesParam.IsArray = true
 	linesParam.ArrayValue = make([]string, 0)
 	for _, node := range mh.Nodes {
-		trans, ok := node.(trans.IMdhtmlTransfNode)
+		tt, ok := node.(trans.IMdhtmlTransfNode)
 		if ok {
-			if err := trans.Transform(scrGr.TemplDir); err != nil {
+			if err := tt.Transform(scrGr.TemplDir); err != nil {
 				return err
 			}
-			linesParam.ArrayValue = append(linesParam.ArrayValue, trans.String())
+			linesParam.ArrayValue = append(linesParam.ArrayValue, tt.String())
 		} else {
 			linesParam.ArrayValue = append(linesParam.ArrayValue, node.String())
 		}
