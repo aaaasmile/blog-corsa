@@ -1,4 +1,4 @@
-package mhparser
+package trans
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 // -- Link Simple, implements  IMdhtmlTransfNode
 
 type mdhtLinkSimpleNode struct {
-	mdhtLineNode
+	MdhtLineNode
 	href_arg string
 }
 

@@ -1,4 +1,4 @@
-package mhparser
+package trans
 
 import (
 	"bytes"
@@ -25,7 +25,7 @@ func (fg *figure) calcReduced() error {
 }
 
 type mdhtFigStackNode struct {
-	mdhtLineNode
+	MdhtLineNode
 	figItems []string
 }
 

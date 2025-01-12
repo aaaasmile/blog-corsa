@@ -1,6 +1,7 @@
 package mhparser
 
 import (
+	"corsa-blog/content/src/mhparser/trans"
 	"errors"
 	"fmt"
 	"strings"
@@ -175,37 +176,11 @@ func lexMatchMdHtmlKey(l *L) (StateFunc, bool) {
 	return nil, false
 }
 
-//  ---  Interfaces
-
-// -- Basic
-type IMdhtmlLineNode interface {
-	String() string
-}
-
-// Node with transformations
-type IMdhtmlTransfNode interface {
-	IMdhtmlLineNode
-	Transform(templDir string) error
-	AddParamString(parVal string) error
-	AddblockHtml(val string) error
-}
-
-// -- Basic, implements IMdhtmlLineNode
-type mdhtLineNode struct {
-	line        string
-	before_link string
-	after_link  string
-}
-
-func (n *mdhtLineNode) String() string {
-	return n.line
-}
-
 /////////// ---- Grammar
 
 type MdHtmlGram struct {
-	Nodes       []IMdhtmlLineNode
-	_curr_Node  IMdhtmlLineNode
+	Nodes       []trans.IMdhtmlLineNode
+	_curr_Node  trans.IMdhtmlLineNode
 	isMdHtmlCtx bool
 	debug       bool
 	templDir    string
@@ -213,7 +188,7 @@ type MdHtmlGram struct {
 
 func NewMdHtmlGr(templDir string, debug bool) *MdHtmlGram {
 	item := MdHtmlGram{
-		Nodes:    make([]IMdhtmlLineNode, 0),
+		Nodes:    make([]trans.IMdhtmlLineNode, 0),
 		debug:    debug,
 		templDir: templDir,
 	}
@@ -238,9 +213,9 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 			return false, err
 		}
 	case item.Type == itemLinkSimple:
-		mh._curr_Node = NewLinkSimpleNode(item.Value)
+		mh._curr_Node = trans.NewLinkSimpleNode(item.Value)
 	case item.Type == itemFigStack:
-		mh._curr_Node = NewFigStackNode(item.Value)
+		mh._curr_Node = trans.NewFigStackNode(item.Value)
 	case item.Type == itemText:
 		// ignore
 	case item.Type == itemSeparator:
@@ -264,20 +239,20 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 }
 
 func (mh *MdHtmlGram) blockHtmlPart(val string) error {
-	transf, ok := mh._curr_Node.(IMdhtmlTransfNode)
+	transf, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
 	if ok {
 		if err := transf.AddblockHtml(val); err != nil {
 			return err
 		}
-		mh._curr_Node = &mdhtLineNode{line: "undef"}
+		mh._curr_Node = trans.NewMdhtLineNode("undef")
 	} else {
-		mh.Nodes = append(mh.Nodes, &mdhtLineNode{line: val})
+		mh.Nodes = append(mh.Nodes, trans.NewMdhtLineNode(val))
 	}
 	return nil
 }
 
 func (mh *MdHtmlGram) addParameterString(valPar string) error {
-	trans, ok := mh._curr_Node.(IMdhtmlTransfNode)
+	trans, ok := mh._curr_Node.(trans.IMdhtmlTransfNode)
 	if ok {
 		return trans.AddParamString(valPar)
 	}
@@ -309,7 +284,7 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	linesParam.IsArray = true
 	linesParam.ArrayValue = make([]string, 0)
 	for _, node := range mh.Nodes {
-		trans, ok := node.(IMdhtmlTransfNode)
+		trans, ok := node.(trans.IMdhtmlTransfNode)
 		if ok {
 			if err := trans.Transform(scrGr.TemplDir); err != nil {
 				return err
