@@ -4,7 +4,7 @@ package trans
 
 // -- Basic
 type IMdhtmlLineNode interface {
-	String() string
+	Block() string
 }
 
 // Node with transformations
@@ -17,16 +17,16 @@ type IMdhtmlTransfNode interface {
 
 // -- Basic, implements IMdhtmlLineNode
 type MdhtLineNode struct {
-	line        string
+	block       string
 	before_link string
 	after_link  string
 }
 
-func (n *MdhtLineNode) String() string {
-	return n.line
+func (n *MdhtLineNode) Block() string {
+	return n.block
 }
 
 func NewMdhtLineNode(line string) *MdhtLineNode {
-	ln := MdhtLineNode{line: line}
+	ln := MdhtLineNode{block: line}
 	return &ln
 }

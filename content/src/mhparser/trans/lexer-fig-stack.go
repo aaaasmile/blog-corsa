@@ -87,6 +87,6 @@ func (ln *mdhtFigStackNode) Transform(templDir string) error {
 	}
 
 	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
-	ln.line = res
+	ln.block = res
 	return nil
 }

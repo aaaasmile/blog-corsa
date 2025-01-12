@@ -289,9 +289,9 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 			if err := tt.Transform(scrGr.TemplDir); err != nil {
 				return err
 			}
-			linesParam.ArrayValue = append(linesParam.ArrayValue, tt.String())
+			linesParam.ArrayValue = append(linesParam.ArrayValue, tt.Block())
 		} else {
-			linesParam.ArrayValue = append(linesParam.ArrayValue, node.String())
+			linesParam.ArrayValue = append(linesParam.ArrayValue, node.Block())
 		}
 	}
 
