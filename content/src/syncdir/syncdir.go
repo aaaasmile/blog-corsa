@@ -78,7 +78,7 @@ func (sd *SyncDir) copyNewItemsFromSrc(src *SyncDir) error {
 			if err != nil {
 				return err
 			}
-			log.Println("copied file into the target ", full_trg_name)
+			log.Println("file copied into the target ", full_trg_name)
 		}
 	}
 	return nil

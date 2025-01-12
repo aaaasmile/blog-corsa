@@ -90,7 +90,6 @@ func (wmh *WatcherMdHtml) doWatch() error {
 		return err
 	}
 
-	//lastWriteEv := time.Now()
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -99,36 +98,30 @@ func (wmh *WatcherMdHtml) doWatch() error {
 			}
 			//log.Println("event:", event)
 			if event.Has(fsnotify.Write) {
-				//if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 				log.Println("WRITE modified file:", event.Name)
-				//lastWriteEv = time.Now()
 				go func() {
 					time.Sleep(200 * time.Millisecond)
 					if err := wmh.processMdHtmlChange(event.Name); err != nil {
 						log.Println("[doWatch] error in processMdHtmlChange: ", err)
 					}
 				}()
-				//}
 			}
 			if event.Has(fsnotify.Create) {
-				//if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
 				log.Println("CREATE file:", event.Name)
-				//lastWriteEv = time.Now() // important because a new jpg image is created
 				go func() {
-					// delayed start to wait full copy
-					time.Sleep(200 * time.Millisecond)
+					time.Sleep(200 * time.Millisecond) // some delay to wait until the writing FS process is finished
 					if err := wmh.processNewImage(event.Name); err != nil {
 						log.Println("[doWatch] error in processNewImage: ", err)
 					}
 				}()
-				//}
 			}
 			if event.Has(fsnotify.Remove) {
 				log.Println("REMOVE file:", event.Name)
-				// TODO remove image in target
+				// do nothing: removing an asset items means that the mdhtml file should be also updated, in this case the image is synch
 			}
 			if event.Has(fsnotify.Rename) {
-				log.Println("RENAME file:", event.Name) // remember that is followed by a create event
+				log.Println("RENAME file:", event.Name)
+				// do nothing: that is followed by a create event and the synch is done with the modification of the mdhtmlfile
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
