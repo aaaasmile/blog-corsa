@@ -1,6 +1,16 @@
 {
-    "images" : [
-        {"id" : "01", "name": "AustriaBackyardUltra2024011.jpg", "redux" : "AustriaBackyardUltra2024011_320.jpg", "caption": "Partenza mondiale Backyard"},
-        {"id" : "02", "name": "backyard_award.png.jpg", "redux" : "backyard_award.png_320.jpg", "caption": "Certificato finale"}
+    "images": [
+        {
+            "id": "01",
+            "name": "AustriaBackyardUltra2024011.jpg",
+            "redux": "AustriaBackyardUltra2024011_320.jpg",
+            "caption": "Partenza mondiale Backyard"
+        },
+        {
+            "id": "02",
+            "name": "backyard_award.png.jpg",
+            "redux": "backyard_award.png_320.jpg",
+            "caption": "Certificato finale"
+        }
     ]
 }
