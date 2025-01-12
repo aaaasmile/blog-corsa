@@ -12,6 +12,7 @@ type figure struct {
 	FullName        string
 	ReducedFullName string
 	Caption         string
+	FigId           string
 }
 
 func (fg *figure) calcReduced() error {
@@ -61,9 +62,9 @@ func (ln *mdhtFigStackNode) Transform(templDir string) error {
 	figs := make([]figure, 0)
 	is_next_caption := false
 	new_fig := figure{}
-	for _, item := range ln.figItems {
+	for ix, item := range ln.figItems {
 		if !is_next_caption {
-			new_fig = figure{FullName: item}
+			new_fig = figure{FullName: item, FigId: fmt.Sprintf("%02d", ix)}
 			if err := new_fig.calcReduced(); err != nil {
 				return err
 			}
