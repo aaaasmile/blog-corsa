@@ -1,12 +1,9 @@
 package mhparser
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"path"
 	"strings"
-	"text/template"
 	"unicode"
 )
 
@@ -202,145 +199,6 @@ type mdhtLineNode struct {
 
 func (n *mdhtLineNode) String() string {
 	return n.line
-}
-
-// -- Link Simple, implements  IMdhtmlTransfNode
-
-type mdhtLinkSimpleNode struct {
-	mdhtLineNode
-	href_arg string
-}
-
-func NewLinkSimpleNode(preline string) *mdhtLinkSimpleNode {
-	res := mdhtLinkSimpleNode{}
-	arr := strings.Split(preline, "[")
-	if len(arr) > 0 {
-		res.before_link = arr[0]
-	}
-	return &res
-}
-
-func (ln *mdhtLinkSimpleNode) AddParamString(parVal string) error {
-	if ln.href_arg != "" {
-		return fmt.Errorf("[AddParamString] parameter already set")
-	}
-	ln.href_arg = parVal
-	return nil
-}
-
-func (ln *mdhtLinkSimpleNode) AddblockHtml(val string) error {
-	if ln.after_link != "" {
-		return fmt.Errorf("[AddblockHtml] already set")
-	}
-	ln.after_link = val
-	return nil
-}
-
-func (ln *mdhtLinkSimpleNode) Transform(templDir string) error {
-	if templDir == "" {
-		return fmt.Errorf("[Transform] templ dir is not set")
-	}
-	templName := path.Join(templDir, "transform.html")
-	tmplPage := template.Must(template.New("Link").ParseFiles(templName))
-	CtxFirst := struct {
-		HrefLink    string
-		DisplayLink string
-	}{
-		HrefLink:    ln.href_arg,
-		DisplayLink: ln.href_arg,
-	}
-	var partFirst bytes.Buffer
-	if err := tmplPage.ExecuteTemplate(&partFirst, "linkbase", CtxFirst); err != nil {
-		return err
-	}
-
-	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
-	ln.line = res
-	return nil
-}
-
-// -- Figure Vertical Stack
-type mdhtFigStackNode struct {
-	mdhtLineNode
-	figItems []string
-}
-
-func NewFigStackNode(preline string) *mdhtFigStackNode {
-	res := mdhtFigStackNode{figItems: make([]string, 0)}
-	arr := strings.Split(preline, "[")
-	if len(arr) > 0 {
-		res.before_link = arr[0]
-	}
-	return &res
-}
-
-func (ln *mdhtFigStackNode) AddParamString(parVal string) error {
-	if parVal == "" {
-		return fmt.Errorf("param is empty")
-	}
-	ln.figItems = append(ln.figItems, parVal)
-	return nil
-}
-
-func (ln *mdhtFigStackNode) AddblockHtml(val string) error {
-	if ln.after_link != "" {
-		return fmt.Errorf("[AddblockHtml] already set")
-	}
-	ln.after_link = val
-	return nil
-}
-
-type figure struct {
-	FullName        string
-	ReducedFullName string
-	Caption         string
-}
-
-func (fg *figure) calcReduced() error {
-	ext := path.Ext(fg.FullName)
-	if ext == "" {
-		return fmt.Errorf("[calcReduced] extension on %s is empty, this is not supported", fg.FullName)
-	}
-	bare_name := strings.Replace(fg.FullName, ext, "", -1)
-	fg.ReducedFullName = fmt.Sprintf("%s_320%s", bare_name, ext)
-	return nil
-}
-
-func (ln *mdhtFigStackNode) Transform(templDir string) error {
-	if templDir == "" {
-		return fmt.Errorf("[Transform] templ dir is not set")
-	}
-	figs := make([]figure, 0)
-	is_next_caption := false
-	new_fig := figure{}
-	for _, item := range ln.figItems {
-		if !is_next_caption {
-			new_fig = figure{FullName: item}
-			if err := new_fig.calcReduced(); err != nil {
-				return err
-			}
-			is_next_caption = true
-		} else {
-			new_fig.Caption = item
-			is_next_caption = false
-			figs = append(figs, new_fig)
-		}
-	}
-	templName := path.Join(templDir, "transform.html")
-	tmplPage := template.Must(template.New("FigStack").ParseFiles(templName))
-	CtxFirst := struct {
-		Figures []figure
-	}{
-		Figures: figs,
-	}
-	var partFirst bytes.Buffer
-	if err := tmplPage.ExecuteTemplate(&partFirst, "figstack", CtxFirst); err != nil {
-		return err
-	}
-
-	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
-	ln.line = res
-	return nil
 }
 
 /////////// ---- Grammar
