@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"corsa-blog/conf"
 	"corsa-blog/content/src/mhproc"
+	"corsa-blog/content/src/syncdir"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -126,40 +127,6 @@ func (wmh *WatcherMdHtml) doWatch() error {
 	}
 }
 
-func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
-	if wmh.staticBlogDir == "" {
-		return fmt.Errorf("static blog dir config is empty")
-	}
-	if wmh.postSubDir == "" {
-		return fmt.Errorf("post sub dir config is empty")
-	}
-	_, err := os.Stat(newFname)
-	if err != nil {
-		return err
-	}
-	ext := filepath.Ext(newFname)
-	if !strings.HasPrefix(ext, ".mdhtml") {
-		log.Println("file ignored", newFname)
-		return nil
-	}
-	mdhtml, err := os.ReadFile(newFname)
-	if err != nil {
-		return err
-	}
-	//log.Println("read: ", mdhtml)
-	prc := mhproc.NewMdHtmlProcess(false)
-	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
-		log.Println("HTML error: ", err)
-		return nil
-	}
-	log.Println("html created with size: ", len(prc.HtmlGen))
-	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
-	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	_, err := os.Stat(newFname)
 	if err != nil {
@@ -234,5 +201,42 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	}
 	log.Println("image created: ", ff_full)
 
+	return nil
+}
+
+func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+	if wmh.staticBlogDir == "" {
+		return fmt.Errorf("static blog dir config is empty")
+	}
+	if wmh.postSubDir == "" {
+		return fmt.Errorf("post sub dir config is empty")
+	}
+	_, err := os.Stat(newFname)
+	if err != nil {
+		return err
+	}
+	ext := filepath.Ext(newFname)
+	if !strings.HasPrefix(ext, ".mdhtml") {
+		log.Println("file ignored", newFname)
+		return nil
+	}
+	mdhtml, err := os.ReadFile(newFname)
+	if err != nil {
+		return err
+	}
+	//log.Println("read: ", mdhtml)
+	prc := mhproc.NewMdHtmlProcess(false)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("HTML error: ", err)
+		return nil
+	}
+	log.Println("html created with size: ", len(prc.HtmlGen))
+	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
+	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
+		return err
+	}
+	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
+		return err
+	}
 	return nil
 }

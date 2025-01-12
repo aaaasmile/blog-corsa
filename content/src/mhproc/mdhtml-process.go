@@ -18,9 +18,9 @@ type MdHtmlProcess struct {
 	HtmlGen           string
 	templDir          string
 	validateMandatory bool
+	SourceDir         string
 	RootStaticDir     string
-	target_dir        string
-	source_dir        string
+	TargetDir         string
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
@@ -149,28 +149,20 @@ func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
 	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
 		return err
 	}
-	log.Println("target dir", mp.target_dir)
+	log.Println("target dir", mp.TargetDir)
 	if err := mp.createIndexHtml(); err != nil {
 		return err
 	}
 	src_arr := make([]string, 0)
 	src_arr = append(src_arr, arr[0:last_ix]...)
-	mp.source_dir = strings.Join(src_arr, "\\")
-	log.Println("source dir", mp.source_dir)
-	if err := mp.synchSourceDirWithTarget(); err != nil {
-		return err
-	}
+	mp.SourceDir = strings.Join(src_arr, "\\")
+	log.Println("source dir", mp.SourceDir)
+
 	return nil
 }
 
-func (mp *MdHtmlProcess) synchSourceDirWithTarget() error {
-	// TODO
-	return fmt.Errorf("synchSourceDirWithTarget is not implemented")
-	//return nil
-}
-
 func (mp *MdHtmlProcess) createIndexHtml() error {
-	fname := path.Join(mp.target_dir, "index.html")
+	fname := path.Join(mp.TargetDir, "index.html")
 	f, err := os.Create(fname)
 	if err != nil {
 		return err
@@ -200,7 +192,7 @@ func (mp *MdHtmlProcess) checkOrCreateOutDir(dir_stack []string) error {
 			os.MkdirAll(dir_path, 0700)
 		}
 	}
-	mp.target_dir = dir_path
+	mp.TargetDir = dir_path
 	return nil
 }
 
