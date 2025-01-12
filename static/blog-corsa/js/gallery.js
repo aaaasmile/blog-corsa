@@ -4,12 +4,16 @@ export default () => {
     let _mapImg = new Map()
     let _idArray = []
     let _currentImg = {}
+    let _image = null
+    let _imageOverlay = null
 
     function resetStrc() {
         _dataImages = {}
         _mapImg = new Map()
         _idArray = []
         _currentImg = {}
+        _image = null
+        _imageOverlay = null
     }
     return {
         loadData() {
@@ -29,7 +33,9 @@ export default () => {
                     })
                     //console.log('dataimages: ', _dataImages)
                     //console.log('mapImg: ', _mapImg)
-                    console.log('img data for gallery ok')
+                    _image = document.querySelector('#the-image');
+                    _imageOverlay = document.querySelector('#image-wrapper');
+                    console.log('images data for gallery ok')
                 })
                 .catch(err => {
                     console.error('error on fetch: ', err)
@@ -38,7 +44,16 @@ export default () => {
         displayImage(id) {
             console.log('display image id ', id)
             _currentImg = _mapImg.get(id)
-            //console.log('current image ', _currentImg)    
+            _image.classList.add('hidden')
+            _image.onload = () => { _image.classList.remove('hidden'); }; 
+            _image.src = _currentImg.name
+            _image.alt = _currentImg.caption
+            //console.log('current image ', _currentImg) 
+            _imageOverlay.classList.remove('gone');   
+        },
+        hideGalleryImage(){
+            console.log('hide gallery image')
+            _imageOverlay.classList.add('gone');
         }
     }
 }
