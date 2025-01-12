@@ -12,3 +12,22 @@
     {{- end}}
 </section>
 {{- end -}}
+
+{{- define "photos" -}}
+{
+    "images": [
+        {{.Imgs}}
+    ]
+}
+{{- end -}}
+
+{{- define "galleryImgItem" -}}
+    {{- range .Figures}}
+    {
+        "id": "{{.FigId}}",
+        "name": "{{.FullName}}",
+        "redux": "{{.ReducedFullName}}",
+        "caption": "{{.Caption}}"
+    }{{.Sep}}
+    {{- end}}
+{{- end -}}

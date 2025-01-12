@@ -26,6 +26,7 @@ const (
 	TtData GrammStType = iota
 	TtFunction
 	TtHtmlVerbatim
+	TtJsonBlock
 )
 
 type FnStatement struct {

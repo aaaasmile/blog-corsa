@@ -89,7 +89,7 @@ func (wmh *WatcherMdHtml) doWatch() error {
 	if err != nil {
 		return err
 	}
-
+	last_proc_eventname := ""
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -97,14 +97,21 @@ func (wmh *WatcherMdHtml) doWatch() error {
 				return fmt.Errorf("watch event failed")
 			}
 			//log.Println("event:", event)
+
 			if event.Has(fsnotify.Write) {
 				log.Println("WRITE modified file:", event.Name)
-				go func() {
+				go func(ffname string) {
+					if strings.Compare(last_proc_eventname, ffname) == 0 {
+						log.Println("igone write event beacuse is duplicated")
+						return
+					}
+					last_proc_eventname = ffname
 					time.Sleep(200 * time.Millisecond)
-					if err := wmh.processMdHtmlChange(event.Name); err != nil {
+					if err := wmh.processMdHtmlChange(ffname); err != nil {
 						log.Println("[doWatch] error in processMdHtmlChange: ", err)
 					}
-				}()
+					last_proc_eventname = ""
+				}(event.Name)
 			}
 			if event.Has(fsnotify.Create) {
 				log.Println("CREATE file:", event.Name)

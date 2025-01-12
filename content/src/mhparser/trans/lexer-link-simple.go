@@ -62,3 +62,11 @@ func (ln *mdhtLinkSimpleNode) Transform(templDir string) error {
 	ln.block = res
 	return nil
 }
+
+func (ln *mdhtLinkSimpleNode) JsonBlock() string {
+	return ""
+}
+
+func (ln *mdhtLinkSimpleNode) HasJsonBlock() bool {
+	return false
+}

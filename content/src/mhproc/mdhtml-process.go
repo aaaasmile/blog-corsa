@@ -16,6 +16,7 @@ type MdHtmlProcess struct {
 	debug             bool
 	scrGramm          mhparser.ScriptGrammar
 	HtmlGen           string
+	ImgJsonGen        string
 	templDir          string
 	validateMandatory bool
 	SourceDir         string
@@ -77,11 +78,24 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 	}
 	normPrg := mp.scrGramm.Norm["main"]
 	lines := []string{}
+	json_images := []string{}
 	for _, stItem := range normPrg.FnsList {
 		if stItem.Type == mhparser.TtHtmlVerbatim {
 			lines = append(lines, stItem.Params[0].ArrayValue...)
 		}
+		if stItem.Type == mhparser.TtJsonBlock {
+			json_images = append(json_images, stItem.Params[0].Value)
+			//fmt.Println("*** json item", stItem.Params[0].Value)
+		}
 	}
+	if len(json_images) > 0 {
+		jjdata := strings.Join(json_images, ",")
+		//fmt.Println("*** jjdata", jjdata)
+		if err := mp.createImageJsonDataFile(jjdata); err != nil {
+			return err
+		}
+	}
+
 	if mp.templDir != "" {
 		return mp.htmlFromTemplate(lines)
 	}
@@ -95,6 +109,24 @@ func (mp *MdHtmlProcess) printGenHTML() {
 	if mp.debug {
 		fmt.Printf("***HTML***\n%s\n", mp.HtmlGen)
 	}
+}
+
+func (mp *MdHtmlProcess) createImageJsonDataFile(jjdata string) error {
+	//jjdata is partial json for the images array, something like "{"id" = "00", "name": "Au", ...}"
+	templName := path.Join(mp.templDir, "transform.html")
+	tmplPage := template.Must(template.New("JsonImg").ParseFiles(templName))
+
+	var partJson bytes.Buffer
+	Ctx := struct {
+		Imgs string
+	}{
+		Imgs: jjdata,
+	}
+	if err := tmplPage.ExecuteTemplate(&partJson, "photos", Ctx); err != nil {
+		return err
+	}
+	mp.ImgJsonGen = partJson.String()
+	return nil
 }
 
 func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
@@ -153,6 +185,10 @@ func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
 	if err := mp.createIndexHtml(); err != nil {
 		return err
 	}
+	if err := mp.createImageGalleryJson(); err != nil {
+		return err
+	}
+
 	src_arr := make([]string, 0)
 	src_arr = append(src_arr, arr[0:last_ix]...)
 	mp.SourceDir = strings.Join(src_arr, "\\")
@@ -173,6 +209,24 @@ func (mp *MdHtmlProcess) createIndexHtml() error {
 		return err
 	}
 	log.Println("file created ", fname)
+	return nil
+}
+
+func (mp *MdHtmlProcess) createImageGalleryJson() error {
+	if mp.ImgJsonGen == "" {
+		return nil
+	}
+	fname := path.Join(mp.TargetDir, "photos.json")
+	f, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString(mp.ImgJsonGen); err != nil {
+		return err
+	}
+	log.Println("[createImageGalleryJson] file created ", fname)
 	return nil
 }
 

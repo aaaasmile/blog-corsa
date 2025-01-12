@@ -13,6 +13,7 @@ type figure struct {
 	ReducedFullName string
 	Caption         string
 	FigId           string
+	Sep             string
 }
 
 func (fg *figure) calcReduced() error {
@@ -27,7 +28,8 @@ func (fg *figure) calcReduced() error {
 
 type mdhtFigStackNode struct {
 	MdhtLineNode
-	figItems []string
+	figItems    []string
+	jsonImgPart string
 }
 
 func NewFigStackNode(preline string) *mdhtFigStackNode {
@@ -64,7 +66,7 @@ func (ln *mdhtFigStackNode) Transform(templDir string) error {
 	new_fig := figure{}
 	for ix, item := range ln.figItems {
 		if !is_next_caption {
-			new_fig = figure{FullName: item, FigId: fmt.Sprintf("%02d", ix)}
+			new_fig = figure{FullName: item, FigId: fmt.Sprintf("%02d", ix), Sep: ","}
 			if err := new_fig.calcReduced(); err != nil {
 				return err
 			}
@@ -75,19 +77,37 @@ func (ln *mdhtFigStackNode) Transform(templDir string) error {
 			figs = append(figs, new_fig)
 		}
 	}
+	if len(figs) > 0 {
+		figs[len(figs)-1].Sep = ""
+	}
 	templName := path.Join(templDir, "transform.html")
 	tmplPage := template.Must(template.New("FigStack").ParseFiles(templName))
-	CtxFirst := struct {
+	Ctx := struct {
 		Figures []figure
 	}{
 		Figures: figs,
 	}
-	var partFirst bytes.Buffer
-	if err := tmplPage.ExecuteTemplate(&partFirst, "figstack", CtxFirst); err != nil {
+	var partStack bytes.Buffer
+	if err := tmplPage.ExecuteTemplate(&partStack, "figstack", Ctx); err != nil {
 		return err
 	}
 
-	res := fmt.Sprintf("%s%s%s", ln.before_link, partFirst.String(), ln.after_link)
+	res := fmt.Sprintf("%s%s%s", ln.before_link, partStack.String(), ln.after_link)
 	ln.block = res
+
+	var partJson bytes.Buffer
+	if err := tmplPage.ExecuteTemplate(&partJson, "galleryImgItem", Ctx); err != nil {
+		return err
+	}
+	ln.jsonImgPart = partJson.String()
+	fmt.Println("*** [mdhtFigStackNode] json part", ln.jsonImgPart)
 	return nil
+}
+
+func (ln *mdhtFigStackNode) JsonBlock() string {
+	return ln.jsonImgPart
+}
+
+func (ln *mdhtFigStackNode) HasJsonBlock() bool {
+	return len(ln.jsonImgPart) > 0
 }

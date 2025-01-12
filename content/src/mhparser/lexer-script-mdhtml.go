@@ -4,6 +4,7 @@ import (
 	"corsa-blog/content/src/mhparser/trans"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"unicode"
 )
@@ -256,7 +257,7 @@ func (mh *MdHtmlGram) addParameterString(valPar string) error {
 	if ok {
 		return tt.AddParamString(valPar)
 	}
-	return fmt.Errorf("param string is not supported")
+	return fmt.Errorf("addParameterString is not supported in IMdhtmlLineNode interface (node=%v)", mh._curr_Node)
 }
 
 func (mh *MdHtmlGram) endOfBlock(valPar string) error {
@@ -269,8 +270,10 @@ func (mh *MdHtmlGram) endOfBlock(valPar string) error {
 
 func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar) error {
 	if mh.debug {
-		fmt.Println("*** storeMdHtmlStatement ", len(mh.Nodes))
+		log.Println("[storeMdHtmlStatement] nodes len ", len(mh.Nodes))
 	}
+
+	jsonBlocks := []string{}
 
 	stName := "mdhtml"
 	fnStMdHtml := FnStatement{
@@ -290,6 +293,9 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 				return err
 			}
 			linesParam.ArrayValue = append(linesParam.ArrayValue, tt.Block())
+			if tt.HasJsonBlock() {
+				jsonBlocks = append(jsonBlocks, tt.JsonBlock())
+			}
 		} else {
 			linesParam.ArrayValue = append(linesParam.ArrayValue, node.Block())
 		}
@@ -297,10 +303,35 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 
 	nrmPrg.FnsList = append(nrmPrg.FnsList, fnStMdHtml)
 	nrm_st_name, err := nrmPrg.statementInNormMap(stName, scrGr, len(nrmPrg.FnsList)-1)
-	if mh.debug {
-		fmt.Println("*** storeMdHtmlStatement norm name", nrm_st_name)
+	if err != nil {
+		return err
 	}
-	return err
+	if mh.debug {
+		log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
+	}
+	if len(jsonBlocks) > 0 {
+		log.Println()
+		fnStmJson := FnStatement{
+			IsInternal: true,
+			FnName:     "jsonBlock",
+			Type:       TtJsonBlock,
+			Params:     make([]ParamItem, 1),
+		}
+		jParam := &fnStmJson.Params[0]
+		jParam.Label = "JsonBlock"
+		jParam.Value = strings.Join(jsonBlocks, ",")
+
+		nrmPrg.FnsList = append(nrmPrg.FnsList, fnStmJson)
+		nrm_st_name, err := nrmPrg.statementInNormMap(stName, scrGr, len(nrmPrg.FnsList)-1)
+		if err != nil {
+			return err
+		}
+		if mh.debug {
+			log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
+		}
+		fmt.Println("*** stored json statement in norm")
+	}
+	return nil
 }
 
 func lexMatchFnKey(l *L) (StateFunc, bool) {

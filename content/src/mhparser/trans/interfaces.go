@@ -13,6 +13,8 @@ type IMdhtmlTransfNode interface {
 	Transform(templDir string) error
 	AddParamString(parVal string) error
 	AddblockHtml(val string) error
+	JsonBlock() string
+	HasJsonBlock() bool
 }
 
 // -- Basic, implements IMdhtmlLineNode
