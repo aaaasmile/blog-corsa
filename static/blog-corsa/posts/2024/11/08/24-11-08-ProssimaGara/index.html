@@ -48,11 +48,11 @@
     
     <section class="vertstack">
     <figure>
-        <a href="AustriaBackyardUltra2024011.jpg"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>
+        <a id="01" onclick="appGallery.displayImage(`${id}`)"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>
         <figcaption>Partenza mondiale Backyard</figcaption>
     </figure>
     <figure>
-        <a href="backyard_award.png"><img src="backyard_award_320.png" alt="Certificato finale" /></a>
+        <a id="02" onclick="appGallery.displayImage(`${id}`)"><img src="backyard_award_320.png" alt="Certificato finale" /></a>
         <figcaption>Certificato finale</figcaption>
     </figure>
 </section>
@@ -86,4 +86,9 @@
   </footer>
 </body>
 
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  appGallery.loadData()
+  window.appGallery = appGallery
+</script>
 </html>
