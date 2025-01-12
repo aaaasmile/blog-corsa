@@ -6,6 +6,8 @@ export default () => {
     let _currentImg = {}
     let _image = null
     let _imageOverlay = null
+    let _nextBtn = null
+    let _prevBtn = null
 
     function resetStrc() {
         _dataImages = {}
@@ -14,6 +16,8 @@ export default () => {
         _currentImg = {}
         _image = null
         _imageOverlay = null
+        _nextBtn = null
+        _prevBtn = null
     }
     return {
         loadData() {
@@ -35,6 +39,8 @@ export default () => {
                     //console.log('mapImg: ', _mapImg)
                     _image = document.querySelector('#the-image');
                     _imageOverlay = document.querySelector('#image-wrapper');
+                    _prevBtn = document.querySelector('#previous-btn');
+                    _nextBtn = document.querySelector('#next-btn');
                     console.log('images data for gallery ok')
                 })
                 .catch(err => {
@@ -45,15 +51,40 @@ export default () => {
             console.log('display image id ', id)
             _currentImg = _mapImg.get(id)
             _image.classList.add('hidden')
-            _image.onload = () => { _image.classList.remove('hidden'); }; 
+            _image.onload = () => { _image.classList.remove('hidden'); };
             _image.src = _currentImg.name
             _image.alt = _currentImg.caption
             //console.log('current image ', _currentImg) 
-            _imageOverlay.classList.remove('gone');   
+            const index = _currentImg.ix
+            if (index < _idArray.length - 1) {
+                _nextBtn.classList.remove('hidden')
+            } else {
+                _nextBtn.classList.add('hidden')
+            }
+            if (index > 0) {
+                _prevBtn.classList.remove('hidden')
+            } else {
+                _prevBtn.classList.add('hidden')
+            }
+            _imageOverlay.classList.remove('gone');
         },
-        hideGalleryImage(){
+        hideGalleryImage() {
             console.log('hide gallery image')
             _imageOverlay.classList.add('gone');
+        },
+        nextImage() {
+            const index = _currentImg.ix
+            console.log('next image of', index)
+            if (index < _idArray.length - 1) {
+                this.displayImage(_idArray[index + 1])
+            }
+        },
+        prevImage() {
+            const index = _currentImg.ix
+            console.log('prev image of', index)
+            if (index > 0) {
+                this.displayImage(_idArray[index - 1])
+            }
         }
     }
 }
