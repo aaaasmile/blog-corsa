@@ -25,6 +25,7 @@ type WatcherMdHtml struct {
 	dirContent    string
 	staticBlogDir string
 	postSubDir    string
+	filesToIgnore []string
 }
 
 func RunWatcher(configfile string, targetDir string) error {
@@ -89,7 +90,7 @@ func (wmh *WatcherMdHtml) doWatch() error {
 		return err
 	}
 
-	lastWriteEv := time.Now()
+	//lastWriteEv := time.Now()
 	for {
 		select {
 		case event, ok := <-watcher.Events:
@@ -98,25 +99,36 @@ func (wmh *WatcherMdHtml) doWatch() error {
 			}
 			//log.Println("event:", event)
 			if event.Has(fsnotify.Write) {
-				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
-					log.Println("WRITE modified file:", event.Name)
-					lastWriteEv = time.Now()
+				//if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
+				log.Println("WRITE modified file:", event.Name)
+				//lastWriteEv = time.Now()
+				go func() {
+					time.Sleep(200 * time.Millisecond)
 					if err := wmh.processMdHtmlChange(event.Name); err != nil {
-						return err
+						log.Println("[doWatch] error in processMdHtmlChange: ", err)
 					}
-				}
+				}()
+				//}
 			}
 			if event.Has(fsnotify.Create) {
-				if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
-					log.Println("Create file:", event.Name)
+				//if time.Since(lastWriteEv) > time.Duration(500)*time.Millisecond {
+				log.Println("CREATE file:", event.Name)
+				//lastWriteEv = time.Now() // important because a new jpg image is created
+				go func() {
+					// delayed start to wait full copy
+					time.Sleep(200 * time.Millisecond)
 					if err := wmh.processNewImage(event.Name); err != nil {
-						return err
+						log.Println("[doWatch] error in processNewImage: ", err)
 					}
-					lastWriteEv = time.Now() // important because a new jpg image is created
-				}
+				}()
+				//}
+			}
+			if event.Has(fsnotify.Remove) {
+				log.Println("REMOVE file:", event.Name)
+				// TODO remove image in target
 			}
 			if event.Has(fsnotify.Rename) {
-				log.Println("Rename file:", event.Name) // remember that is followed by a create event
+				log.Println("RENAME file:", event.Name) // remember that is followed by a create event
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
@@ -134,12 +146,20 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	}
 
 	ext := filepath.Ext(newFname)
-	log.Println("extension new file ", ext)
+	if wmh.debug {
+		log.Println("[processNewImage] extension new file ", ext)
+	}
 	isPng := strings.HasPrefix(ext, ".png")
 	isJpeg := strings.HasPrefix(ext, ".jpg")
 	if !(isJpeg || isPng) {
-		log.Println("file ignored", newFname)
+		log.Println("[processNewImage] file ignored", newFname)
 		return nil
+	}
+	for _, ignItem := range wmh.filesToIgnore {
+		if strings.Compare(ignItem, newFname) == 0 {
+			log.Println("[processNewImage] ignore file because already processed ", ignItem)
+			return nil
+		}
 	}
 
 	imageBytes, err := os.ReadFile(newFname)
@@ -154,9 +174,9 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	} else if isPng {
 		ff = fmt.Sprintf("%s_%d.png", ff, newWidth)
 	} else {
-		return fmt.Errorf("image format %s not supported", ext)
+		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
 	}
-	ff_full := filepath.Join(wmh.dirContent, ff)
+	ff_full_reduced := filepath.Join(wmh.dirContent, ff)
 
 	var original_image image.Image
 	if isJpeg {
@@ -168,23 +188,23 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("image format %s not supported", ext)
+		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
 	}
 	if original_image.Bounds().Max.X <= newWidth {
-		log.Println("image is already on resize width or smaller", newWidth)
+		log.Println("[processNewImage] image is already on resize width or smaller", newWidth)
 		return nil
 	}
 
-	output, _ := os.Create(ff_full)
+	output, _ := os.Create(ff_full_reduced)
 	defer output.Close()
-	log.Println("current image size ", original_image.Bounds().Max)
+	log.Println("[processNewImage] current image size ", original_image.Bounds().Max)
 	ratiof := float32(original_image.Bounds().Max.X) / float32(newWidth)
 	if ratiof == 0.0 {
-		return fmt.Errorf("invalid source image, attempt division by zero")
+		return fmt.Errorf("[processNewImage] invalid source image, attempt division by zero")
 	}
 	newHeightf := float32(original_image.Bounds().Max.Y) / ratiof
 	newHeight := int(newHeightf)
-	log.Printf("new rect width %d height %d ratio %f ", newWidth, newHeight, ratiof)
+	log.Printf("[processNewImage] new rect width %d height %d ratio %f ", newWidth, newHeight, ratiof)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
 	if isJpeg {
@@ -197,19 +217,20 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("image format %s not supported", ext)
+		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
 	}
-	log.Println("image created: ", ff_full)
+	wmh.filesToIgnore = append(wmh.filesToIgnore, ff_full_reduced)
+	log.Println("[processNewImage] image created: ", ff_full_reduced)
 
 	return nil
 }
 
 func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	if wmh.staticBlogDir == "" {
-		return fmt.Errorf("static blog dir config is empty")
+		return fmt.Errorf("[processMdHtmlChange] static blog dir config is empty")
 	}
 	if wmh.postSubDir == "" {
-		return fmt.Errorf("post sub dir config is empty")
+		return fmt.Errorf("[processMdHtmlChange] post sub dir config is empty")
 	}
 	_, err := os.Stat(newFname)
 	if err != nil {
@@ -217,7 +238,7 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	}
 	ext := filepath.Ext(newFname)
 	if !strings.HasPrefix(ext, ".mdhtml") {
-		log.Println("file ignored", newFname)
+		log.Println("[processMdHtmlChange] file ignored", newFname)
 		return nil
 	}
 	mdhtml, err := os.ReadFile(newFname)
@@ -227,10 +248,10 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	//log.Println("read: ", mdhtml)
 	prc := mhproc.NewMdHtmlProcess(false)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
-		log.Println("HTML error: ", err)
+		log.Println("[processMdHtmlChange] HTML error: ", err)
 		return nil
 	}
-	log.Println("html created with size: ", len(prc.HtmlGen))
+	log.Println("[processMdHtmlChange] html created with size: ", len(prc.HtmlGen))
 	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
 	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
 		return err
