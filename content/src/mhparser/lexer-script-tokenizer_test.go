@@ -349,7 +349,7 @@ id: 20241108-00
 		return
 	}
 	nrm := lex.Norm["main"]
-	lastFns := len(nrm.FnsList) - 1
+	lastFns := len(nrm.FnsList) - 2
 	stFns := nrm.FnsList[lastFns]
 	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
 		t.Error("expected one array param with lines")
@@ -363,13 +363,16 @@ id: 20241108-00
 	secline := ll.ArrayValue[0]
 	if !strings.Contains(secline, "<p>Ciao</p>") {
 		t.Errorf("expected <p>Ciao</p> in generated  html, but %s ", secline)
+		return
 	}
 	secline = ll.ArrayValue[1]
-	if !strings.Contains(secline, `<a href="AustriaBackyardUltra2024011.jpg"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>`) {
+	if !strings.Contains(secline, `<a id="00" onclick="appGallery.displayImage`) {
 		t.Errorf("expected AustriaBackyardUltra2024011 in generated  html, but %s ", secline)
+		return
 	}
-	if !strings.Contains(secline, `<a href="backyard_award.png"><img src="backyard_award_320.png" alt="Certificato finale" /></a>`) {
+	if !strings.Contains(secline, `<a id="02" onclick="appGallery.displayImage`) {
 		t.Errorf("expected backyard_award.png in generated  html, but %s ", secline)
+		return
 	}
 
 	secline = ll.ArrayValue[2]

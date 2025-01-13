@@ -100,7 +100,7 @@ func (ln *mdhtFigStackNode) Transform(templDir string) error {
 		return err
 	}
 	ln.jsonImgPart = partJson.String()
-	fmt.Println("*** [mdhtFigStackNode] json part", ln.jsonImgPart)
+	//fmt.Println("*** [mdhtFigStackNode] json part", ln.jsonImgPart)
 	return nil
 }
 

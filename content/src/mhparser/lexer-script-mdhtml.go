@@ -329,7 +329,7 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 		if mh.debug {
 			log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
 		}
-		fmt.Println("*** stored json statement in norm")
+		//fmt.Println("*** stored json statement in norm")
 	}
 	return nil
 }
