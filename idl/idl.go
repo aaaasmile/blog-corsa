@@ -1,6 +1,9 @@
 package idl
 
 import (
+	"fmt"
+	"path"
+	"strings"
 	"time"
 )
 
@@ -35,4 +38,25 @@ type CmtNode struct {
 	Id       string
 	Children []*CmtNode
 	Item     *CmtItem
+}
+
+type ImgDataItem struct {
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Redux   string `json:"redux"`
+	Caption string `json:"caption"`
+}
+
+type ImgDataItems struct {
+	Images []ImgDataItem `json:"images"`
+}
+
+func (fg *ImgDataItem) CalcReduced() error {
+	ext := path.Ext(fg.Name)
+	if ext == "" {
+		return fmt.Errorf("[calcReduced] extension on %s is empty, this is not supported", fg.Name)
+	}
+	bare_name := strings.Replace(fg.Name, ext, "", -1)
+	fg.Redux = fmt.Sprintf("%s_320%s", bare_name, ext)
+	return nil
 }

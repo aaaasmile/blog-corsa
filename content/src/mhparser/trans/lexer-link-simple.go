@@ -63,10 +63,14 @@ func (ln *mdhtLinkSimpleNode) Transform(templDir string) error {
 	return nil
 }
 
+func (ln *mdhtLinkSimpleNode) HasJsonBlock() bool {
+	return false
+}
+
 func (ln *mdhtLinkSimpleNode) JsonBlock() string {
 	return ""
 }
 
-func (ln *mdhtLinkSimpleNode) HasJsonBlock() bool {
-	return false
+func (ln *mdhtLinkSimpleNode) JsonBlockType() string {
+	return ""
 }

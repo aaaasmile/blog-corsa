@@ -273,8 +273,6 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 		log.Println("[storeMdHtmlStatement] nodes len ", len(mh.Nodes))
 	}
 
-	jsonBlocks := []string{}
-
 	stName := "mdhtml"
 	fnStMdHtml := FnStatement{
 		IsInternal: true,
@@ -294,7 +292,25 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 			}
 			linesParam.ArrayValue = append(linesParam.ArrayValue, tt.Block())
 			if tt.HasJsonBlock() {
-				jsonBlocks = append(jsonBlocks, tt.JsonBlock())
+				fnStmJson := FnStatement{
+					IsInternal: true,
+					FnName:     "JsonBlock",
+					Type:       TtJsonBlock,
+					Params:     make([]ParamItem, 1),
+				}
+				jParam := &fnStmJson.Params[0]
+				jParam.Label = tt.JsonBlockType()
+				jParam.Value = tt.JsonBlock()
+
+				nrmPrg.FnsList = append(nrmPrg.FnsList, fnStmJson)
+				nrm_st_name, err := nrmPrg.statementInNormMap(stName, scrGr, len(nrmPrg.FnsList)-1)
+				if err != nil {
+					return err
+				}
+				if mh.debug {
+					log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
+				}
+				//fmt.Println("*** stored json statement in norm")
 			}
 		} else {
 			linesParam.ArrayValue = append(linesParam.ArrayValue, node.Block())
@@ -308,28 +324,6 @@ func (mh *MdHtmlGram) storeMdHtmlStatement(nrmPrg *NormPrg, scrGr *ScriptGrammar
 	}
 	if mh.debug {
 		log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
-	}
-	if len(jsonBlocks) > 0 {
-		log.Println()
-		fnStmJson := FnStatement{
-			IsInternal: true,
-			FnName:     "jsonBlock",
-			Type:       TtJsonBlock,
-			Params:     make([]ParamItem, 1),
-		}
-		jParam := &fnStmJson.Params[0]
-		jParam.Label = "JsonBlock"
-		jParam.Value = strings.Join(jsonBlocks, ",")
-
-		nrmPrg.FnsList = append(nrmPrg.FnsList, fnStmJson)
-		nrm_st_name, err := nrmPrg.statementInNormMap(stName, scrGr, len(nrmPrg.FnsList)-1)
-		if err != nil {
-			return err
-		}
-		if mh.debug {
-			log.Println("[storeMdHtmlStatement] norm name", nrm_st_name)
-		}
-		//fmt.Println("*** stored json statement in norm")
 	}
 	return nil
 }

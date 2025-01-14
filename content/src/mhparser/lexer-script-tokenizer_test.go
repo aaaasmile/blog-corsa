@@ -349,7 +349,7 @@ id: 20241108-00
 		return
 	}
 	nrm := lex.Norm["main"]
-	lastFns := len(nrm.FnsList) - 2
+	lastFns := len(nrm.FnsList) - 1
 	stFns := nrm.FnsList[lastFns]
 	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
 		t.Error("expected one array param with lines")

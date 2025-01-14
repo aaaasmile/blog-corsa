@@ -3,6 +3,8 @@ package mhproc
 import (
 	"bytes"
 	"corsa-blog/content/src/mhparser"
+	"corsa-blog/idl"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -78,22 +80,35 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 	}
 	normPrg := mp.scrGramm.Norm["main"]
 	lines := []string{}
-	json_images := []string{}
+	img_data_items := []idl.ImgDataItem{}
 	for _, stItem := range normPrg.FnsList {
 		if stItem.Type == mhparser.TtHtmlVerbatim {
 			lines = append(lines, stItem.Params[0].ArrayValue...)
 		}
 		if stItem.Type == mhparser.TtJsonBlock {
-			json_images = append(json_images, stItem.Params[0].Value)
+			labelJson := stItem.Params[0].Label
+			if labelJson == "TtJsonImgs" {
+				img_arr := idl.ImgDataItems{}
+				bb := []byte(stItem.Params[0].Value)
+				if err := json.Unmarshal(bb, &img_arr); err != nil {
+					log.Println("[parsedToHtml] Unmarshal error")
+					return err
+				}
+				img_data_items = append(img_data_items, img_arr.Images...)
+			} else {
+				return fmt.Errorf("[parsedToHtml] %s json block not supported", labelJson)
+			}
 			//fmt.Println("*** json item", stItem.Params[0].Value)
 		}
 	}
-	if len(json_images) > 0 {
-		jjdata := strings.Join(json_images, ",")
-		//fmt.Println("*** jjdata", jjdata)
-		if err := mp.createImageJsonDataFile(jjdata); err != nil {
+	if len(img_data_items) > 0 {
+		imgs := idl.ImgDataItems{Images: img_data_items}
+		data_img, err := json.Marshal(imgs)
+		if err != nil {
+			log.Println("[parsedToHtml] Marshal error")
 			return err
 		}
+		mp.ImgJsonGen = string(data_img)
 	}
 
 	if mp.templDir != "" {
@@ -109,24 +124,6 @@ func (mp *MdHtmlProcess) printGenHTML() {
 	if mp.debug {
 		fmt.Printf("***HTML***\n%s\n", mp.HtmlGen)
 	}
-}
-
-func (mp *MdHtmlProcess) createImageJsonDataFile(jjdata string) error {
-	//jjdata is partial json for the images array, something like "{"id" = "00", "name": "Au", ...}"
-	templName := path.Join(mp.templDir, "transform.html")
-	tmplPage := template.Must(template.New("JsonImg").ParseFiles(templName))
-
-	var partJson bytes.Buffer
-	Ctx := struct {
-		Imgs string
-	}{
-		Imgs: jjdata,
-	}
-	if err := tmplPage.ExecuteTemplate(&partJson, "photos", Ctx); err != nil {
-		return err
-	}
-	mp.ImgJsonGen = partJson.String()
-	return nil
 }
 
 func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
