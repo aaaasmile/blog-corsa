@@ -97,6 +97,14 @@ p {
   line-height: 1.8;
 }
 
+article p:first-child::first-letter {
+  font-size: 60px;
+  float: left;
+  margin-bottom: -0.2em;
+  margin-top: -0.3em;
+  padding: 0px 0.05em 0px 0px;
+}
+
 nav {
   padding-top: 1rem;
   font-weight: bold;
@@ -409,14 +417,14 @@ figure {
   }
 }
 
-.person img{
+.person img {
   height: 100px;
   width: 100px;
   border: thin solid #e7c157;
   border-radius: 50%;
 }
 
-figure.person{
+figure.person {
   border: none;
   max-width: 100%;
   display: flex;
