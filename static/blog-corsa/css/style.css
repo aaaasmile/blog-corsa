@@ -409,6 +409,21 @@ figure {
   }
 }
 
+.person img{
+  height: 100px;
+  width: 100px;
+  border: thin solid #e7c157;
+  border-radius: 50%;
+}
+
+figure.person{
+  border: none;
+  max-width: 100%;
+  display: flex;
+  flex-flow: unset;
+  justify-content: center;
+}
+
 .vertstack {
   display: grid;
   row-gap: 1em;
