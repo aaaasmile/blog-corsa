@@ -14,6 +14,9 @@ import (
 //
 //	go run .\main.go -config ..\..\config.toml  -watch -target ..\posts-src\2024\11\08\
 //
+// Another example of edit
+// go run .\main.go -config ..\..\config.toml  -editpost -date "2023-01-04"
+//
 // Example new post:
 //
 //	go run .\main.go -config ..\..\config.toml  -newpost "Quo Vadis" -date "2023-01-04"
@@ -24,6 +27,7 @@ func main() {
 	var target = flag.String("target", "", "file to watch")
 	var newpost = flag.String("newpost", "", "title of the new post")
 	var date = flag.String("date", "", "Date of the post, e.g. 2025-09-30")
+	var editpost = flag.Bool("editpost", false, "edit post at date")
 	flag.Parse()
 
 	if *ver {
@@ -33,7 +37,11 @@ func main() {
 	if _, err := conf.ReadConfig(*configfile); err != nil {
 		log.Fatal("ERROR: ", err)
 	}
-	if *newpost != "" {
+	if *editpost {
+		if err := watch.EditPost(*date); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *newpost != "" {
 		if err := watch.NewPost(*newpost, *date, *watchdir); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
