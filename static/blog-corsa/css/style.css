@@ -448,6 +448,13 @@ section.horstack {
   }
 }
 
+header {
+  time {
+    font-style: italic;
+    font-size: medium;
+  }
+}
+
 /* gallery */
 #close-btn {
   position: fixed;
