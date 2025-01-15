@@ -64,11 +64,12 @@
     </div>
   </div>
 </body>
-
+{{if .HasGallery -}}
 <script type="module">
   import appGallery from '/js/gallery.js?001'
   window.appGallery = appGallery()
   window.appGallery.loadData()
 </script>
+{{end -}}
 </html>
 {{end}}

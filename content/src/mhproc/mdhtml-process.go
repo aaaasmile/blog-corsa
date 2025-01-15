@@ -146,10 +146,12 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		DateFormatted string
 		DateTime      string
 		PostId        string
+		HasGallery    bool
 	}{
 		DateTime:      mp.scrGramm.Datetime.Format("2006-01-02 15:00"),
 		DateFormatted: util.FormatDateIt(mp.scrGramm.Datetime),
 		PostId:        mp.scrGramm.PostId,
+		HasGallery:    len(mp.ImgJsonGen) > 0,
 	}
 	if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
 		return err
