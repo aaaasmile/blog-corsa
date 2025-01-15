@@ -1,0 +1,13 @@
+{{- define "postnew" -}}
+title: {{.Title}}
+datetime: {{.DateTime}}
+id: {{.Id}}
+---
+<header>
+  <h1>{{.Title}}</h1>
+  <time>{{.DateLoc}}</time>
+</header>
+<section>
+  <p>Here your awesome post!</p>
+</section>    
+{{end}}

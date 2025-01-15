@@ -28,7 +28,7 @@ type WatcherMdHtml struct {
 	filesToIgnore []string
 }
 
-func RunWatcher(configfile string, targetDir string) error {
+func RunWatcher(targetDir string) error {
 	if targetDir == "" {
 		return fmt.Errorf("target dir is empty")
 	}
@@ -39,9 +39,6 @@ func RunWatcher(configfile string, targetDir string) error {
 	}
 	if !fs.IsDir() {
 		return fmt.Errorf("watch make sense only on a directory with content and images")
-	}
-	if _, err := conf.ReadConfig(configfile); err != nil {
-		return err
 	}
 
 	chShutdown := make(chan struct{}, 1)

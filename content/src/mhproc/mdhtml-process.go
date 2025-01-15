@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"corsa-blog/content/src/mhparser"
 	"corsa-blog/idl"
+	"corsa-blog/util"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,7 +12,6 @@ import (
 	"path"
 	"strings"
 	"text/template"
-	"time"
 )
 
 type MdHtmlProcess struct {
@@ -148,7 +148,7 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		PostId        string
 	}{
 		DateTime:      mp.scrGramm.Datetime.Format("2006-01-02 15:00"),
-		DateFormatted: formatPostDate(mp.scrGramm.Datetime),
+		DateFormatted: util.FormatDateIt(mp.scrGramm.Datetime),
 		PostId:        mp.scrGramm.PostId,
 	}
 	if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
@@ -245,40 +245,4 @@ func (mp *MdHtmlProcess) checkOrCreateOutDir(dir_stack []string) error {
 	}
 	mp.TargetDir = dir_path
 	return nil
-}
-
-func formatPostDate(tt time.Time) string {
-	res := fmt.Sprintf("%d %s %d", tt.Day(), monthToStringIT(tt.Month()), tt.Year())
-	return res
-}
-
-func monthToStringIT(month time.Month) string {
-	switch month {
-	case time.January:
-		return "Gennaio"
-	case time.February:
-		return "Febbraio"
-	case time.March:
-		return "Marzo"
-	case time.April:
-		return "Aprile"
-	case time.May:
-		return "Maggio"
-	case time.June:
-		return "Giugno"
-	case time.July:
-		return "Luglio"
-	case time.August:
-		return "Agosto"
-	case time.September:
-		return "Settembre"
-	case time.October:
-		return "Ottobre"
-	case time.November:
-		return "Novembre"
-	case time.December:
-		return "Dicembre"
-	default:
-		return ""
-	}
 }
