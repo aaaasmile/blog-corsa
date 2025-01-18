@@ -2,10 +2,14 @@
 title: {{.Title}}
 datetime: {{.DateTime}}
 id: {{.Id}}
+tags:
 ---
-<header>
-  <h1>{{.Title}}</h1>
-  <time>{{.DateLoc}}</time>
+<header class="withimg">
+  <div>
+    <h1>{{.Title}}</h1>
+    <time>{{.DateLoc}}</time>
+  </div>
+  <img src="undef.jpg" /> 
 </header>
 <section>
   <p>Here your awesome post!</p>

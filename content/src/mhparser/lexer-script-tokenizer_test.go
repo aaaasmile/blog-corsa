@@ -380,3 +380,74 @@ id: 20241108-00
 		t.Errorf("expected  <p>hello</p> in generated  html, but %s ", secline)
 	}
 }
+
+func TestParseZeroTags(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+tags:
+`
+	lex := ScriptGrammar{
+		Debug: true,
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+
+	if len(lex.Tags) != 0 {
+		t.Error("expected zero tags")
+	}
+}
+
+func TestParseTwoTags(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+tags: ultra,adamello
+`
+	lex := ScriptGrammar{
+		Debug: true,
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+
+	if len(lex.Tags) != 2 {
+		t.Error("expected two tags")
+		return
+	}
+	if strings.Compare(lex.Tags[0], "ultra") != 0 {
+		t.Error("expected first tag ultra, but ", lex.Tags[0])
+		return
+	}
+	if strings.Compare(lex.Tags[1], "adamello") != 0 {
+		t.Error("expected second tag adamello, but ", lex.Tags[0])
+		return
+	}
+}

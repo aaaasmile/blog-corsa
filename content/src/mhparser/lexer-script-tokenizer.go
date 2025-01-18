@@ -324,8 +324,11 @@ func lexStateAssignRight(l *L) StateFunc {
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
 			l.rewind()
 			return lexStateAssignInValue
+		case r == EOFRune, r == '\n', r == '\r':
+			l.rewind()
+			return lexStateAssignInValue
 		default:
-			return l.errorf("Expect string assign (lexStateAssignRight) or a known function name:  %q (Line %d)", l.source[l.start:l.position], l.scriptLine)
+			return l.errorf("[lexStateAssignRight] expect string assign (lexStateAssignRight) or a known function name:  %q (Line %d)", l.source[l.start:l.position], l.scriptLine)
 		}
 	}
 }

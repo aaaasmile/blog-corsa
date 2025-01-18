@@ -44,6 +44,7 @@ type ScriptGrammar struct {
 	Title      string
 	PostId     string
 	Datetime   time.Time
+	Tags       []string
 	CustomData map[string]string
 	Norm       map[string]*NormPrg
 	st_id      int
@@ -172,11 +173,26 @@ func (sn *ScriptGrammar) EvaluateParams() error {
 					if err := sn.setDateTimeFromString(parItem.Value); err != nil {
 						return err
 					}
+				case "tags":
+					if err := sn.setTagsFromString(parItem.Value); err != nil {
+						return err
+					}
 				default:
 					sn.CustomData[parItem.VariableName] = parItem.Value
 				}
 			}
 		}
+	}
+	return nil
+}
+
+func (sn *ScriptGrammar) setTagsFromString(strVal string) error {
+	// expected something like: ultra,gedanken
+	if strVal == "" {
+		sn.Tags = []string{}
+	} else {
+		arr := strings.Split(strVal, ",")
+		sn.Tags = append(sn.Tags, arr...)
 	}
 	return nil
 }
