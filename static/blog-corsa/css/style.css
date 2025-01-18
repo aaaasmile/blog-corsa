@@ -575,3 +575,11 @@ header.withimg {
     }
   }
 }
+
+@media only screen and (max-width: 560px) {
+  header.withimg {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
