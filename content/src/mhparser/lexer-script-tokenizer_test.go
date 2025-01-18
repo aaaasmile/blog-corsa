@@ -451,3 +451,42 @@ tags: ultra,adamello
 		return
 	}
 }
+
+func TestSimpleHtmlZeroTags(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>Quo Vadis</h1>
+    <time>4 Gennaio 2023</time>
+  </div>
+  <img src="bestage.jpg" /> 
+</header>
+`
+	lex := ScriptGrammar{
+		Debug: true,
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+
+	if len(lex.Tags) != 0 {
+		t.Error("expected zero tags")
+	}
+}

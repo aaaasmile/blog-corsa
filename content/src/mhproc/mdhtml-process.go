@@ -114,6 +114,7 @@ func (mp *MdHtmlProcess) parsedToHtml() error {
 	if mp.templDir != "" {
 		return mp.htmlFromTemplate(lines)
 	}
+	// no template
 	mp.HtmlGen = strings.Join(lines, "\n")
 	mp.printGenHTML()
 
@@ -130,12 +131,21 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	templName := path.Join(mp.templDir, "post.html")
 	var partFirst, partSecond, partMerged bytes.Buffer
 	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
+	linesNoCr := []string{}
+	for _, item := range lines {
+		llnocr := strings.ReplaceAll(item, "\r", "")
+		llnocr = strings.ReplaceAll(llnocr, "\n", "")
+		if llnocr != "" {
+			linesNoCr = append(linesNoCr, llnocr)
+		}
+	}
+	//fmt.Println("*** lines ", strings.Join(linesNoCr, ","))
 	CtxFirst := struct {
 		Title string
 		Lines []string
 	}{
 		Title: mp.scrGramm.Title,
-		Lines: lines,
+		Lines: linesNoCr,
 	}
 
 	if err := tmplPage.ExecuteTemplate(&partFirst, "postbeg", CtxFirst); err != nil {

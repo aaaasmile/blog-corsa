@@ -317,16 +317,17 @@ func lexStateAssignInValue(l *L) StateFunc {
 func lexStateAssignRight(l *L) StateFunc {
 	for {
 		switch r := l.next(); {
-		case unicode.IsSpace(r):
-			l.ignore()
 		case r == ':':
 			l.emit(itemAssign)
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
 			l.rewind()
 			return lexStateAssignInValue
-		case r == EOFRune, r == '\n', r == '\r':
+		case r == EOFRune || r == '\n' || r == '\r':
 			l.rewind()
-			return lexStateAssignInValue
+			l.emit(itemVarValue)
+			return lexStateEndOfStatement
+		case unicode.IsSpace(r):
+			l.ignore()
 		default:
 			return l.errorf("[lexStateAssignRight] expect string assign (lexStateAssignRight) or a known function name:  %q (Line %d)", l.source[l.start:l.position], l.scriptLine)
 		}
