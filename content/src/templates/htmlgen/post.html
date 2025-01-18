@@ -35,6 +35,7 @@
       <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
     </p>
     <nav>
+      <a href="/">Home</a>
       <a href="https://corsa.invido.it/" target="_blank">Tools per la Corsa</a>
       <a href="https://invido.it/" target="_blank">Invido</a>
       <nav class="flatnav">
@@ -55,6 +56,7 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  {{if .HasGallery -}}
   <div id="image-wrapper" class="gone">
     <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
     <div id="image-panel">
@@ -63,6 +65,7 @@
       <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
     </div>
   </div>
+  {{end -}}
 </body>
 {{if .HasGallery -}}
 <script type="module">
