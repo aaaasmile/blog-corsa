@@ -24,11 +24,12 @@ type WatcherMdHtml struct {
 	debug         bool
 	dirContent    string
 	staticBlogDir string
-	postSubDir    string
+	staticSubDir  string
 	filesToIgnore []string
+	is_page       bool
 }
 
-func RunWatcher(targetDir string) error {
+func RunWatcher(targetDir string, subDir string, is_page bool) error {
 	if targetDir == "" {
 		return fmt.Errorf("target dir is empty")
 	}
@@ -46,7 +47,8 @@ func RunWatcher(targetDir string) error {
 		wmh := WatcherMdHtml{dirContent: targetDir,
 			debug:         conf.Current.Debug,
 			staticBlogDir: conf.Current.StaticBlogDir,
-			postSubDir:    conf.Current.PostSubDir,
+			staticSubDir:  subDir,
+			is_page:       is_page,
 		}
 		if err := wmh.doWatch(); err != nil {
 			log.Println("Server is not watching anymore because: ", err)
@@ -76,7 +78,7 @@ loop:
 }
 
 func (wmh *WatcherMdHtml) doWatch() error {
-	log.Println("setup watch on ", wmh.dirContent)
+	log.Printf("setup watch on src: %s, update sub dir in static %s", wmh.dirContent, wmh.staticSubDir)
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		return err
@@ -225,12 +227,12 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	start := time.Now()
 	if wmh.staticBlogDir == "" {
-		return fmt.Errorf("[processMdHtmlChange] static blog dir config is empty")
+		return fmt.Errorf("[processMdHtmlChange] destination err: static blog dir is empty")
 	}
-	if wmh.postSubDir == "" {
-		return fmt.Errorf("[processMdHtmlChange] post sub dir config is empty")
+	if wmh.staticSubDir == "" {
+		return fmt.Errorf("[processMdHtmlChange] destination err: sub dir is empty")
 	}
-	_, err := os.Stat(newFname)
+	fi_src, err := os.Stat(newFname)
 	if err != nil {
 		return err
 	}
@@ -249,9 +251,16 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 		log.Println("[processMdHtmlChange] HTML error: ", err)
 		return nil
 	}
-	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.postSubDir)
-	if err = prc.CreateOrUpdateStaticHtml(newFname); err != nil {
-		return err
+	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
+	log.Println("Root dir is ", prc.RootStaticDir)
+	if wmh.is_page {
+		if err = prc.PageCreateOrUpdateStaticHtml(newFname, fi_src.Name()); err != nil {
+			return err
+		}
+	} else {
+		if err = prc.PostCreateOrUpdateStaticHtml(newFname); err != nil {
+			return err
+		}
 	}
 	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
 		return err

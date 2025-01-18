@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -157,12 +158,15 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		DateTime      string
 		PostId        string
 		HasGallery    bool
+		HasComments   bool
 	}{
 		DateTime:      mp.scrGramm.Datetime.Format("2006-01-02 15:00"),
 		DateFormatted: util.FormatDateIt(mp.scrGramm.Datetime),
 		PostId:        mp.scrGramm.PostId,
 		HasGallery:    len(mp.ImgJsonGen) > 0,
+		HasComments:   true,
 	}
+	//mp.scrGramm.CustomData // TODO check for disable comments
 	if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
 		return err
 	}
@@ -173,7 +177,24 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	return nil
 }
 
-func (mp *MdHtmlProcess) CreateOrUpdateStaticHtml(sourceName string) error {
+func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fname string) error {
+	mp.SourceDir = filepath.Dir(srcMdFullName)
+	log.Println("source dir for PAGE", mp.SourceDir)
+
+	ext := filepath.Ext(fname)
+	dir_for_target := strings.Replace(fname, ext, "", -1)
+	dir_stack := []string{dir_for_target}
+	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
+		return err
+	}
+	log.Println("target dir for PAGE", mp.TargetDir)
+	if err := mp.createIndexHtml(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
 	arr := strings.Split(sourceName, "\\")
 	if len(arr) < 4 {
 		return fmt.Errorf("soure filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml")

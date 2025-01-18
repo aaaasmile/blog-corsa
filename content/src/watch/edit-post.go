@@ -1,6 +1,7 @@
 package watch
 
 import (
+	"corsa-blog/conf"
 	"fmt"
 	"log"
 	"os"
@@ -34,7 +35,7 @@ func (pp *Post) editPost(targetRootDir string) error {
 	if !info.IsDir() {
 		return fmt.Errorf("[editPost] expected dir on %s", contentDir)
 	}
-	if err := RunWatcher(contentDir); err != nil {
+	if err := RunWatcher(contentDir, conf.Current.PostSubDir, false); err != nil {
 		log.Println("[editPost] error on watch")
 		return err
 	}

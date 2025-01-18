@@ -16,6 +16,7 @@ type Config struct {
 	ServerName     string
 	StaticBlogDir  string
 	PostSubDir     string
+	PageSubDir     string
 	VuetifyLibName string
 	VueLibName     string
 	Relay          *Relay

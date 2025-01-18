@@ -8,6 +8,7 @@ VuetifyLibName = "vuetify.js"
 VueLibName = "vue.js"
 ServerName = "<todo in custom>"
 PostSubDir = "posts"
+PageSubDir = "pages"
 
 [Relay]
 SendMail = false
