@@ -13,17 +13,6 @@ import (
 	"time"
 )
 
-type Post struct {
-	Datetime      time.Time
-	DatetimeOrig  string
-	Title         string
-	TitleCompress string
-	mdhtmlName    string
-	contentDir    string
-	templDir      string
-	postId        string
-}
-
 func NewPost(title string, datepost string, watch_for_changes bool) error {
 	if title == "" {
 		return fmt.Errorf("title could not be null")

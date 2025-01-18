@@ -6,7 +6,19 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 )
+
+type Post struct {
+	Datetime      time.Time
+	DatetimeOrig  string
+	Title         string
+	TitleCompress string
+	mdhtmlName    string
+	contentDir    string
+	templDir      string
+	postId        string
+}
 
 func EditPost(datepost string) error {
 	post := Post{

@@ -21,6 +21,9 @@ import (
 // # Example edit page
 //
 // go run .\main.go -config ..\..\config.toml  -editpage -name "autore"
+// Example new page:
+//
+// go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
@@ -29,6 +32,7 @@ func main() {
 	var date = flag.String("date", "", "Date of the post, e.g. 2025-09-30")
 	var editpost = flag.Bool("editpost", false, "edit post at date")
 	var editpage = flag.Bool("editpage", false, "edit page at name")
+	var newpage = flag.String("newpage", "", "name of the new page")
 	var name = flag.String("name", "", "name of the page")
 	flag.Parse()
 
@@ -45,6 +49,10 @@ func main() {
 		}
 	} else if *newpost != "" {
 		if err := watch.NewPost(*newpost, *date, *watchdir); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *newpage != "" {
+		if err := watch.NewPage(*newpage, *date); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *editpage {

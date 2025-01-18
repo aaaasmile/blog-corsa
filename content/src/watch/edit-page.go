@@ -13,6 +13,10 @@ type Page struct {
 	Datetime     time.Time
 	DatetimeOrig string
 	Name         string
+	NameCompress string
+	mdhtmlName   string
+	contentDir   string
+	templDir     string
 	Id           string
 }
 
