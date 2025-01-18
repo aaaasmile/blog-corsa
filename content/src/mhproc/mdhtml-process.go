@@ -166,7 +166,11 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		HasGallery:    len(mp.ImgJsonGen) > 0,
 		HasComments:   true,
 	}
-	//mp.scrGramm.CustomData // TODO check for disable comments
+	if val, ok := mp.scrGramm.CustomData["comments"]; ok {
+		if val == "no" || val == "false" {
+			CtxSecond.HasComments = false
+		}
+	}
 	if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
 		return err
 	}
