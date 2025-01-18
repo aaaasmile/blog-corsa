@@ -20,15 +20,17 @@
     •
     <a href="/pages/statistiche/">Statistiche</a>
   </nav>
-  <article>
+  <main>
+    <article>
     {{- range .Lines}}
     {{.}}
     {{- end}}
 {{- end -}}    
 
 {{define "postfinal"}}
-  </article>
-  <span hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
+    </article>
+    <span class="comments" hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
+  </main>
   <footer>
     <p>
       Pubblicato il

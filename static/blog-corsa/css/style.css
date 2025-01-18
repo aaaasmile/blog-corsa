@@ -97,14 +97,6 @@ p {
   line-height: 1.8;
 }
 
-article p:first-child::first-letter {
-  font-size: 60px;
-  float: left;
-  margin-bottom: -0.2em;
-  margin-top: -0.3em;
-  padding: 0px 0.05em 0px 0px;
-}
-
 nav {
   padding-top: 1rem;
   font-weight: bold;
@@ -120,11 +112,25 @@ nav a:hover {
   text-decoration: underline;
 }
 
+main{
+  display: grid;
+  grid-template-columns: 1fr;
+  align-self: center;
+}
+
 article {
   align-self: center;
   box-sizing: border-box;
   padding: 0 30px;
   max-width: min(600px, 100vw);
+}
+
+article p:first-child::first-letter {
+  font-size: 60px;
+  float: left;
+  margin-bottom: -0.2em;
+  margin-top: -0.3em;
+  padding: 0px 0.05em 0px 0px;
 }
 
 .centered {
@@ -519,7 +525,7 @@ header.withimg {
 }
 
 /* comments */
-div.comments {
+span.comments {
   box-sizing: border-box;
   padding: 0 30px;
   display: block;
