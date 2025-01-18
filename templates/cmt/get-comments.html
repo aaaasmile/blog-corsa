@@ -1,6 +1,5 @@
 {{define "head" -}}
-<p>
-<details>
+<details class="comments">
     <summary>6 Commenti</summary>
     <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
         <p class="hint">Puoi usare anche il formato <a href="https://daringfireball.net/projects/markdown/" target="_blank"><i>MarkDown</i></a></p>
@@ -21,14 +20,7 @@
     </form>
 {{end}}
 
-{{define "foot"}}
-</details>
-</p>
-{{- end}}
-
-
 {{define "tree"}}
-    <p>
     <ul>
         <li> Commento 1
             <ul>
@@ -49,5 +41,8 @@
         <li> Commento 2 <button>Rispondi</button></li>
         <li> Commento 3 <button>Rispondi</button></li>
     </ul>
-    </p>
+{{- end}}
+
+{{define "foot"}}
+</details>
 {{- end}}

@@ -288,71 +288,6 @@ li {
   }
 }
 
-/* Per i commenti */
-
-.error {
-  color: #CCCC49 !important;
-}
-
-form {
-  fieldset {
-    background-color: #2b2d3b;
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    padding: 1em;
-  }
-
-  fieldset.cmd {
-    background-color: #2b2d3b;
-    display: flex;
-    padding: 1em;
-    column-gap: 1em;
-  }
-
-  p.hint {
-    font-size: x-small;
-  }
-
-  legend {
-    margin-top: 1em;
-    font-weight: bold;
-    background: gold;
-    border-top: thin solid #999;
-  }
-
-  label {
-    text-align: right;
-    margin-right: 0.5em;
-  }
-
-  label::after {
-    content: ": ";
-  }
-
-  input {
-    margin: 0 0 1em .5em;
-    padding: .2em .5em;
-    width: 65%;
-    background-color: #fffbf0;
-    border: thin solid #e7c157;
-  }
-
-  textarea {
-    margin: 0 0 1em .5em;
-    padding: .2em .5em;
-    width: 95%;
-    resize: none;
-  }
-
-  button {
-    align-self: self-end;
-  }
-
-  button[type='reset'] {
-    background-color: #e7c157;
-  }
-}
-
 .postnav {
   text-align: right;
   align-self: center;
@@ -555,8 +490,7 @@ header {
   }
 }
 
-/* end gallery */
-
+/* header */
 header.withimg {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -581,5 +515,76 @@ header.withimg {
     display: flex;
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* comments */
+div.comments {
+  box-sizing: border-box;
+  padding: 0 30px;
+  display: block;
+  max-width: min(600px, 100vw);
+}
+
+.error {
+  color: #CCCC49 !important;
+}
+
+form {
+  fieldset {
+    background-color: #2b2d3b;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    padding: 1em;
+  }
+
+  fieldset.cmd {
+    background-color: #2b2d3b;
+    display: flex;
+    padding: 1em;
+    column-gap: 1em;
+  }
+
+  p.hint {
+    font-size: x-small;
+  }
+
+  legend {
+    margin-top: 1em;
+    font-weight: bold;
+    background: gold;
+    border-top: thin solid #999;
+  }
+
+  label {
+    text-align: right;
+    margin-right: 0.5em;
+  }
+
+  label::after {
+    content: ": ";
+  }
+
+  input {
+    margin: 0 0 1em .5em;
+    padding: .2em .5em;
+    width: 65%;
+    background-color: #fffbf0;
+    border: thin solid #e7c157;
+  }
+
+  textarea {
+    margin: 0 0 1em .5em;
+    padding: .2em .5em;
+    width: 95%;
+    resize: none;
+  }
+
+  button {
+    align-self: self-end;
+  }
+
+  button[type='reset'] {
+    background-color: #e7c157;
   }
 }

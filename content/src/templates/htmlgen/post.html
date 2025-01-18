@@ -27,8 +27,8 @@
 {{- end -}}    
 
 {{define "postfinal"}}
-    <span hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
   </article>
+  <span hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
   <footer>
     <p>
       Pubblicato il
