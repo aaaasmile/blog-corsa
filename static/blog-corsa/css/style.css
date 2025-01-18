@@ -556,3 +556,22 @@ header {
 }
 
 /* end gallery */
+
+header.withimg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 1em;
+  margin-top: 1em;
+  background-color: #222;
+
+  div {
+    display: block;
+    align-self: center;
+
+    time {
+      text-align: center;
+      display: block;
+      font-size: small;
+    }
+  }
+}
