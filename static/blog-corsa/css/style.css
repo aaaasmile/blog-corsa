@@ -418,6 +418,7 @@ header {
   font-size: 2rem;
   padding: 0.25rem 0.5rem;
   background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
 
 #previous-btn {

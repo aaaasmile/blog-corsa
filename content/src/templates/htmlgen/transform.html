@@ -6,7 +6,7 @@
 <section class="vertstack">
     {{- range .Images}}
     <figure>
-        <a id="{{.Id}}" onclick="appGallery.displayImage(`${id}`)"><img src="{{.Redux}}" alt="{{.Caption}}" /></a>
+        <a href="#" id="{{.Id}}" onclick="appGallery.displayImage(`${id}`)"><img src="{{.Redux}}" alt="{{.Caption}}" /></a>
         <figcaption>{{.Caption}}</figcaption>
     </figure>
     {{- end}}

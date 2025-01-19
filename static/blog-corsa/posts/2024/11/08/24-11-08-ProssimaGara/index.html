@@ -20,50 +20,31 @@
     •
     <a href="/pages/statistiche/">Statistiche</a>
   </nav>
-  <article>
-    
+  <main>
+    <article>
     <header>
-    
       <h1>Prossima gara: Wien Rundumadum</h1>
-    
       <time>8 Novembre 2024</time>
-    
     </header>
-    
-    <section>
-    
+    <section> 
       <p>Dopo la mia prestazione al mondiale di Backyard per squadre, che mi ha visto terminare anzitempo per un
-    
         problema muscolare dopo soli 15 giri, ecco che arriva il momento dell'ultimo appuntamento stagionale con le
-    
-        ultra: il Wien Rundumadum.</p> 
-    
+        ultra: il Wien Rundumadum.</p>
       <p>Sarà la mia undicesima partenza, se sarà anche il mio undicesimo arrivo è tutto da vedere.</p>
-    
       <p>Tracker: <a href="https://wien-rundumadum-2024-130k.legendstracking.com/" target="_blank">https://wien-rundumadum-2024-130k.legendstracking.com/</a></p>
-    
       <p>Risultati ufficiali: <a href="https://my.raceresult.com/285972/results#1_C7DAA5" target="_blank">https://my.raceresult.com/285972/results#1_C7DAA5</a></p>
-    
     </section>
-    
-    <section class="vertstack">
-    <figure>
-        <a id="00" onclick="appGallery.displayImage(`${id}`)"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>
-        <figcaption>Partenza mondiale Backyard</figcaption>
-    </figure>
-    <figure>
-        <a id="02" onclick="appGallery.displayImage(`${id}`)"><img src="backyard_award_320.png" alt="Certificato finale" /></a>
-        <figcaption>Certificato finale</figcaption>
-    </figure>
-</section>
-    <span hx-get="/blog-admin/20241108-00/comments" hx-trigger="revealed"></span>
-  </article>
+    <section class="vertstack">    <figure>        <a href="#" id="00" onclick="appGallery.displayImage(`${id}`)"><img src="AustriaBackyardUltra2024011_320.jpg" alt="Partenza mondiale Backyard" /></a>        <figcaption>Partenza mondiale Backyard</figcaption>    </figure>    <figure>        <a href="#" id="02" onclick="appGallery.displayImage(`${id}`)"><img src="backyard_award_320.png" alt="Certificato finale" /></a>        <figcaption>Certificato finale</figcaption>    </figure></section>
+    </article>
+    <span class="comments" hx-get="/blog-admin/20241108-00/comments" hx-trigger="revealed"></span>
+    </main>
   <footer>
     <p>
-      Pubblicato il
+      Pubblicato:
       <time datetime="2024-11-08 19:00">8 Novembre 2024</time>
     </p>
     <nav>
+      <a href="/">Home</a>
       <a href="https://corsa.invido.it/" target="_blank">Tools per la Corsa</a>
       <a href="https://invido.it/" target="_blank">Invido</a>
       <nav class="flatnav">
@@ -92,7 +73,7 @@
       <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
     </div>
   </div>
-</body>
+  </body>
 <script type="module">
   import appGallery from '/js/gallery.js?001'
   window.appGallery = appGallery()
