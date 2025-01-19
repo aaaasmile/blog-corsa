@@ -33,12 +33,12 @@ func EditPost(datepost string) error {
 	return nil
 }
 
-func (pp *Post) editPost(targetRootDir string) error {
+func (pp *Post) editPost(contentRootDir string) error {
 	log.Printf("[editPost] on '%s'", pp.Datetime)
 	yy := fmt.Sprintf("%d", pp.Datetime.Year())
 	mm := fmt.Sprintf("%02d", pp.Datetime.Month())
 	dd := fmt.Sprintf("%02d", pp.Datetime.Day())
-	contentDir := filepath.Join(targetRootDir, yy, mm, dd)
+	contentDir := filepath.Join(contentRootDir, yy, mm, dd)
 	log.Println("source post content dir ", contentDir)
 	info, err := os.Stat(contentDir)
 	if err != nil {

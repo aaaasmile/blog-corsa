@@ -199,9 +199,11 @@ func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fnam
 }
 
 func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
-	arr := strings.Split(sourceName, "\\")
+	log.Println("[PostCreateOrUpdateStaticHtml] on ", sourceName)
+	sourceNameAgn := strings.ReplaceAll(sourceName, "\\", "/")
+	arr := strings.Split(sourceNameAgn, "/")
 	if len(arr) < 4 {
-		return fmt.Errorf("soure filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml")
+		return fmt.Errorf("source filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml, but it is %s", sourceNameAgn)
 	}
 	log.Println("Processing stack from source ", arr)
 	last_ix := len(arr) - 1

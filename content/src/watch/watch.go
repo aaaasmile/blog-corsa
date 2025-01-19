@@ -21,12 +21,13 @@ import (
 )
 
 type WatcherMdHtml struct {
-	debug         bool
-	dirContent    string
-	staticBlogDir string
-	staticSubDir  string
-	filesToIgnore []string
-	is_page       bool
+	CreatedHtmlFile string
+	debug           bool
+	dirContent      string
+	staticBlogDir   string
+	staticSubDir    string
+	filesToIgnore   []string
+	is_page         bool
 }
 
 func RunWatcher(targetDir string, subDir string, is_page bool) error {
@@ -224,6 +225,10 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	return nil
 }
 
+func (wmh *WatcherMdHtml) BuildFromMdHtml(mdHtmlFilename string) error {
+	return wmh.processMdHtmlChange(mdHtmlFilename)
+}
+
 func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	start := time.Now()
 	if wmh.staticBlogDir == "" {
@@ -262,6 +267,7 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 			return err
 		}
 	}
+	wmh.CreatedHtmlFile = newFname
 	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
 		return err
 	}

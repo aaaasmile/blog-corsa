@@ -24,6 +24,8 @@ import (
 // Example new page:
 //
 // go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
+// Example build all
+// go run .\main.go -config ..\..\config.toml  -build
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
@@ -34,6 +36,7 @@ func main() {
 	var editpage = flag.Bool("editpage", false, "edit page at name")
 	var newpage = flag.String("newpage", "", "name of the new page")
 	var name = flag.String("name", "", "name of the page")
+	var build = flag.Bool("build", false, "create all htmls (post and pages)")
 	flag.Parse()
 
 	if *ver {
@@ -43,7 +46,11 @@ func main() {
 	if _, err := conf.ReadConfig(*configfile); err != nil {
 		log.Fatal("ERROR: ", err)
 	}
-	if *editpost {
+	if *build {
+		if err := watch.Build(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *editpost {
 		if err := watch.EditPost(*date); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
