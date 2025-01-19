@@ -12,12 +12,16 @@ import (
 
 type Builder struct {
 	mdsFn []string
+	pages []string
 }
 
 func Build() error {
 	start := time.Now()
 	bb := Builder{}
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
+		return err
+	}
+	if err := bb.rebuildPages("../page-src"); err != nil {
 		return err
 	}
 	log.Println("[Build] completed, elapsed time ", time.Since(start))
@@ -37,6 +41,24 @@ func (bb *Builder) rebuildPosts(srcDir string) error {
 			return err
 		}
 	}
+	log.Printf("%d posts processed ", len(bb.mdsFn))
+	return nil
+}
+
+func (bb *Builder) rebuildPages(srcDir string) error {
+	bb.pages = make([]string, 0)
+	var err error
+	bb.pages, err = getFilesinDir(srcDir, bb.pages)
+	if err != nil {
+		return err
+	}
+	log.Printf("%d mdhtml pages found ", len(bb.pages))
+	for _, item := range bb.pages {
+		if err := bb.buildItem(item, true); err != nil {
+			return err
+		}
+	}
+	log.Printf("%d pages processed ", len(bb.pages))
 	return nil
 }
 
