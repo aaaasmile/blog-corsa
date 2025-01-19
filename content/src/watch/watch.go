@@ -229,7 +229,7 @@ func (wmh *WatcherMdHtml) BuildFromMdHtml(mdHtmlFilename string) error {
 	return wmh.processMdHtmlChange(mdHtmlFilename)
 }
 
-func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
+func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 	start := time.Now()
 	if wmh.staticBlogDir == "" {
 		return fmt.Errorf("[processMdHtmlChange] destination err: static blog dir is empty")
@@ -237,16 +237,16 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	if wmh.staticSubDir == "" {
 		return fmt.Errorf("[processMdHtmlChange] destination err: sub dir is empty")
 	}
-	fi_src, err := os.Stat(newFname)
+	fi_src, err := os.Stat(srcMdHtmlFname)
 	if err != nil {
 		return err
 	}
-	ext := filepath.Ext(newFname)
+	ext := filepath.Ext(srcMdHtmlFname)
 	if !strings.HasPrefix(ext, ".mdhtml") {
-		log.Println("[processMdHtmlChange] file ignored", newFname)
+		log.Println("[processMdHtmlChange] file ignored", srcMdHtmlFname)
 		return nil
 	}
-	mdhtml, err := os.ReadFile(newFname)
+	mdhtml, err := os.ReadFile(srcMdHtmlFname)
 	if err != nil {
 		return err
 	}
@@ -259,15 +259,15 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(newFname string) error {
 	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
 	log.Println("Root dir is ", prc.RootStaticDir)
 	if wmh.is_page {
-		if err = prc.PageCreateOrUpdateStaticHtml(newFname, fi_src.Name()); err != nil {
+		if err = prc.PageCreateOrUpdateStaticHtml(srcMdHtmlFname, fi_src.Name()); err != nil {
 			return err
 		}
 	} else {
-		if err = prc.PostCreateOrUpdateStaticHtml(newFname); err != nil {
+		if err = prc.PostCreateOrUpdateStaticHtml(srcMdHtmlFname); err != nil {
 			return err
 		}
 	}
-	wmh.CreatedHtmlFile = newFname
+	wmh.CreatedHtmlFile = prc.CreatedFnHtml
 	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
 		return err
 	}

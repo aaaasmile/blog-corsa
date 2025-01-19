@@ -98,6 +98,6 @@ func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
 	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
 		return err
 	}
-	log.Println("create HTML: ", wmh.CreatedHtmlFile)
+	log.Println("created HTML: ", wmh.CreatedHtmlFile)
 	return nil
 }

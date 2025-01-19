@@ -25,6 +25,7 @@ type MdHtmlProcess struct {
 	SourceDir         string
 	RootStaticDir     string
 	TargetDir         string
+	CreatedFnHtml     string
 }
 
 func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
@@ -245,6 +246,7 @@ func (mp *MdHtmlProcess) createIndexHtml() error {
 		return err
 	}
 	log.Println("file created ", fname)
+	mp.CreatedFnHtml = fname
 	return nil
 }
 
