@@ -3,9 +3,9 @@ package app
 import (
 	"bytes"
 	"corsa-blog/idl"
-	"html/template"
 	"log"
 	"net/http"
+	"text/template"
 )
 
 func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, id string) error {
@@ -17,15 +17,26 @@ func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, i
 	templName := "templates/cmt/get-comments.html"
 	var partHeader, partTree, partFoot, partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
+
+	ctxHead := struct {
+		CmtTotText string
+	}{
+		CmtTotText: "1 Commento",
+	}
+	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
+		return err
+	}
+
+	ctxTree := struct {
+		CmtLines []string
+	}{
+		CmtLines: []string{"<li>Risposta 1.2 <button>Rispondi</button></li>"},
+	}
+	if err := tmplBody.ExecuteTemplate(&partTree, "tree", ctxTree); err != nil {
+		return err
+	}
+
 	cmtItem := idl.CmtItem{}
-
-	if err := tmplBody.ExecuteTemplate(&partHeader, "head", cmtItem); err != nil {
-		return err
-	}
-	if err := tmplBody.ExecuteTemplate(&partTree, "tree", cmtItem); err != nil {
-		return err
-	}
-
 	if err := tmplBody.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
 		return err
 	}

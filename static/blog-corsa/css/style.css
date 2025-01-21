@@ -125,7 +125,7 @@ article {
   max-width: min(600px, 100vw);
 }
 
-article p:first-child::first-letter {
+article.post p:first-child::first-letter {
   font-size: 60px;
   float: left;
   margin-bottom: -0.2em;

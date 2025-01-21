@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	Appname = "comment-blog"
+	Appname = "blog-corsa"
 	Buildnr = "00.001.20241226-00"
 )
 

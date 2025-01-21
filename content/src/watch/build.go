@@ -92,8 +92,12 @@ func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
 	wmh := WatcherMdHtml{
 		debug:         conf.Current.Debug,
 		staticBlogDir: conf.Current.StaticBlogDir,
-		staticSubDir:  conf.Current.PostSubDir,
 		is_page:       is_page,
+	}
+	if is_page {
+		wmh.staticSubDir = conf.Current.PageSubDir
+	} else {
+		wmh.staticSubDir = conf.Current.PostSubDir
 	}
 	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
 		return err
