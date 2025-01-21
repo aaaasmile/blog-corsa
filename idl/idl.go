@@ -35,9 +35,10 @@ type CmtItem struct {
 }
 
 type CmtNode struct {
-	Id       string
+	PostId   string
+	NodeId   string
 	Children []*CmtNode
-	Item     *CmtItem
+	CmtItem  *CmtItem
 }
 
 type ImgDataItem struct {
