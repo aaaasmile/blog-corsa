@@ -1,4 +1,4 @@
-package app
+package comments
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func (gh *GetHandler) handleComments(w http.ResponseWriter, req *http.Request, id string) error {
+func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, id string) error {
 	lang := req.URL.Query().Get("lang")
 	log.Printf("get comments for id=%s, lang=%s", id, lang)
 

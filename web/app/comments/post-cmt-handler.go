@@ -1,7 +1,8 @@
-package app
+package comments
 
 import (
 	"bytes"
+	"corsa-blog/db"
 	"corsa-blog/idl"
 	"log"
 	"net/http"
@@ -13,7 +14,22 @@ import (
 	"github.com/russross/blackfriday/v2"
 )
 
-func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Request, id string) error {
+type CommentHandler struct {
+	debug  bool
+	liteDB *db.LiteDB
+	start  time.Time
+}
+
+func NewCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
+	res := &CommentHandler{
+		debug:  debug,
+		liteDB: liteDB,
+		start:  time.Now(),
+	}
+	return res
+}
+
+func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, id string) error {
 	lang := req.URL.Query().Get("lang")
 	log.Println("process new comment for parent", id, lang)
 	err := req.ParseForm()
@@ -23,13 +39,13 @@ func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Req
 	email := req.PostFormValue("email")
 	name := req.PostFormValue("name")
 	commentMd := req.PostFormValue("comment")
-	if ph.debug {
+	if ch.debug {
 		log.Println("orig comment:", commentMd)
 		log.Println("name, email:", name, email)
 	}
 	unsafeComment := blackfriday.Run([]byte(commentMd), blackfriday.WithNoExtensions())
 	htmlCmt := bluemonday.UGCPolicy().SanitizeBytes(unsafeComment)
-	if ph.debug {
+	if ch.debug {
 		log.Println("transformed html comment:", string(htmlCmt))
 	}
 
@@ -41,26 +57,26 @@ func (ph *PostHandler) handleFormNewComment(w http.ResponseWriter, req *http.Req
 	}
 	if len(htmlCmt) == 0 {
 		errMsg = "commento vuoto"
-		return ph.renderResNewComment(cmtItem, errMsg, w)
+		return ch.renderResNewComment(cmtItem, errMsg, w)
 	}
 
 	if email != "" {
 		if _, err := mail.ParseAddress(email); err != nil {
 			errMsg = "inidirizzo email non valido"
-			return ph.renderResNewComment(cmtItem, errMsg, w)
+			return ch.renderResNewComment(cmtItem, errMsg, w)
 		}
 	}
 	if name == "" {
 		if _, err := mail.ParseAddress(email); err != nil {
 			errMsg = "il nome è vuoto"
-			return ph.renderResNewComment(cmtItem, errMsg, w)
+			return ch.renderResNewComment(cmtItem, errMsg, w)
 		}
 	}
 
-	return ph.renderResNewComment(cmtItem, errMsg, w)
+	return ch.renderResNewComment(cmtItem, errMsg, w)
 }
 
-func (ph *PostHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg string, w http.ResponseWriter) error {
+func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg string, w http.ResponseWriter) error {
 	ctx := struct {
 		Cmt       *idl.CmtItem
 		ErrMsg    string
@@ -79,7 +95,7 @@ func (ph *PostHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg string, 
 		return err
 	}
 
-	elapsed := time.Since(ph.start)
+	elapsed := time.Since(ch.start)
 
 	log.Printf("Service total call duration: %v\n", elapsed)
 	_, err := w.Write(partMerged.Bytes())

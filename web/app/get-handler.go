@@ -5,6 +5,7 @@ import (
 	"corsa-blog/db"
 	"corsa-blog/idl"
 	"corsa-blog/util"
+	"corsa-blog/web/app/comments"
 	"fmt"
 	"html/template"
 	"log"
@@ -50,7 +51,8 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 		return gh.handleGetValidateEmail(w, req)
 	}
 	if id, ok := isComments(gh.lastPath, remPath); ok {
-		return gh.handleComments(w, req, id)
+		hc := comments.NewCommentHandler(gh.liteDB, gh.debug)
+		return hc.HandleComments(w, req, id)
 	}
 
 	*status = http.StatusNotFound

@@ -2,6 +2,7 @@ package app
 
 import (
 	"corsa-blog/db"
+	"corsa-blog/web/app/comments"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -25,7 +26,8 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 	}
 
 	if id, ok := isPostNewComment(ph.lastPath, remPath); ok {
-		return ph.handleFormNewComment(w, req, id)
+		hc := comments.NewCommentHandler(ph.liteDB, ph.debug)
+		return hc.HandleFormNewComment(w, req, id)
 	}
 
 	elapsed := time.Since(ph.start)
