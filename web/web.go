@@ -27,6 +27,7 @@ func RunService(configfile string, simulate bool) error {
 	if _, err := conf.ReadConfig(configfile); err != nil {
 		return err
 	}
+
 	serverurl := conf.Current.ServiceURL
 	serverurl = strings.Replace(serverurl, "0.0.0.0", "localhost", 1)
 	serverurl = strings.Replace(serverurl, "127.0.0.1", "localhost", 1)
@@ -43,9 +44,12 @@ func RunService(configfile string, simulate bool) error {
 	staticBlogDirSrv := http.Dir(util.GetFullPath(fmt.Sprintf("static/%s", conf.Current.StaticBlogDir)))
 	log.Println("static blog dir", staticBlogDirSrv)
 	http.Handle("/", http.StripPrefix("/", http.FileServer(staticBlogDirSrv)))
-
-	// Dashboard app
-	http.HandleFunc(conf.Current.RootURLPattern, app.APiHandler)
+	// app for GET and POST handling
+	myApp, err := app.NewApp()
+	if err != nil {
+		return err
+	}
+	http.HandleFunc(conf.Current.RootURLPattern, myApp.APiHandler)
 
 	chShutdown := make(chan struct{}, 1)
 	go func(chs chan struct{}) {

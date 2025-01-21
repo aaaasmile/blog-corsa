@@ -1,6 +1,7 @@
-DataFileName = "data.json"
+DbFileName = "blog-corsa.db"
 SimulateAlarm = false
 Debug = false
+SQLDebug = false
 ServiceURL = "127.0.0.1:5572"
 RootURLPattern = "/blog-admin/"
 StaticBlogDir = "blog-corsa"

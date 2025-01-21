@@ -1,6 +1,7 @@
 package app
 
 import (
+	"corsa-blog/db"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ type PostHandler struct {
 	debug    bool
 	lastPath string
 	start    time.Time
+	liteDB   *db.LiteDB
 }
 
 func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) error {

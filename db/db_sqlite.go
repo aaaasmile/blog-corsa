@@ -11,13 +11,25 @@ import (
 
 type LiteDB struct {
 	connDb   *sql.DB
-	DBPath   string
-	DebugSQL bool
+	dBPath   string
+	debugSQL bool
 }
 
-func (ld *LiteDB) OpenSqliteDatabase() error {
+func OpenSqliteDatabase(dbPath string, debugSql bool) (*LiteDB, error) {
+	ld := &LiteDB{
+		dBPath:   dbPath,
+		debugSQL: debugSql,
+	}
+	if err := ld.openSqliteDatabase(); err != nil {
+		log.Println("[OpenSqliteDatabase] error")
+		return nil, err
+	}
+	return ld, nil
+}
+
+func (ld *LiteDB) openSqliteDatabase() error {
 	var err error
-	dbname := util.GetFullPath(ld.DBPath)
+	dbname := util.GetFullPath(ld.dBPath)
 	log.Println("Using the sqlite file: ", dbname)
 	ld.connDb, err = sql.Open("sqlite3", dbname)
 	if err != nil {

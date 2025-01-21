@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	DataFileName   string
+	DbFileName     string
 	ServiceURL     string
 	RootURLPattern string
 	ServerName     string
@@ -23,6 +23,7 @@ type Config struct {
 	Telegram       *Telegram
 	SimulateAlarm  bool
 	Debug          bool
+	SQLDebug       bool
 }
 
 type Telegram struct {

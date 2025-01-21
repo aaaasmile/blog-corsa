@@ -2,17 +2,32 @@ package app
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/db"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-func APiHandler(w http.ResponseWriter, req *http.Request) {
+type App struct {
+	liteDB *db.LiteDB
+}
+
+func NewApp() (*App, error) {
+	res := &App{}
+	var err error
+	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.DbFileName, conf.Current.SQLDebug); err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
 		status := http.StatusOK
 		gh := GetHandler{
-			debug: conf.Current.Debug,
+			debug:  conf.Current.Debug,
+			liteDB: ap.liteDB,
 		}
 		if err := gh.handleGet(w, req, &status); err != nil {
 			log.Println("Error on process request: ", err)
@@ -24,7 +39,8 @@ func APiHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	case "POST":
 		ph := PostHandler{
-			debug: conf.Current.Debug,
+			debug:  conf.Current.Debug,
+			liteDB: ap.liteDB,
 		}
 		if err := ph.handlePost(w, req); err != nil {
 			log.Println("[POST] Error: ", err)

@@ -2,6 +2,7 @@ package app
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/db"
 	"corsa-blog/idl"
 	"corsa-blog/util"
 	"fmt"
@@ -24,6 +25,7 @@ type PageCtx struct {
 type GetHandler struct {
 	debug    bool
 	lastPath string
+	liteDB   *db.LiteDB
 }
 
 func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status *int) error {
