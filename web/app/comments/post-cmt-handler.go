@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"corsa-blog/db"
 	"corsa-blog/idl"
+	"corsa-blog/util"
 	"log"
 	"net/http"
 	"net/mail"
@@ -82,6 +83,10 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 	if !ch.moderateCmt {
 		cmtItem.Status = idl.STPublished
 	}
+	cmtItem.ReqId, err = util.PseudoUuid()
+	if err != nil {
+		return err
+	}
 	if err := ch.liteDB.InsertNewComment(cmtItem); err != nil {
 		return err
 	}
@@ -94,10 +99,18 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 		Cmt       *idl.CmtItem
 		ErrMsg    string
 		HasErrors bool
+		Id        int
+		ReqId     string
+		ParentId  int
+		PostId    string
 	}{
 		Cmt:       cmtItem,
 		ErrMsg:    errMsg,
 		HasErrors: (errMsg != ""),
+		Id:        cmtItem.Id,
+		ParentId:  cmtItem.ParentId,
+		PostId:    cmtItem.PostId,
+		ReqId:     cmtItem.ReqId,
 	}
 	//fmt.Println("*** ctx: ", *ctx.Cmt)
 

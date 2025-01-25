@@ -32,6 +32,7 @@ type CmtItem struct {
 	Status   StatusType
 	Indent   int
 	PostId   string
+	ReqId    string
 }
 
 type CmtNode struct {

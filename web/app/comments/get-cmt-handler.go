@@ -33,9 +33,13 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
 
 	ctxHead := struct {
+		ParentId   int
+		PostId     string
 		CmtTotText string
 	}{
 		CmtTotText: cmtNode.GetTextNumComments(),
+		PostId:     post_id,
+		ParentId:   0,
 	}
 	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
 		return err

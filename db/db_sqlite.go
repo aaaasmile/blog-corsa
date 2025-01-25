@@ -41,7 +41,7 @@ func (ld *LiteDB) openSqliteDatabase() error {
 func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 	log.Println("[LiteDB] insert new comment on post id ", cmtItem.PostId)
 
-	q := `INSERT INTO comment(parent_id,name,email,comment,timestamp,post_id,status) VALUES(?,?,?,?,?,?,?);`
+	q := `INSERT INTO comment(parent_id,name,email,comment,timestamp,post_id,status,req_id) VALUES(?,?,?,?,?,?,?,?);`
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
@@ -57,7 +57,8 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 		cmtItem.Comment,
 		cmtItem.DateTime.Local().Unix(),
 		cmtItem.PostId,
-		cmtItem.Status)
+		cmtItem.Status,
+		cmtItem.ReqId)
 	if err != nil {
 		return err
 	}
@@ -65,13 +66,13 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
-	var id string
+	var id int
 	err = ld.connDb.QueryRow(q).Scan(&id)
 	if err != nil {
 		return err
 	}
-
-	log.Println("Comment added into the db OK: ", id)
+	cmtItem.Id = id
+	log.Println("Comment added into the db OK: ", cmtItem.Id)
 	return nil
 }
 

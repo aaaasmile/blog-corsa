@@ -1,7 +1,7 @@
 {{define "head" -}}
 <details class="comments">
     <summary>{{.CmtTotText}}</summary>
-    <form action="/blog-admin/20241108-00/newcomment?lang=it" method="post" hx-boost="true">
+    <form action="/blog-admin/{{.ParentId}}/{{.PostId}}/newcomment?lang=it" method="post" hx-boost="true">
         <p class="hint">Puoi usare anche il formato <a href="https://daringfireball.net/projects/markdown/" target="_blank"><i>MarkDown</i></a></p>
         <fieldset>
             <label for="name">Nome</label>
