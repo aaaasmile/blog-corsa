@@ -48,7 +48,7 @@ func (ch *CommentHandler) HandleFormDeleteComment(w http.ResponseWriter, req *ht
 		return err
 	}
 
-	return nil
+	return ch.renderDeletedCmtIdOk(cmtItem, w)
 }
 
 func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, parent_id int, post_id string) error {
@@ -146,5 +146,26 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 	log.Printf("Service total call duration: %v\n", elapsed)
 	_, err := w.Write(partMerged.Bytes())
 	//fmt.Println("response: ", partMerged.String())
+	return err
+}
+
+func (ch *CommentHandler) renderDeletedCmtIdOk(cmtItem *idl.CmtItem, w http.ResponseWriter) error {
+	ctx := struct {
+		Cmt *idl.CmtItem
+	}{
+		Cmt: cmtItem,
+	}
+
+	templName := "templates/cmt/resp-newcomment.html"
+	var partMerged bytes.Buffer
+	tmplBody := template.Must(template.New("Body").ParseFiles(templName))
+	if err := tmplBody.ExecuteTemplate(&partMerged, "deleteok", ctx); err != nil {
+		return err
+	}
+
+	elapsed := time.Since(ch.start)
+
+	log.Printf("Service total call duration: %v\n", elapsed)
+	_, err := w.Write(partMerged.Bytes())
 	return err
 }

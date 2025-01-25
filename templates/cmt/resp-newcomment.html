@@ -1,5 +1,5 @@
 {{define "base"}}
-<article>
+<article id="art-resp">
     {{if .HasErrors -}}
     <p>Spiacente il commento contiene degli errori ed è stato rifiutato</p>
     <p>Errore: <span class="error">{{.ErrMsg}}</span></p>
@@ -10,8 +10,15 @@
     <p>Testo: <fieldset class="commentOk"><span>{{.Cmt.Comment}}</span></fieldset> </p>
     <section class="horstack">
         <button onclick="history.back()">Continua</button>
-        <button class="delete" hx-post="/blog-admin/{{.Id}}/{{.PostId}}/deletecomment?reqId={{.ReqId}}">Elimina</button>
+        <button class="delete" hx-target="#art-resp" hx-post="/blog-admin/{{.Id}}/{{.PostId}}/deletecomment?reqId={{.ReqId}}">Elimina</button>
     </section>
     {{end -}}
+</article>
+{{end}}
+
+{{define "deleteok"}}
+<article>
+    <p>Il commento è stato eliminato</p>
+    <button onclick="history.back()">Continua</button>
 </article>
 {{end}}
