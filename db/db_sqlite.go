@@ -39,7 +39,7 @@ func (ld *LiteDB) openSqliteDatabase() error {
 }
 
 func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
-	log.Println("insert new comment on post id ", cmtItem.PostId)
+	log.Println("[LiteDB] insert new comment on post id ", cmtItem.PostId)
 
 	q := `INSERT INTO comment(parent_id,name,email,website,comment,timestamp,post_id,status) VALUES(?,?,?,?,?,?,?,?);`
 	if ld.debugSQL {
@@ -76,16 +76,20 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 	return nil
 }
 
-func (ld *LiteDB) GeCommentsForPostId(postid string) (*idl.CmtNode, error) {
-	q := `SELECT id from comment where post_id = ? and parent_id = '';`
-	rows, err := ld.connDb.Query(q, postid)
+func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
+	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
+	q := `SELECT id from comment where post_id = ? and parent_id = 0;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	rows, err := ld.connDb.Query(q, post_id)
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
 	root_node := &idl.CmtNode{
-		PostId:   postid,
+		PostId:   post_id,
 		Children: []*idl.CmtNode{},
 	}
 	var rowid int
@@ -98,12 +102,14 @@ func (ld *LiteDB) GeCommentsForPostId(postid string) (*idl.CmtNode, error) {
 	}
 	level := 0
 	for _, item_id := range level0_ids {
-		node, err := ld.getCommentNodeChild(level, item_id, postid)
+		node, err := ld.getCommentNodeChild(level, item_id, post_id)
 		if err != nil {
 			return nil, err
 		}
 		root_node.Children = append(root_node.Children, node)
+		root_node.NodeCount += node.NodeCount
 	}
+	log.Println("[LiteDB-SELECT] found level 0 items: ", len(level0_ids))
 
 	return root_node, nil
 }
@@ -111,10 +117,14 @@ func (ld *LiteDB) GeCommentsForPostId(postid string) (*idl.CmtNode, error) {
 func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) (*idl.CmtNode, error) {
 	log.Println("[getCommentNodeChild] level ", level)
 	child_node := &idl.CmtNode{
-		PostId:   post_id,
-		Children: []*idl.CmtNode{},
+		PostId:    post_id,
+		Children:  []*idl.CmtNode{},
+		NodeCount: 1,
 	}
-	q := `SELECT id from comment where post_id = ? and parent_id = '';`
+	q := `SELECT id from comment where post_id = ? and parent_id = ?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
 	rows, err := ld.connDb.Query(q, post_id, parent_id)
 	if err != nil {
 		return nil, err
@@ -135,7 +145,8 @@ func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) 
 			return nil, err
 		}
 		child_node.Children = append(child_node.Children, node)
+		child_node.NodeCount += node.NodeCount
 	}
-	log.Printf("[getCommentNodeChild] on level %d found %d children with parent id %d", level, len(child_node.Children), parent_id)
+	log.Printf("[getCommentNodeChild] on level %d found %d children with parent id %d, sub-count %d", level, len(child_node.Children), parent_id, child_node.NodeCount)
 	return child_node, nil
 }

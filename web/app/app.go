@@ -15,7 +15,8 @@ type App struct {
 func NewApp() (*App, error) {
 	res := &App{}
 	var err error
-	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbFileName, conf.Current.Database.SQLDebug); err != nil {
+	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbFileName,
+		conf.Current.Database.SQLDebug); err != nil {
 		return nil, err
 	}
 	return res, nil

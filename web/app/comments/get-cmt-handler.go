@@ -19,11 +19,14 @@ func NewGetCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
 	return res
 }
 
-func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, id string) error {
+func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, post_id string) error {
 	lang := req.URL.Query().Get("lang")
-	log.Printf("get comments for id=%s, lang=%s", id, lang)
+	log.Printf("get comments for id=%s, lang=%s", post_id, lang)
 
-	// TODO read comments from data
+	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
+	if err != nil {
+		return nil
+	}
 
 	templName := "templates/cmt/get-comments.html"
 	var partHeader, partTree, partFoot, partMerged bytes.Buffer
@@ -32,7 +35,7 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	ctxHead := struct {
 		CmtTotText string
 	}{
-		CmtTotText: "1 Commento",
+		CmtTotText: cmtNode.GetTextNumComments(),
 	}
 	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
 		return err
@@ -55,7 +58,9 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	partTree.WriteTo(&partMerged)
 	partFoot.WriteTo(&partMerged)
 
-	_, err := w.Write(partMerged.Bytes())
+	if _, err = w.Write(partMerged.Bytes()); err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }

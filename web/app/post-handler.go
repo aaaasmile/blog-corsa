@@ -3,7 +3,6 @@ package app
 import (
 	"corsa-blog/db"
 	"corsa-blog/web/app/comments"
-	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
@@ -47,12 +46,12 @@ func isPostNewComment(lastPath, remPath string) (string, bool) {
 	return "", false
 }
 
-func writeJsonResp(w http.ResponseWriter, resp interface{}) error {
-	blobresp, err := json.Marshal(resp)
-	if err != nil {
-		return err
-	}
-	w.Write(blobresp)
+// func writeJsonResp(w http.ResponseWriter, resp interface{}) error {
+// 	blobresp, err := json.Marshal(resp)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	w.Write(blobresp)
 
-	return nil
-}
+// 	return nil
+// }

@@ -11,6 +11,14 @@
             "mode": "auto",
             "program": "${workspaceFolder}/content/src/main.go",
             "args": ["-config", "${workspaceFolder}/config.toml", "-watch", "-target", "${workspaceFolder}/content/posts-src/2024/11/08/" ]
-        }
+        },
+        {
+            "name": "main service",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml"]
+        },
     ]
 }
