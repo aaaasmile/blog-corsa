@@ -99,7 +99,7 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 	}
 	//fmt.Println("*** ctx: ", *ctx.Cmt)
 
-	templName := "templates/cmt/newcomment.html"
+	templName := "templates/cmt/resp-newcomment.html"
 	var partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("Body").ParseFiles(templName))
 	if err := tmplBody.ExecuteTemplate(&partMerged, "base", ctx); err != nil {

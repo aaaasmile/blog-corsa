@@ -404,6 +404,10 @@ header {
   }
 }
 
+button{
+  cursor: pointer;
+}
+
 /* gallery */
 #close-btn {
   position: fixed;
