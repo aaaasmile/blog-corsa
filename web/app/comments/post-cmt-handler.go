@@ -60,23 +60,25 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		Comment:  string(htmlCmt),
 		PostId:   post_id,
 	}
-	if len(htmlCmt) == 0 {
-		errMsg = "commento vuoto"
-		return ch.renderResNewComment(cmtItem, errMsg, w)
-	}
-
-	if email != "" {
-		if _, err := mail.ParseAddress(email); err != nil {
-			errMsg = "inidirizzo email non valido"
-			return ch.renderResNewComment(cmtItem, errMsg, w)
-		}
-	}
 	if name == "" {
 		if _, err := mail.ParseAddress(email); err != nil {
 			errMsg = "il nome è vuoto"
 			return ch.renderResNewComment(cmtItem, errMsg, w)
 		}
 	}
+	if email == "" {
+		errMsg = "email è vuota"
+		return ch.renderResNewComment(cmtItem, errMsg, w)
+	}
+	if _, err := mail.ParseAddress(email); err != nil {
+		errMsg = "inidirizzo email non valido"
+		return ch.renderResNewComment(cmtItem, errMsg, w)
+	}
+	if len(htmlCmt) == 0 {
+		errMsg = "commento vuoto"
+		return ch.renderResNewComment(cmtItem, errMsg, w)
+	}
+
 	if !ch.moderateCmt {
 		cmtItem.Status = idl.STPublished
 	}
