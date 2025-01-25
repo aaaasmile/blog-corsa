@@ -132,7 +132,7 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 		ParentId:  cmtItem.ParentId,
 		PostId:    cmtItem.PostId,
 		ReqId:     cmtItem.ReqId,
-		PostURL:   "/posts/2024/11/08/24-11-08-ProssimaGara/", // TODO calculate it
+		PostURL:   cmtItem.GetLocationFromPostId(),
 	}
 	//fmt.Println("*** ctx: ", *ctx.Cmt)
 
@@ -157,7 +157,7 @@ func (ch *CommentHandler) renderDeletedCmtIdOk(cmtItem *idl.CmtItem, w http.Resp
 		PostURL string
 	}{
 		Cmt:     cmtItem,
-		PostURL: "/posts/2024/11/08/24-11-08-ProssimaGara/", // TODO calculate it
+		PostURL: cmtItem.GetLocationFromPostId(),
 	}
 
 	templName := "templates/cmt/resp-newcomment.html"

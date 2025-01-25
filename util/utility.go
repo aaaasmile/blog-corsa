@@ -1,12 +1,9 @@
 package util
 
 import (
-	"bufio"
 	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -15,17 +12,6 @@ import (
 
 var rootPath string
 var UseRelativeRoot = true
-
-func GetEncryptedPasswordFromPrompt() string {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Please enter the secret to encode")
-	response, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatal(err)
-	}
-	buf := []byte(response)
-	return base64.StdEncoding.EncodeToString(buf)
-}
 
 func GetFullPath(relPath string) string {
 	if UseRelativeRoot {
