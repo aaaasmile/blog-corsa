@@ -40,8 +40,9 @@ func (ch *CommentHandler) HandleFormDeleteComment(w http.ResponseWriter, req *ht
 	}
 	log.Println("[HandleFormDeleteComment] delete comment ", id, post_id, reqId)
 	cmtItem := &idl.CmtItem{
-		Id:    id,
-		ReqId: reqId,
+		Id:     id,
+		PostId: post_id,
+		ReqId:  reqId,
 	}
 
 	if err := ch.liteDB.DeleteComment(cmtItem); err != nil {

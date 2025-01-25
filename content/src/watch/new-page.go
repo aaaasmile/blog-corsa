@@ -76,7 +76,7 @@ func (pg *Page) createNewPage(targetRootDir string) error {
 		}
 	}
 	pg.contentDir = contentDir
-	pg.Id = fmt.Sprintf("%s-00", pg.NameCompress)
+	pg.Id = fmt.Sprintf("%s-PG", pg.NameCompress)
 	pg.mdhtmlName = fmt.Sprintf("%s.mdhtml", pg.NameCompress)
 	log.Println("content dir is empty, lets generate the file", pg.mdhtmlName)
 	if err := pg.createMdHtml(); err != nil {
