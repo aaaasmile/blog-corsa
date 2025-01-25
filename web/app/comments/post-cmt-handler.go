@@ -123,6 +123,7 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 		ReqId     string
 		ParentId  int
 		PostId    string
+		PostURL   string
 	}{
 		Cmt:       cmtItem,
 		ErrMsg:    errMsg,
@@ -131,6 +132,7 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 		ParentId:  cmtItem.ParentId,
 		PostId:    cmtItem.PostId,
 		ReqId:     cmtItem.ReqId,
+		PostURL:   "/posts/2024/11/08/24-11-08-ProssimaGara/", // TODO calculate it
 	}
 	//fmt.Println("*** ctx: ", *ctx.Cmt)
 
@@ -151,9 +153,11 @@ func (ch *CommentHandler) renderResNewComment(cmtItem *idl.CmtItem, errMsg strin
 
 func (ch *CommentHandler) renderDeletedCmtIdOk(cmtItem *idl.CmtItem, w http.ResponseWriter) error {
 	ctx := struct {
-		Cmt *idl.CmtItem
+		Cmt     *idl.CmtItem
+		PostURL string
 	}{
-		Cmt: cmtItem,
+		Cmt:     cmtItem,
+		PostURL: "/posts/2024/11/08/24-11-08-ProssimaGara/", // TODO calculate it
 	}
 
 	templName := "templates/cmt/resp-newcomment.html"
