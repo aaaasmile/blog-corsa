@@ -27,7 +27,6 @@ type CmtItem struct {
 	ParentId int
 	Name     string
 	Email    string
-	Website  string
 	Comment  string
 	DateTime time.Time
 	Status   StatusType
