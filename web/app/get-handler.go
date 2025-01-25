@@ -51,7 +51,7 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 		return gh.handleGetValidateEmail(w, req)
 	}
 	if id, ok := isComments(gh.lastPath, remPath); ok {
-		hc := comments.NewCommentHandler(gh.liteDB, gh.debug)
+		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
 		return hc.HandleComments(w, req, id)
 	}
 

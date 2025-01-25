@@ -2,11 +2,22 @@ package comments
 
 import (
 	"bytes"
+	"corsa-blog/db"
 	"corsa-blog/idl"
 	"log"
 	"net/http"
 	"text/template"
+	"time"
 )
+
+func NewGetCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
+	res := &CommentHandler{
+		debug:  debug,
+		liteDB: liteDB,
+		start:  time.Now(),
+	}
+	return res
+}
 
 func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, id string) error {
 	lang := req.URL.Query().Get("lang")

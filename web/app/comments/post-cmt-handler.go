@@ -15,23 +15,25 @@ import (
 )
 
 type CommentHandler struct {
-	debug  bool
-	liteDB *db.LiteDB
-	start  time.Time
+	debug       bool
+	liteDB      *db.LiteDB
+	start       time.Time
+	moderateCmt bool
 }
 
-func NewCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
+func NewPostCommentHandler(liteDB *db.LiteDB, debug bool, moderateCmt bool) *CommentHandler {
 	res := &CommentHandler{
-		debug:  debug,
-		liteDB: liteDB,
-		start:  time.Now(),
+		debug:       debug,
+		liteDB:      liteDB,
+		moderateCmt: moderateCmt,
+		start:       time.Now(),
 	}
 	return res
 }
 
-func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, id string) error {
+func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, post_id string) error {
 	lang := req.URL.Query().Get("lang")
-	log.Println("process new comment for parent", id, lang)
+	log.Println("process new comment for parent", post_id, lang)
 	err := req.ParseForm()
 	if err != nil {
 		return err
@@ -51,9 +53,12 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 
 	errMsg := ""
 	cmtItem := &idl.CmtItem{
-		Email:   email,
-		Name:    name,
-		Comment: string(htmlCmt),
+		Email:    email,
+		Name:     name,
+		Status:   idl.STCreated,
+		DateTime: time.Now(),
+		Comment:  string(htmlCmt),
+		PostId:   post_id,
 	}
 	if len(htmlCmt) == 0 {
 		errMsg = "commento vuoto"
@@ -71,6 +76,12 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 			errMsg = "il nome è vuoto"
 			return ch.renderResNewComment(cmtItem, errMsg, w)
 		}
+	}
+	if !ch.moderateCmt {
+		cmtItem.Status = idl.STPublished
+	}
+	if err := ch.liteDB.InsertNewComment(cmtItem); err != nil {
+		return err
 	}
 
 	return ch.renderResNewComment(cmtItem, errMsg, w)

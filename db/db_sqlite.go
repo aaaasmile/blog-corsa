@@ -38,6 +38,44 @@ func (ld *LiteDB) openSqliteDatabase() error {
 	return nil
 }
 
+func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
+	log.Println("insert new comment on post id ", cmtItem.PostId)
+
+	q := `INSERT INTO comment(parent_id,name,email,website,comment,timestamp,post_id,status) VALUES(?,?,?,?,?,?,?,?);`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+
+	stmt, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(cmtItem.ParentId,
+		cmtItem.Name,
+		cmtItem.Email,
+		cmtItem.Website,
+		cmtItem.Comment,
+		cmtItem.DateTime.Local().Unix(),
+		cmtItem.PostId,
+		cmtItem.Status)
+	if err != nil {
+		return err
+	}
+	q = `SELECT last_insert_rowid()`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	var id string
+	err = ld.connDb.QueryRow(q).Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Comment added into the db OK: ", id)
+	return nil
+}
+
 func (ld *LiteDB) GeCommentsForPostId(postid string) (*idl.CmtNode, error) {
 	q := `SELECT id from comment where post_id = ? and parent_id = '';`
 	rows, err := ld.connDb.Query(q, postid)

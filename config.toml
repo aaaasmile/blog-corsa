@@ -1,7 +1,5 @@
-DbFileName = "blog-corsa.db"
 SimulateAlarm = false
 Debug = false
-SQLDebug = false
 ServiceURL = "127.0.0.1:5572"
 RootURLPattern = "/blog-admin/"
 StaticBlogDir = "blog-corsa"
@@ -23,3 +21,8 @@ User = "<todo in custom>"
 SendTelegram = false
 ChatID = -1
 APIString = "<todo in custom>"
+
+[Database]
+DbFileName = "blog-corsa.db"
+SQLDebug = false
+ModerateCmt = false

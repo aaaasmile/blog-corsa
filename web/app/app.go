@@ -15,7 +15,7 @@ type App struct {
 func NewApp() (*App, error) {
 	res := &App{}
 	var err error
-	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.DbFileName, conf.Current.SQLDebug); err != nil {
+	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbFileName, conf.Current.Database.SQLDebug); err != nil {
 		return nil, err
 	}
 	return res, nil
@@ -39,8 +39,9 @@ func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 		}
 	case "POST":
 		ph := PostHandler{
-			debug:  conf.Current.Debug,
-			liteDB: ap.liteDB,
+			debug:       conf.Current.Debug,
+			liteDB:      ap.liteDB,
+			moderateCmt: conf.Current.Database.ModerateCmt,
 		}
 		if err := ph.handlePost(w, req); err != nil {
 			log.Println("[POST] Error: ", err)

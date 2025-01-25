@@ -15,23 +15,24 @@ var (
 type StatusType int
 
 const (
-	Created StatusType = iota
-	Published
-	Deleted
-	Rejected
-	Spam
+	STCreated StatusType = iota
+	STPublished
+	STDeleted
+	STRejected
+	STSpam
 )
 
 type CmtItem struct {
-	Id       string
-	ParentId string
+	Id       int
+	ParentId int
 	Name     string
 	Email    string
 	Website  string
 	Comment  string
-	Time     time.Time
+	DateTime time.Time
 	Status   StatusType
 	Indent   int
+	PostId   string
 }
 
 type CmtNode struct {

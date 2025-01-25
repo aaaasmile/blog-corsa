@@ -11,10 +11,11 @@ import (
 )
 
 type PostHandler struct {
-	debug    bool
-	lastPath string
-	start    time.Time
-	liteDB   *db.LiteDB
+	debug       bool
+	lastPath    string
+	start       time.Time
+	liteDB      *db.LiteDB
+	moderateCmt bool
 }
 
 func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) error {
@@ -26,7 +27,7 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 	}
 
 	if id, ok := isPostNewComment(ph.lastPath, remPath); ok {
-		hc := comments.NewCommentHandler(ph.liteDB, ph.debug)
+		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
 		return hc.HandleFormNewComment(w, req, id)
 	}
 

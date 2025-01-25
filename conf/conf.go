@@ -10,7 +10,6 @@ import (
 )
 
 type Config struct {
-	DbFileName     string
 	ServiceURL     string
 	RootURLPattern string
 	ServerName     string
@@ -21,9 +20,15 @@ type Config struct {
 	VueLibName     string
 	Relay          *Relay
 	Telegram       *Telegram
+	Database       *Database
 	SimulateAlarm  bool
 	Debug          bool
-	SQLDebug       bool
+}
+
+type Database struct {
+	DbFileName  string
+	SQLDebug    bool
+	ModerateCmt bool
 }
 
 type Telegram struct {
