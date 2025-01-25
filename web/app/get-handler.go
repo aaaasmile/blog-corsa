@@ -35,7 +35,7 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	log.Println("GET requested ", u)
 
 	remPath := ""
-	gh.lastPath, remPath = getURLForRoute(req.RequestURI)
+	gh.lastPath, remPath = getLastPathInUri(req.RequestURI)
 	if gh.debug {
 		log.Println("Check the last path ", gh.lastPath, remPath)
 	}
@@ -50,13 +50,13 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	if isValidateEmail(gh.lastPath) {
 		return gh.handleGetValidateEmail(w, req)
 	}
-	if id, ok := isComments(gh.lastPath, remPath); ok {
+	if post_id, ok := isComments(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
-		return hc.HandleComments(w, req, id)
+		return hc.HandleComments(w, req, post_id)
 	}
 
 	*status = http.StatusNotFound
-	return fmt.Errorf("invalid GET request for %s", gh.lastPath)
+	return fmt.Errorf("[WARN] invalid GET request for %s", gh.lastPath)
 
 }
 
@@ -133,26 +133,17 @@ func (gh *GetHandler) handleHeadNav(w http.ResponseWriter) error {
 	return tmplIndex.ExecuteTemplate(w, "headnav", struct{}{})
 }
 
-func getURLForRoute(uri string) (string, string) {
+func getLastPathInUri(uri string) (string, string) {
 	arr := strings.Split(uri, "/")
-	remPath := ""
-	//fmt.Println("split: ", arr, len(arr))
 	for i := len(arr) - 1; i >= 0; i-- {
-		ss := arr[i]
-		if i > 0 {
-			if remPath == "" {
-				remPath = arr[i-1]
-			} else {
-				remPath = fmt.Sprintf("%s/%s", remPath, arr[i-1])
-			}
-
-		}
-		if ss != "" {
-			if !strings.HasPrefix(ss, "?") {
-				//fmt.Printf("Url for route is %s, remPath is: %s \n", ss, remPath)
-				return ss, remPath
+		last := arr[i]
+		rem_ix := i
+		if last != "" {
+			if !strings.HasPrefix(last, "?") {
+				remPath := strings.Join(arr[0:rem_ix], "/")
+				return last, remPath
 			}
 		}
 	}
-	return uri, remPath
+	return uri, ""
 }

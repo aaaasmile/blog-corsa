@@ -21,7 +21,7 @@ func NewGetCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
 
 func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, post_id string) error {
 	lang := req.URL.Query().Get("lang")
-	log.Printf("get comments for id=%s, lang=%s", post_id, lang)
+	log.Printf("[HandleComments] get comments for id=%s, lang=%s", post_id, lang)
 
 	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
 	if err != nil {

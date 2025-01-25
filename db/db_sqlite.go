@@ -4,6 +4,7 @@ import (
 	"corsa-blog/idl"
 	"corsa-blog/util"
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -37,9 +38,26 @@ func (ld *LiteDB) openSqliteDatabase() error {
 	}
 	return nil
 }
+func (ld *LiteDB) DeleteComment(cmtItem *idl.CmtItem) error {
+	log.Println("[LiteDB - DELETE] delete comment on id ", cmtItem.Id)
+	q := fmt.Sprintf(`DELETE FROM comment WHERE id=%d AND req_id='%s';`, cmtItem.Id, cmtItem.ReqId)
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stmt, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec()
+	if err != nil {
+		return err
+	}
+	log.Println("[LiteDB - DELETE] ok")
+	return nil
+}
 
 func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
-	log.Println("[LiteDB] insert new comment on post id ", cmtItem.PostId)
+	log.Println("[LiteDB - INSERT] insert new comment on post id ", cmtItem.PostId)
 
 	q := `INSERT INTO comment(parent_id,name,email,comment,timestamp,post_id,status,req_id) VALUES(?,?,?,?,?,?,?,?);`
 	if ld.debugSQL {

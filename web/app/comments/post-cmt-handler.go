@@ -5,6 +5,7 @@ import (
 	"corsa-blog/db"
 	"corsa-blog/idl"
 	"corsa-blog/util"
+	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
@@ -32,9 +33,27 @@ func NewPostCommentHandler(liteDB *db.LiteDB, debug bool, moderateCmt bool) *Com
 	return res
 }
 
-func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, post_id string) error {
+func (ch *CommentHandler) HandleFormDeleteComment(w http.ResponseWriter, req *http.Request, id int, post_id string) error {
+	reqId := req.URL.Query().Get("reqId")
+	if reqId == "" {
+		return fmt.Errorf("request id for delete is null")
+	}
+	log.Println("[HandleFormDeleteComment] delete comment ", id, post_id, reqId)
+	cmtItem := &idl.CmtItem{
+		Id:    id,
+		ReqId: reqId,
+	}
+
+	if err := ch.liteDB.DeleteComment(cmtItem); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.Request, parent_id int, post_id string) error {
 	lang := req.URL.Query().Get("lang")
-	log.Println("process new comment for parent", post_id, lang)
+	log.Println("[HandleFormNewComment] process new comment ", parent_id, post_id, lang)
 	err := req.ParseForm()
 	if err != nil {
 		return err
@@ -60,6 +79,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		DateTime: time.Now(),
 		Comment:  string(htmlCmt),
 		PostId:   post_id,
+		ParentId: parent_id,
 	}
 	if name == "" {
 		if _, err := mail.ParseAddress(email); err != nil {

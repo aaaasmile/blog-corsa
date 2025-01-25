@@ -5,6 +5,7 @@ import (
 	"corsa-blog/web/app/comments"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -20,30 +21,65 @@ type PostHandler struct {
 func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) error {
 	ph.start = time.Now()
 	remPath := ""
-	ph.lastPath, remPath = getURLForRoute(req.RequestURI)
+	ph.lastPath, remPath = getLastPathInUri(req.RequestURI)
 	if ph.debug {
-		log.Println("[POST] uri requested is: ", ph.lastPath, remPath)
+		log.Println("[handlePost] uri requested is: ", ph.lastPath, remPath)
 	}
 
-	if id, ok := isPostNewComment(ph.lastPath, remPath); ok {
+	if parent_id, post_id, ok := isNewComment(ph.lastPath, remPath); ok {
 		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
-		return hc.HandleFormNewComment(w, req, id)
+		return hc.HandleFormNewComment(w, req, parent_id, post_id)
+	}
+	if id, post_id, ok := isDeleteComment(ph.lastPath, remPath); ok {
+		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
+		return hc.HandleFormDeleteComment(w, req, id, post_id)
 	}
 
 	elapsed := time.Since(ph.start)
-	log.Printf("Ignored request. Total call duration: %v\n", elapsed)
+	log.Printf("[WARN] ignored request. Total call duration: %v\n", elapsed)
 	return nil
 }
 
-func isPostNewComment(lastPath, remPath string) (string, bool) {
+func isNewComment(lastPath, remPath string) (parent_id int, post_id string, ok bool) {
+	// expect something like: /blog-admin/{{.ParentId}}/{{.PostId}}/newcomment?lang=it
+	ok = false
 	if !strings.HasPrefix(lastPath, "newcomment") {
-		return "", false
+		return
 	}
 	arr := strings.Split(remPath, "/")
-	if len(arr) > 0 {
-		return arr[len(arr)-1], true
+	if len(arr) > 1 {
+		idtxt := arr[len(arr)-2]
+		var err error
+		if parent_id, err = strconv.Atoi(idtxt); err != nil {
+			log.Println("[isNewComment] ERROR parent_id ", err)
+			return
+		}
+		post_id = arr[len(arr)-1]
+		ok = true
+		return
 	}
-	return "", false
+	return
+}
+
+func isDeleteComment(lastPath, remPath string) (id int, post_id string, ok bool) {
+	// expect something like: /blog-admin/{{.Id}}/{{.PostId}}/deletecomment?req={{.ReqId}}
+	ok = false
+	if !strings.HasPrefix(lastPath, "deletecomment") {
+		return
+	}
+	arr := strings.Split(remPath, "/")
+	if len(arr) > 1 {
+		idtxt := arr[len(arr)-2]
+		var err error
+		if id, err = strconv.Atoi(idtxt); err != nil {
+			log.Println("[isDeleteComment] ERROR id ", err)
+			return
+		}
+		post_id = arr[len(arr)-1]
+		ok = true
+		return
+	}
+	return
 }
 
 // func writeJsonResp(w http.ResponseWriter, resp interface{}) error {
