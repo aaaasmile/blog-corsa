@@ -139,7 +139,7 @@ func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) 
 		Children:  []*idl.CmtNode{},
 		NodeCount: 1,
 	}
-	q := `SELECT id from comment where post_id = ? and parent_id = ?;`
+	q := `SELECT id from comment where post_id = ? and parent_id = ?;` // todo get CmtItem infos
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
