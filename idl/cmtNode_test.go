@@ -1,6 +1,7 @@
 package idl
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -12,7 +13,7 @@ func TestNode(t *testing.T) {
 
 	root := CmtNode{Children: []*CmtNode{&cn1, &cn2}}
 	lines := root.GetLines()
-	//fmt.Println("** lines", lines)
+	fmt.Println("** lines", lines)
 	if len(lines) != 10 {
 		t.Error("expected 10 lines, but ", lines)
 	}

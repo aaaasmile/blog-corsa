@@ -24,7 +24,8 @@ func (cn *CmtNode) GetLines() []string {
 
 func (cn *CmtNode) getNodeLines() []string {
 	l1 := fmt.Sprintf("<p><strong>%s</strong></p>", cn.CmtItem.Name)
-	res := []string{"<li>", l1, cn.CmtItem.Comment}
+	l2 := fmt.Sprintf("%s<button>Rispondi</button>", cn.CmtItem.Comment)
+	res := []string{"<li>", l1, l2}
 	if len(cn.Children) > 0 {
 		res = append(res, "<ul>")
 		for _, item := range cn.Children {
