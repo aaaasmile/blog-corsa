@@ -99,13 +99,10 @@ creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione st
 La URL di riferimento è: http://localhost:5572/blog-admin/
 
 ### TODO
-- config_custom.toml va cryptato nel valore di diversi campi
+- Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori
 - La pagina admin deve essere protetta da un token di sign-in 
-- Nella pagina di risposta newcomment dal form, va messo un testo e un link per tornare indietro
-- Per testare la sezione _Discussione_ uso del codice html direttamente in index.html. Probabilmente
-dovrebbe essere generato completamente sul server con un get.
-- Gestione dei commenti nel file data.json in quanto non voglio usare un database
 - Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti
+- config_custom.toml va cryptato nel valore di diversi campi
 
 ### Stop del service
 Per stoppare il sevice si usa:

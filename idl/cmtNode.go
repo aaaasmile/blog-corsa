@@ -15,8 +15,10 @@ func (cn *CmtNode) GetLines() []string {
 	res := []string{}
 	res = append(res, "<ul>")
 	for _, item := range cn.Children {
-		lines := item.getNodeLines()
-		res = append(res, lines...)
+		if item.CmtItem != nil {
+			lines := item.getNodeLines()
+			res = append(res, lines...)
+		}
 	}
 	res = append(res, "</ul>")
 	return res

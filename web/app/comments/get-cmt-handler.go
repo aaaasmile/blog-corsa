@@ -48,7 +48,7 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	ctxTree := struct {
 		CmtLines []string
 	}{
-		CmtLines: []string{"<li>Risposta 1.2 <button>Rispondi</button></li>"},
+		CmtLines: cmtNode.GetLines(),
 	}
 	if err := tmplBody.ExecuteTemplate(&partTree, "tree", ctxTree); err != nil {
 		return err

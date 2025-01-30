@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -96,7 +98,7 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 
 func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
-	q := `SELECT id from comment where post_id = ? and parent_id = 0;`
+	q := `SELECT id,name,email,comment,timestamp,status from comment where post_id = ? and parent_id = 0;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
@@ -112,18 +114,31 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	}
 	var rowid int
 	level0_ids := []int{}
+	arrCmtItem := []*idl.CmtItem{}
 	for rows.Next() {
-		if err := rows.Scan(&rowid); err != nil {
+		var ts int64
+		statustxt := ""
+		cmtItem := idl.CmtItem{}
+		if err := rows.Scan(&rowid, &cmtItem.Name, &cmtItem.Email, &cmtItem.Comment, &ts, &statustxt); err != nil {
 			return nil, err
 		}
+		cmtItem.Id = rowid
+		cmtItem.DateTime = time.Unix(ts, 0)
+		status, err := strconv.Atoi(statustxt)
+		if err != nil {
+			return nil, err
+		}
+		cmtItem.Status = idl.StatusType(status)
+		arrCmtItem = append(arrCmtItem, &cmtItem)
 		level0_ids = append(level0_ids, rowid)
 	}
 	level := 0
-	for _, item_id := range level0_ids {
+	for ix, item_id := range level0_ids {
 		node, err := ld.getCommentNodeChild(level, item_id, post_id)
 		if err != nil {
 			return nil, err
 		}
+		node.CmtItem = arrCmtItem[ix]
 		root_node.Children = append(root_node.Children, node)
 		root_node.NodeCount += node.NodeCount
 	}
@@ -134,12 +149,12 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 
 func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) (*idl.CmtNode, error) {
 	log.Println("[getCommentNodeChild] level ", level)
-	child_node := &idl.CmtNode{
+	node := &idl.CmtNode{
 		PostId:    post_id,
 		Children:  []*idl.CmtNode{},
 		NodeCount: 1,
 	}
-	q := `SELECT id from comment where post_id = ? and parent_id = ?;` // todo get CmtItem infos
+	q := `SELECT id,name,email,comment,timestamp,status from comment where post_id = ? and parent_id = ?;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
@@ -150,21 +165,35 @@ func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) 
 	defer rows.Close()
 	var rowid int
 	level_ids := []int{}
+	arrCmtItem := []*idl.CmtItem{}
+
 	for rows.Next() {
-		if err := rows.Scan(&rowid); err != nil {
+		var ts int64
+		cmtItem := idl.CmtItem{}
+		statustxt := ""
+		if err := rows.Scan(&rowid, &cmtItem.Name, &cmtItem.Email, &cmtItem.Comment, &ts, &statustxt); err != nil {
 			return nil, err
 		}
-		level_ids = append(level_ids, rowid)
-	}
-	nex_level := level + 1
-	for _, item_id := range level_ids {
-		node, err := ld.getCommentNodeChild(nex_level, item_id, post_id)
+		cmtItem.Id = rowid
+		cmtItem.DateTime = time.Unix(ts, 0)
+		status, err := strconv.Atoi(statustxt)
 		if err != nil {
 			return nil, err
 		}
-		child_node.Children = append(child_node.Children, node)
-		child_node.NodeCount += node.NodeCount
+		cmtItem.Status = idl.StatusType(status)
+		arrCmtItem = append(arrCmtItem, &cmtItem)
+		level_ids = append(level_ids, rowid)
 	}
-	log.Printf("[getCommentNodeChild] on level %d found %d children with parent id %d, sub-count %d", level, len(child_node.Children), parent_id, child_node.NodeCount)
-	return child_node, nil
+	nex_level := level + 1
+	for ix, item_id := range level_ids {
+		child, err := ld.getCommentNodeChild(nex_level, item_id, post_id)
+		if err != nil {
+			return nil, err
+		}
+		node.CmtItem = arrCmtItem[ix]
+		node.Children = append(node.Children, child)
+		node.NodeCount += node.NodeCount
+	}
+	log.Printf("[getCommentNodeChild] on level %d found %d children with parent id %d, sub-count %d", level, len(node.Children), parent_id, node.NodeCount)
+	return node, nil
 }
