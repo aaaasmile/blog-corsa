@@ -25,11 +25,11 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 
 	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	templName := "templates/cmt/get-comments.html"
-	var partHeader, partTree, partFoot, partMerged bytes.Buffer
+	var partHeader, partForm, partTree, partFoot, partMerged bytes.Buffer
 	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
 
 	ctxHead := struct {
@@ -39,9 +39,12 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	}{
 		CmtTotText: cmtNode.GetTextNumComments(),
 		PostId:     post_id,
-		ParentId:   0,
+		ParentId:   cmtNode.CmtItem.ParentId,
 	}
 	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
+		return err
+	}
+	if err := tmplBody.ExecuteTemplate(&partForm, "headform", ctxHead); err != nil {
 		return err
 	}
 
@@ -59,6 +62,7 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 		return err
 	}
 	partHeader.WriteTo(&partMerged)
+	partForm.WriteTo(&partMerged)
 	partTree.WriteTo(&partMerged)
 	partFoot.WriteTo(&partMerged)
 

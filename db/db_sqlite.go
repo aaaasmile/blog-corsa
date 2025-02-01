@@ -111,6 +111,7 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	root_node := &idl.CmtNode{
 		PostId:   post_id,
 		Children: []*idl.CmtNode{},
+		CmtItem:  &idl.CmtItem{},
 	}
 	var rowid int
 	level0_ids := []int{}
