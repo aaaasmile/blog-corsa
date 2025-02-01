@@ -96,6 +96,81 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 	return nil
 }
 
+func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
+	log.Println("[GetCommentForId] get comment id ", id)
+	q := `SELECT id,parent_id,post_id,name,email,comment,timestamp,status from comment where id = ?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	rows, err := ld.connDb.Query(q, id)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var rowid int
+	var parent_id int
+	post_id := ""
+	level0_ids := []int{}
+	arrCmtItem := []*idl.CmtItem{}
+	for rows.Next() {
+		var ts int64
+		statustxt := ""
+		cmtItem := idl.CmtItem{}
+		if err := rows.Scan(&rowid, &parent_id, &cmtItem.PostId, &cmtItem.Name, &cmtItem.Email, &cmtItem.Comment, &ts, &statustxt); err != nil {
+			return nil, err
+		}
+		cmtItem.Id = rowid
+		cmtItem.ParentId = parent_id
+		cmtItem.DateTime = time.Unix(ts, 0)
+		status, err := strconv.Atoi(statustxt)
+		if err != nil {
+			return nil, err
+		}
+		cmtItem.Status = idl.StatusType(status)
+		arrCmtItem = append(arrCmtItem, &cmtItem)
+		level0_ids = append(level0_ids, rowid)
+		if post_id == "" {
+			post_id = cmtItem.PostId
+		}
+	}
+	if len(arrCmtItem) == 0 {
+		return nil, fmt.Errorf("comment id %s not found", id)
+	}
+	if len(arrCmtItem) > 1 {
+		return nil, fmt.Errorf("comment id %s multiple instance?", id)
+	}
+	root_node := &idl.CmtNode{
+		Children: []*idl.CmtNode{},
+		CmtItem:  arrCmtItem[0],
+		PostId:   post_id,
+	}
+	level := 0
+	for ix, item_id := range level0_ids {
+		node := &idl.CmtNode{
+			PostId:    post_id,
+			Children:  []*idl.CmtNode{},
+			CmtItem:   arrCmtItem[ix],
+			NodeCount: 1,
+		}
+		node.CmtItem = arrCmtItem[ix]
+		children, err := ld.getCommentNodeChildren(level, item_id, post_id)
+		if err != nil {
+			return nil, err
+		}
+		if len(children) > 0 {
+			node.Children = append(node.Children, children...)
+		}
+
+		root_node.Children = append(root_node.Children, node)
+		root_node.NodeCount += node.NodeCount
+	}
+	log.Println("[GetCommentForId] found level 0 items: ", len(level0_ids))
+
+	return root_node, nil
+}
+
 func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
 	q := `SELECT id,name,email,comment,timestamp,status from comment where post_id = ? and parent_id = 0;`
@@ -124,6 +199,7 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 			return nil, err
 		}
 		cmtItem.Id = rowid
+		cmtItem.PostId = post_id
 		cmtItem.DateTime = time.Unix(ts, 0)
 		status, err := strconv.Atoi(statustxt)
 		if err != nil {
@@ -135,11 +211,22 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	}
 	level := 0
 	for ix, item_id := range level0_ids {
-		node, err := ld.getCommentNodeChild(level, item_id, post_id)
+		node := &idl.CmtNode{
+			PostId:    post_id,
+			Children:  []*idl.CmtNode{},
+			CmtItem:   arrCmtItem[ix],
+			NodeCount: 1,
+		}
+		children, err := ld.getCommentNodeChildren(level, item_id, post_id)
 		if err != nil {
 			return nil, err
 		}
-		node.CmtItem = arrCmtItem[ix]
+		if len(children) > 0 {
+			node.Children = append(node.Children, children...)
+			for _, item := range children {
+				node.NodeCount += item.NodeCount
+			}
+		}
 		root_node.Children = append(root_node.Children, node)
 		root_node.NodeCount += node.NodeCount
 	}
@@ -148,13 +235,8 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	return root_node, nil
 }
 
-func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) (*idl.CmtNode, error) {
-	log.Println("[getCommentNodeChild] level ", level)
-	node := &idl.CmtNode{
-		PostId:    post_id,
-		Children:  []*idl.CmtNode{},
-		NodeCount: 1,
-	}
+func (ld *LiteDB) getCommentNodeChildren(level int, parent_id int, post_id string) ([]*idl.CmtNode, error) {
+	log.Println("[getCommentNodeChildren] level ", level)
 	q := `SELECT id,name,email,comment,timestamp,status from comment where post_id = ? and parent_id = ?;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
@@ -176,7 +258,10 @@ func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) 
 			return nil, err
 		}
 		cmtItem.Id = rowid
+		cmtItem.ParentId = parent_id
+		cmtItem.PostId = post_id
 		cmtItem.DateTime = time.Unix(ts, 0)
+		cmtItem.Indent = level
 		status, err := strconv.Atoi(statustxt)
 		if err != nil {
 			return nil, err
@@ -186,15 +271,30 @@ func (ld *LiteDB) getCommentNodeChild(level int, parent_id int, post_id string) 
 		level_ids = append(level_ids, rowid)
 	}
 	nex_level := level + 1
+	nodes := []*idl.CmtNode{}
+	subNodeCount := 0
 	for ix, item_id := range level_ids {
-		child, err := ld.getCommentNodeChild(nex_level, item_id, post_id)
+		node := &idl.CmtNode{
+			PostId:    post_id,
+			Children:  []*idl.CmtNode{},
+			NodeCount: 0,
+		}
+		node.CmtItem = arrCmtItem[ix]
+		node.NodeCount += 1
+
+		children, err := ld.getCommentNodeChildren(nex_level, item_id, post_id)
 		if err != nil {
 			return nil, err
 		}
-		node.CmtItem = arrCmtItem[ix]
-		node.Children = append(node.Children, child)
-		node.NodeCount += node.NodeCount
+		if len(children) > 0 {
+			node.Children = append(node.Children, children...)
+			for _, item := range children {
+				node.NodeCount += item.NodeCount
+				subNodeCount += item.NodeCount
+			}
+		}
+		nodes = append(nodes, node)
 	}
-	log.Printf("[getCommentNodeChild] on level %d found %d children with parent id %d, sub-count %d", level, len(node.Children), parent_id, node.NodeCount)
-	return node, nil
+	log.Printf("[getCommentNodeChild] on level %d found %d nodes with parent id %d, sub-count %d", level, len(nodes), parent_id, subNodeCount)
+	return nodes, nil
 }

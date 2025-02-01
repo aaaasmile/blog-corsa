@@ -29,7 +29,7 @@ func (cn *CmtNode) GetLines() []string {
 
 func (cn *CmtNode) getNodeLines() []string {
 	l1 := fmt.Sprintf("<p><strong>%s</strong>, <em><small>%s</small></em></p>", cn.CmtItem.Name, util.FormatDateIt(cn.CmtItem.DateTime))
-	l2 := fmt.Sprintf("%s<button>Rispondi</button>", cn.CmtItem.Comment)
+	l2 := fmt.Sprintf("%s<button hx-get=\"/blog-admin/%d/cmtform\"  hx-target=\"#reply%d\">Rispondi</button><span id=\"reply%d\"></span>", cn.CmtItem.Comment, cn.CmtItem.Id, cn.CmtItem.Id, cn.CmtItem.Id)
 	res := []string{"<li>", l1, l2}
 	if len(cn.Children) > 0 {
 		res = append(res, "<ul>")

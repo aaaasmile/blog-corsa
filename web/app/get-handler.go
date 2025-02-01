@@ -54,6 +54,10 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
 		return hc.HandleComments(w, req, post_id)
 	}
+	if id, ok := isFormForReplyComment(gh.lastPath, remPath); ok {
+		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
+		return hc.HandleFormForReplyComment(w, req, id)
+	}
 
 	*status = http.StatusNotFound
 	return fmt.Errorf("[WARN] invalid GET request for %s", gh.lastPath)
@@ -66,6 +70,17 @@ func isValidateEmail(lastPath string) bool {
 
 func isComments(lastPath string, remPath string) (string, bool) {
 	if !strings.HasPrefix(lastPath, "comments") {
+		return "", false
+	}
+	arr := strings.Split(remPath, "/")
+	if len(arr) > 0 {
+		return arr[len(arr)-1], true
+	}
+	return "", false
+}
+
+func isFormForReplyComment(lastPath string, remPath string) (string, bool) {
+	if !strings.HasPrefix(lastPath, "cmtform") {
 		return "", false
 	}
 	arr := strings.Split(remPath, "/")
