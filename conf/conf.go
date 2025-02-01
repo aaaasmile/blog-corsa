@@ -21,6 +21,7 @@ type Config struct {
 	Relay          *Relay
 	Telegram       *Telegram
 	Database       *Database
+	AllowEmptyMail bool
 	SimulateAlarm  bool
 	Debug          bool
 }

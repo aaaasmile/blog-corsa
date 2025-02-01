@@ -2,6 +2,7 @@ package comments
 
 import (
 	"bytes"
+	"corsa-blog/conf"
 	"corsa-blog/db"
 	"corsa-blog/idl"
 	"corsa-blog/util"
@@ -89,8 +90,12 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		}
 	}
 	if email == "" {
-		errMsg = "email è vuota"
-		return ch.renderResNewComment(cmtItem, errMsg, w)
+		if conf.Current.AllowEmptyMail {
+			email = "noreply@invido.it"
+		} else {
+			errMsg = "email è vuota"
+			return ch.renderResNewComment(cmtItem, errMsg, w)
+		}
 	}
 	if _, err := mail.ParseAddress(email); err != nil {
 		errMsg = "inidirizzo email non valido"

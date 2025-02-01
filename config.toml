@@ -8,6 +8,7 @@ VueLibName = "vue.js"
 ServerName = "<todo in custom>"
 PostSubDir = "posts"
 PageSubDir = "pages"
+AllowEmptyMail = false
 
 [Relay]
 SendMail = false
