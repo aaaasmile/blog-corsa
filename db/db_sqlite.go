@@ -173,64 +173,24 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 
 func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
-	q := `SELECT id,name,email,comment,timestamp,status from comment where post_id = ? and parent_id = 0;`
-	if ld.debugSQL {
-		log.Println("Query is", q)
+	root_node := &idl.CmtNode{
+		PostId:    post_id,
+		Children:  []*idl.CmtNode{},
+		CmtItem:   &idl.CmtItem{},
+		NodeCount: 0,
 	}
-	rows, err := ld.connDb.Query(q, post_id)
+	children, err := ld.getCommentNodeChildren(0, 0, post_id)
 	if err != nil {
 		return nil, err
 	}
+	if len(children) > 0 {
+		root_node.Children = append(root_node.Children, children...)
+		for _, item := range children {
+			root_node.NodeCount += item.NodeCount
+		}
+	}
 
-	defer rows.Close()
-	root_node := &idl.CmtNode{
-		PostId:   post_id,
-		Children: []*idl.CmtNode{},
-		CmtItem:  &idl.CmtItem{},
-	}
-	var rowid int
-	level0_ids := []int{}
-	arrCmtItem := []*idl.CmtItem{}
-	for rows.Next() {
-		var ts int64
-		statustxt := ""
-		cmtItem := idl.CmtItem{}
-		if err := rows.Scan(&rowid, &cmtItem.Name, &cmtItem.Email, &cmtItem.Comment, &ts, &statustxt); err != nil {
-			return nil, err
-		}
-		cmtItem.Id = rowid
-		cmtItem.PostId = post_id
-		cmtItem.DateTime = time.Unix(ts, 0)
-		status, err := strconv.Atoi(statustxt)
-		if err != nil {
-			return nil, err
-		}
-		cmtItem.Status = idl.StatusType(status)
-		arrCmtItem = append(arrCmtItem, &cmtItem)
-		level0_ids = append(level0_ids, rowid)
-	}
-	level := 0
-	for ix, item_id := range level0_ids {
-		node := &idl.CmtNode{
-			PostId:    post_id,
-			Children:  []*idl.CmtNode{},
-			CmtItem:   arrCmtItem[ix],
-			NodeCount: 1,
-		}
-		children, err := ld.getCommentNodeChildren(level, item_id, post_id)
-		if err != nil {
-			return nil, err
-		}
-		if len(children) > 0 {
-			node.Children = append(node.Children, children...)
-			for _, item := range children {
-				node.NodeCount += item.NodeCount
-			}
-		}
-		root_node.Children = append(root_node.Children, node)
-		root_node.NodeCount += node.NodeCount
-	}
-	log.Println("[LiteDB-SELECT] found level 0 items: ", len(level0_ids))
+	log.Println("[LiteDB-SELECT] found nodes: ", root_node.NodeCount)
 
 	return root_node, nil
 }
