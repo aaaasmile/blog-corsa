@@ -99,7 +99,7 @@ creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione st
 La URL di riferimento è: http://localhost:5572/blog-admin/
 
 ### TODO
-- Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori
+- Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
 - La pagina admin deve essere protetta da un token di sign-in 
 - Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti
 - config_custom.toml va cryptato nel valore di diversi campi
