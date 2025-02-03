@@ -2,6 +2,7 @@ package admin
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/crypto"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -101,4 +102,22 @@ func checkRefreshToken(w http.ResponseWriter, refrTk string) error {
 		return tokenResult(200, user, w)
 	}
 	return tokenResult(403, user, w)
+}
+
+func writeResponse(w http.ResponseWriter, resp interface{}) error {
+	blobresp, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	w.Write(blobresp)
+	return nil
+}
+
+func writeErrorResponse(w http.ResponseWriter, errorcode int, resp interface{}) error {
+	blobresp, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	http.Error(w, string(blobresp), errorcode)
+	return nil
 }

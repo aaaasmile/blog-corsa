@@ -45,7 +45,7 @@ func NewUserCred() *UserCred {
 		CredFile:   "./cert/cred.json",
 		PemFile:    "./cert/key.pem",
 		PubPemfile: "./cert/pubkey.pem",
-		RsaLen:     1024,
+		RsaLen:     1024 * 4,
 	}
 	return &res
 }
@@ -59,7 +59,7 @@ func (uc *UserCred) CreateAdminCredentials() error {
 		}
 		return uc.saveCredential()
 	}
-	return fmt.Errorf("Unable to create a new crediantial. File %s already exist. Please delete it if you want a new crendential", uc.CredFile)
+	return fmt.Errorf("unable to create a new crediantial. File %s already exist. Please delete it, if you want a new crendential", uc.CredFile)
 }
 
 func (uc *UserCred) saveCredential() error {
@@ -94,25 +94,25 @@ func (uc *UserCred) credFromPrompt() error {
 	fmt.Println("Please enter the password")
 	fmt.Scanln(&pwd)
 	if len(pwd) < 6 {
-		return fmt.Errorf("Password must be al least 6 character lenght")
+		return fmt.Errorf("password must be al least 6 character lenght")
 	}
 
 	fmt.Println("Please confirm the password")
 	fmt.Scanln(&pwdcfm)
 	if pwd != pwdcfm {
-		return fmt.Errorf("Password confirm is different")
+		return fmt.Errorf("password confirm is different")
 	}
 
 	genKeyFile := uc.PemFile
 	if _, err := os.Stat(genKeyFile); err != nil {
 		fmt.Println("Generate also the: ", genKeyFile)
-		fmt.Println("Please enter the pwd for the ", genKeyFile)
-		fmt.Scanln(&pwdpem)
-		if len(pwdpem) < 6 {
-			return fmt.Errorf("The pem key is too short")
-		}
+		// fmt.Println("Please enter the pwd for the ", genKeyFile)
+		// fmt.Scanln(&pwdpem)
+		// if len(pwdpem) < 6 {
+		// 	return fmt.Errorf("the pem key is too short")
+		// }
 		priv, _ := rsa.GenerateKey(rand.Reader, uc.RsaLen)
-		err := savePrivateKeyInFile(genKeyFile, priv, pwdpem)
+		err := savePrivateKeyInFile(genKeyFile, priv)
 		if err != nil {
 			return err
 		}
@@ -121,7 +121,7 @@ func (uc *UserCred) credFromPrompt() error {
 		fmt.Println("A wrong secret for the pem wil make the service unusable. If you recreate the key, please remember that old encrypted files are not available anymore.")
 		fmt.Scanln(&pwdpem)
 		if len(pwdpem) < 6 {
-			return fmt.Errorf("The pem key is too short")
+			return fmt.Errorf("the pem key is too short")
 		}
 	}
 
@@ -161,7 +161,7 @@ func (uc *UserCred) CredFromFile() error {
 
 func (uc *UserCred) fetchPrivateRsaKey() error {
 	if uc.MySigningKey == nil {
-		mySigningKey, err := privateKeyFromPemFile(util.GetFullPath(uc.PemFile), uc.SecretPem)
+		mySigningKey, err := privateKeyFromPemFile(util.GetFullPath(uc.PemFile))
 		if err != nil {
 			return err
 		}
@@ -246,7 +246,7 @@ func (uc *UserCred) ParseJwtToken(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("[ParseJwtToken] unexpected signing method: %v", token.Header["alg"])
 		}
 
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
@@ -255,12 +255,12 @@ func (uc *UserCred) ParseJwtToken(tokenString string) (string, error) {
 
 	if ve, ok := err.(*jwt.ValidationError); ok {
 		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-			err = fmt.Errorf("That's not even a token")
+			err = fmt.Errorf("[ParseJwtToken] That's not even a token")
 		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
 			// Token is either expired or not active yet
-			err = fmt.Errorf("Timing is everything, token is expired")
+			err = fmt.Errorf("[ParseJwtToken] Timing is everything, token is expired")
 		} else {
-			err = fmt.Errorf("Couldn't handle this token: %v", err)
+			err = fmt.Errorf("[ParseJwtToken] Couldn't handle this token: %v", err)
 		}
 	}
 	if err != nil {
@@ -274,7 +274,7 @@ func (uc *UserCred) ParseJwtToken(tokenString string) (string, error) {
 				return user, nil
 			}
 		}
-		err = fmt.Errorf("Token is not valid for refresh")
+		err = fmt.Errorf("[ParseJwtToken] Token is not valid for refresh")
 	}
 	return "", err
 }
@@ -298,7 +298,7 @@ func hashPassword(pwd string, salt []byte) string {
 	return fmt.Sprintf("%x", key)
 }
 
-func privateKeyFromPemFile(file string, pwd string) (*rsa.PrivateKey, error) {
+func privateKeyFromPemFile(file string) (*rsa.PrivateKey, error) {
 	der, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -316,7 +316,7 @@ func privateKeyFromPemFile(file string, pwd string) (*rsa.PrivateKey, error) {
 	return priv, err
 }
 
-func savePrivateKeyInFile(file string, priv *rsa.PrivateKey, pwd string) error {
+func savePrivateKeyInFile(file string, priv *rsa.PrivateKey) error {
 	//der := x509.MarshalPKCS1PrivateKey(priv)
 	// pp := []byte(pwd)
 	// block, err := x509.EncryptPEMBlock(rand.Reader, "RSA PRIVATE KEY", der, pp, x509.PEMCipherAES256)

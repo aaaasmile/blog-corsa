@@ -5,3 +5,7 @@ config_custom.toml
 *.jpg
 *.png
 *.db
+cert/cred.json
+cert/key.pem
+cert/pubkey.pem
+cert/readme-keypem.md

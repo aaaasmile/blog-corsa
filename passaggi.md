@@ -192,4 +192,30 @@ todo
 - https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html
 - https://akismet.com/plan/personal/
 
+## Validazione utente
+
+Ho bisogno di un  token e un hash per validare l'utente che amministra il sito.
+Per generare il JWT token ho bisogno di una chiave privata.
+Per validare il JWT token ho bisogno della chiave pubblica.
+Per calcolare l'hash della password salvata in cred.json ho bisogno di una chiave privata key.pem.
+
+La chiave privata criptata messa nel file key.pem è generata da questo programma (funzione savePrivateKeyInFile)
+La password che genera l'hash viene chiesta all'atto della creazione dell'account admin.
+Nel file cred.json c'è l'hash della password di admin.
+Il salt per l'hash della password è generato casualmente nel momento in cui viene creata la
+chiave privata key.pem.
+
+Comando:
+
+    go run .\main.go -initaccount
+
+## Key.pem
+È la chiave privata che viene usata per generare il token JWT e l'hash dell'utente.
+
+## Chiave pubblica
+Per validare il token jwt occorre la chiave pubblica, che ricavo con WSL dalla chiave pem
+generata in con questo programma attraverso:
+
+    openssl rsa -in key.pem -pubout -out pubkey.pem
+
 

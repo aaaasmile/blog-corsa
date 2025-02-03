@@ -1,6 +1,8 @@
 package conf
 
 import (
+	"corsa-blog/crypto"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -24,6 +26,7 @@ type Config struct {
 	AllowEmptyMail bool
 	SimulateAlarm  bool
 	Debug          bool
+	AdminCred      *crypto.UserCred
 }
 
 type Database struct {
@@ -60,7 +63,12 @@ func ReadConfig(configfile string) (*Config, error) {
 	if err := readCustomOverrideConfig(Current, configfile); err != nil {
 		return nil, err
 	}
-
+	ac := crypto.NewUserCred()
+	if err := ac.CredFromFile(); err != nil {
+		return nil, fmt.Errorf("[ReadConfig] Credential error. Please make sure that an account has been initialized. Error is: %v ", err)
+	}
+	Current.AdminCred = ac
+	log.Println("User configured: ", Current.AdminCred.String())
 	log.Println("Configuration: ", Current.Relay.MailFrom, Current.Relay.Host, Current.Relay.MailFrom, Current.Telegram.SendTelegram)
 	return Current, nil
 }
