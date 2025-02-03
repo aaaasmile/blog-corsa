@@ -52,7 +52,6 @@ func handleToken(w http.ResponseWriter, req *http.Request) error {
 }
 
 func tokenResult(resultCode int, username string, w http.ResponseWriter) error {
-
 	resp := struct {
 		Info       string
 		ResultCode int
