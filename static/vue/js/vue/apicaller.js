@@ -25,5 +25,16 @@ export default {
     }, error => {
       handleErrorMsg(that, error)
     });
+  },
+  DoLogin(that, params, Ok) {
+    let req = { method: 'DoLogin', Params: params }
+    this.CallDataService(that, req).then(result => {
+      console.log('Call terminated ', result.data)
+      that.$store.commit('clearMsgText') 
+      that.$store.commit('resDatalog', [result.data.Status])
+      that.$store.commit('storeToken', result.data.Token) 
+    }, error => {
+      handleErrorMsg(that, error)
+    });
   }
 }
