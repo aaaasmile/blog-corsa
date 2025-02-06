@@ -2,7 +2,6 @@ export default {
     state: {
         server_name: '',
         loadingSync: false,
-        session_id: '',
         token: '',
     },
     mutations: {
@@ -11,6 +10,9 @@ export default {
         },
         storeToken(state, token) {
             state.token = token
+        },
+        tokenFromCache(state){
+            
         }
     }
 }

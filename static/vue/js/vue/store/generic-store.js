@@ -2,7 +2,6 @@ export default {
   state: {
     errorText: '',
     msgText: '',
-    bcplatform: '',
     lastmsgText: '',
     infodata: [],
     reslog: [],

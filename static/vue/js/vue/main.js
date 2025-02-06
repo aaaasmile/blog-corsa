@@ -19,7 +19,7 @@ export const app = new Vue({
   computed: {
     ...Vuex.mapState({
       ServiceServer: state => {
-        return state.cmt.server_name
+        return state.admin.server_name
       }
     })
   },
