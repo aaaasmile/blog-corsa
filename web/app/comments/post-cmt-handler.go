@@ -68,7 +68,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		log.Println("name, email:", name, email)
 	}
 	unsafeComment := blackfriday.Run([]byte(commentMd), blackfriday.WithNoExtensions())
-	htmlCmt := bluemonday.UGCPolicy().SanitizeBytes(unsafeComment)
+	htmlCmt := bluemonday.StrictPolicy().SanitizeBytes(unsafeComment)
 	if ch.debug {
 		log.Println("transformed html comment:", string(htmlCmt))
 	}
@@ -88,6 +88,10 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 			errMsg = "il nome è vuoto"
 			return ch.renderResNewComment(cmtItem, errMsg, w)
 		}
+	}
+	if len(name) > 30 {
+		errMsg = "nome non valido"
+		return ch.renderResNewComment(cmtItem, errMsg, w)
 	}
 	if email == "" {
 		if conf.Current.AllowEmptyMail {

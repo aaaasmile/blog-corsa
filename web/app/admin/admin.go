@@ -81,7 +81,7 @@ func tokenResult(resultCode int, username string, w http.ResponseWriter) error {
 	switch resultCode {
 	case 200:
 		resp.Info = "User credential OK"
-		expires := 3600 * 24 * 100
+		expires := 3600 * 24
 		log.Printf("Create JWT Token for user %s, expires in %d", username, expires)
 		refCred := conf.Current.AdminCred
 		err := refCred.GetJWTToken(username, expires, &resp.Token)

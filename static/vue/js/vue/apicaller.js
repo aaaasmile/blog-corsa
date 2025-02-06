@@ -46,7 +46,7 @@ export default {
     });
   },
   DoCmt(that, params, Ok) {
-    let req = { method: 'DoCmt', Params: params }
+    let req = { method: 'DoComment', Params: params }
     this.CallDataService(that, req).then(result => {
       console.log('Call terminated ', result.data)
       that.$store.commit('clearMsgText')

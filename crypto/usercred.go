@@ -256,13 +256,10 @@ func (uc *UserCred) ParseJwtToken(tokenString string) (string, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		log.Println("Refresh token claims: ", claims)
-		if claims["aud"] == "auth" {
-			if user, ok := claims["sub"].(string); ok {
-				return user, nil
-			}
+		log.Println("token claims: ", claims)
+		if user, ok := claims["sub"].(string); ok {
+			return user, nil
 		}
-		err = fmt.Errorf("[ParseJwtToken] Token is not valid for refresh")
 	}
 	return "", err
 }
