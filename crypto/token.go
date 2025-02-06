@@ -44,32 +44,18 @@ func privateKeyFromPemFile(file string) (*rsa.PrivateKey, error) {
 	}
 	// https://gist.github.com/Northern-Lights/8685a823e5c5503511e89068d855994c
 	pemBlock, _ := pem.Decode(der)
-	// der, err = x509.DecryptPEMBlock(pemBlock, []byte(pwd)) // deprecated!
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// priv, err := x509.ParsePKCS1PrivateKey(der)
 	priv, err := x509.ParsePKCS1PrivateKey(pemBlock.Bytes)
-
 	// Public key can be obtained through priv.PublicKey
 	return priv, err
 }
 
 func savePrivateKeyInFile(file string, priv *rsa.PrivateKey) error {
-	//der := x509.MarshalPKCS1PrivateKey(priv)
-	// pp := []byte(pwd)
-	// block, err := x509.EncryptPEMBlock(rand.Reader, "RSA PRIVATE KEY", der, pp, x509.PEMCipherAES256)
-	// if err != nil {
-	// 	return err
-	// }
-	//return os.WriteFile(file, pem.EncodeToMemory(block), 0644)
 	block := pem.EncodeToMemory(
 		&pem.Block{
 			Type:  "RSA PRIVATE KEY",
 			Bytes: x509.MarshalPKCS1PrivateKey(priv),
 		},
 	)
-	//pem.Encode(der, block)
 	log.Println("Save the key in ", file)
 	return os.WriteFile(file, block, 0644)
 }
