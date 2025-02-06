@@ -2,6 +2,7 @@ package app
 
 import (
 	"corsa-blog/db"
+	"corsa-blog/web/app/admin"
 	"corsa-blog/web/app/comments"
 	"log"
 	"net/http"
@@ -34,10 +35,21 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
 		return hc.HandleFormDeleteComment(w, req, id, post_id)
 	}
+	if ok := isAdminReq(ph.lastPath); ok {
+		ha := admin.NewAdmin(w, req)
+		return ha.HandleAdminRequest()
+	}
 
 	elapsed := time.Since(ph.start)
 	log.Printf("[WARN] ignored request. Total call duration: %v\n", elapsed)
 	return nil
+}
+
+func isAdminReq(lastPath string) bool {
+	if strings.HasPrefix(lastPath, "CallDataService") {
+		return true
+	}
+	return false
 }
 
 func isNewComment(lastPath, remPath string) (parent_id int, post_id string, ok bool) {

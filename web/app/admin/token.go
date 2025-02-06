@@ -10,6 +10,42 @@ import (
 	"net/http"
 )
 
+type AdminHandler struct {
+	_w      http.ResponseWriter
+	_req    *http.Request
+	rawbody []byte
+}
+
+func NewAdmin(w http.ResponseWriter, req *http.Request) *AdminHandler {
+	ah := AdminHandler{_w: w, _req: req}
+	return &ah
+}
+
+func (ah *AdminHandler) HandleAdminRequest() error {
+	var err error
+	ah.rawbody, err = io.ReadAll(ah._req.Body)
+	if err != nil {
+		return err
+	}
+
+	scopeDef := struct {
+		Method string `json:"method"`
+	}{}
+	if err := json.Unmarshal(ah.rawbody, &scopeDef); err != nil {
+		return err
+	}
+	switch scopeDef.Method {
+	case "DoLogin":
+		err = ah.doLogin()
+	default:
+		return fmt.Errorf("[HandleAdminRequest]%s is  not supported", scopeDef.Method)
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func handleToken(w http.ResponseWriter, req *http.Request) error {
 	rawbody, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -64,7 +100,7 @@ func tokenResult(resultCode int, username string, w http.ResponseWriter) error {
 
 	switch resultCode {
 	case 200:
-		resp.Info = fmt.Sprintf("User credential OK")
+		resp.Info = "User credential OK"
 		expires := 3600 * 24 * 100
 		log.Printf("Create JWT Token for user %s, expires in %d", username, expires)
 		refCred := conf.Current.AdminCred
@@ -74,9 +110,9 @@ func tokenResult(resultCode int, username string, w http.ResponseWriter) error {
 		}
 		return writeResponse(w, &resp)
 	case 403:
-		resp.Info = fmt.Sprintf("User Unauthorized")
+		resp.Info = "User Unauthorized"
 	default:
-		resp.Info = fmt.Sprintf("User credential ERROR")
+		resp.Info = "User credential ERROR"
 	}
 
 	return writeErrorResponse(w, resp.ResultCode, resp)
@@ -85,7 +121,7 @@ func tokenResult(resultCode int, username string, w http.ResponseWriter) error {
 func checkRefreshToken(w http.ResponseWriter, refrTk string) error {
 
 	if refrTk == "" {
-		return fmt.Errorf("Refresh token is empty")
+		return fmt.Errorf("refresh token is empty")
 	}
 	if len(refrTk) > 10 {
 		b := len(refrTk) - 1
