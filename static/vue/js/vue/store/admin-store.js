@@ -10,9 +10,14 @@ export default {
         },
         storeToken(state, token) {
             state.token = token
+            sessionStorage.setItem("token", token)
         },
         tokenFromCache(state){
-            
+            const token = sessionStorage.getItem("token")
+            if (token){
+                console.log('token from session storage')
+            }
+            state.token = token
         }
     }
 }

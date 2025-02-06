@@ -19,7 +19,7 @@ export default {
       that.$store.commit('tokenFromCache')
       token = that.$store.state.admin.token
     }
-    let headers = { headers: { "content-type": "application/json", "Authoriztion": token } }
+    let headers = { headers: { "content-type": "application/json", "Authorization": token } }
     console.log('headers: ', headers)
     return that.$http.post("CallDataService", JSON.stringify(req), headers)
   },

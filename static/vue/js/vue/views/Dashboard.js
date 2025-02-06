@@ -1,7 +1,10 @@
 import API from '../apicaller.js?version=101'
-
+import CmtToModerate from './components/cmt-to-mod.js?version=100'
 
 export default {
+  components: {
+    CmtToModerate,
+  },
   data() {
     return {
     }
