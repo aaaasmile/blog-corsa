@@ -8,6 +8,12 @@ export default {
   },
   created() {
     this.$store.commit('clearGenAll')
+    this.$store.commit('tokenFromCache')
+    const token = this.$store.state.admin.token
+    if (!token){
+      console.log('token is missed')
+      this.$router.push('/login')
+    }
   },
   computed: {
     ...Vuex.mapState({

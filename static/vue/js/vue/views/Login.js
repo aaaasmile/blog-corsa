@@ -30,25 +30,17 @@ export default {
     template: `
   <v-card>
     <v-card-title class="subheading grey--text">Login</v-card-title>
-
     <v-divider></v-divider>
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
-        <v-text-field
-          v-model="User"
-          label="User"
-        ></v-text-field>
-        <v-text-field
-          v-model="Password"
-          label="Password"
-        ></v-text-field>
-
-        <v-btn icon @click="doLogin" v-on="on">
-          <v-icon>mdi-file</v-icon>
-        </v-btn>
-      </template>
-      <span>Login</span>
-    </v-tooltip>
-  </v-card>
-`
+    <v-container>
+      <v-row>
+        <v-text-field v-model="User" label="User"></v-text-field>
+      </v-row>
+      <v-row>
+        <v-text-field v-model="Password" type="password" label="Password"></v-text-field>
+      </v-row>
+    </v-container>
+    <v-card-actions>
+      <v-btn color="primary" v-on:click="doLogin">Login</v-btn>
+    </v-card-actions>
+  </v-card>`
 }
