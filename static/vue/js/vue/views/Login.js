@@ -1,6 +1,5 @@
 import API from '../apicaller.js?version=101'
 
-
 export default {
     data() {
         return {
@@ -42,5 +41,6 @@ export default {
     <v-card-actions>
       <v-btn color="primary" v-on:click="doLogin">Login</v-btn>
     </v-card-actions>
-  </v-card>`
+  </v-card>
+`
 }

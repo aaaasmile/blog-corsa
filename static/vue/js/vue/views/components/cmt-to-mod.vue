@@ -1,5 +1,7 @@
 <template>
   <v-container>
-    <CmtToModerate />
+    <v-card>
+      <v-card-subtitle>Comments to moderate</v-card-subtitle>
+    </v-card>
   </v-container>
 </template>
