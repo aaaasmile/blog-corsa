@@ -3,6 +3,7 @@ export default {
         server_name: '',
         loadingSync: false,
         token: '',
+        comments_to_mod: [{id: 1, Comment: "Lol"}, {id: 2, Comment: "Lol2"}]
     },
     mutations: {
         serviceServer(state, servername) {
@@ -18,6 +19,9 @@ export default {
                 console.log('token from session storage')
             }
             state.token = token
+        },
+        storeCmtTodMod(state, data){
+            //state.comments_to_mod = data.Comments
         }
     }
 }

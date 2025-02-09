@@ -51,7 +51,7 @@ export default {
     this.CallDataService(that, req).then(result => {
       console.log('Call terminated ', result.data)
       that.$store.commit('clearMsgText')
-      that.$store.commit('resDatalog', [result.data.Status])
+      that.$store.commit('storeCmtTodMod', [result.data])
     }, error => {
       handleErrorMsg(that, error)
     });
