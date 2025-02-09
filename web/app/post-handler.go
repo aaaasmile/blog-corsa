@@ -36,7 +36,7 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 		return hc.HandleFormDeleteComment(w, req, id, post_id)
 	}
 	if ok := isAdminReq(ph.lastPath); ok {
-		ha := admin.NewAdmin(w, req)
+		ha := admin.NewAdmin(w, req, ph.liteDB)
 		return ha.HandleAdminRequest()
 	}
 

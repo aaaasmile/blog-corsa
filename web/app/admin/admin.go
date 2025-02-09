@@ -3,6 +3,7 @@ package admin
 import (
 	"corsa-blog/conf"
 	"corsa-blog/crypto"
+	"corsa-blog/db"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,10 +15,11 @@ type AdminHandler struct {
 	_w      http.ResponseWriter
 	_req    *http.Request
 	rawbody []byte
+	liteDB  *db.LiteDB
 }
 
-func NewAdmin(w http.ResponseWriter, req *http.Request) *AdminHandler {
-	ah := AdminHandler{_w: w, _req: req}
+func NewAdmin(w http.ResponseWriter, req *http.Request, liteDB *db.LiteDB) *AdminHandler {
+	ah := AdminHandler{_w: w, _req: req, liteDB: liteDB}
 	return &ah
 }
 

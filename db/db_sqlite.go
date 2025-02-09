@@ -176,6 +176,33 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 	return base_node, nil
 }
 
+func (ld *LiteDB) GeCommentsToModerate() ([]*idl.CmtItem, error) {
+	log.Println("[LiteDB-SELECT] get comments to moderate ")
+	res := []*idl.CmtItem{}
+	q := `SELECT id,name,email,comment,timestamp,status,post_id,parent_id from comment where status = 0;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	rows, err := ld.connDb.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ts int64
+		cmtItem := idl.CmtItem{}
+		statustxt := ""
+		if err := rows.Scan(&cmtItem.Id, &cmtItem.Name, &cmtItem.Email, &cmtItem.Comment, &ts, &statustxt, &cmtItem.PostId, &cmtItem.ParentId); err != nil {
+			return nil, err
+		}
+		cmtItem.DateTime = time.Unix(ts, 0)
+		res = append(res, &cmtItem)
+	}
+
+	return res, nil
+}
+
 func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	// used to display all comments for a post
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)

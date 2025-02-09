@@ -41,6 +41,7 @@ export default {
       that.$store.commit('clearMsgText')
       that.$store.commit('resDatalog', [result.data.Status])
       that.$store.commit('storeToken', result.data.Token.access_token)
+      Ok()
     }, error => {
       handleErrorMsg(that, error)
     });

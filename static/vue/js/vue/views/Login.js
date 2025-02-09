@@ -23,7 +23,10 @@ export default {
                 user: this.User,
                 password: this.Password,
             }
-            API.DoLogin(this, para)
+            API.DoLogin(this, para, () => {
+              console.log('Login ok')
+              this.$router.push('/')
+            })
         }
     },
     template: `

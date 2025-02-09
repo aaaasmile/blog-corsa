@@ -7,7 +7,6 @@ export default {
       drawer: false,
       AppTitle: "Blog Admin",
       links: [{ path: '/', icon: 'dashboard', title: 'Dashboard'},
-        { path: '/login', icon: 'folder', title: 'Login'},
       ],
     }
   },
