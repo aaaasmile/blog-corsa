@@ -97,6 +97,7 @@ func (ld *LiteDB) InsertNewComment(cmtItem *idl.CmtItem) error {
 }
 
 func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
+	// this is used for reply to a comment id
 	log.Println("[GetCommentForId] get comment id ", id)
 	q := `SELECT id,parent_id,post_id,name,email,comment,timestamp,status from comment where id = ?;`
 	if ld.debugSQL {
@@ -141,7 +142,7 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 	if len(arrCmtItem) > 1 {
 		return nil, fmt.Errorf("comment id %s multiple instance?", id)
 	}
-	root_node := &idl.CmtNode{
+	base_node := &idl.CmtNode{
 		Children: []*idl.CmtNode{},
 		CmtItem:  arrCmtItem[0],
 		PostId:   post_id,
@@ -155,6 +156,9 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 			NodeCount: 1,
 		}
 		node.CmtItem = arrCmtItem[ix]
+		if node.CmtItem.Status == idl.STPublished {
+			node.PublishedCount = 1
+		}
 		children, err := ld.getCommentNodeChildren(level, item_id, post_id)
 		if err != nil {
 			return nil, err
@@ -163,21 +167,24 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 			node.Children = append(node.Children, children...)
 		}
 
-		root_node.Children = append(root_node.Children, node)
-		root_node.NodeCount += node.NodeCount
+		base_node.Children = append(base_node.Children, node)
+		base_node.NodeCount += node.NodeCount
+		base_node.PublishedCount += node.PublishedCount
 	}
 	log.Println("[GetCommentForId] found level 0 items: ", len(level0_ids))
 
-	return root_node, nil
+	return base_node, nil
 }
 
 func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
+	// used to display all comments for a post
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
 	root_node := &idl.CmtNode{
-		PostId:    post_id,
-		Children:  []*idl.CmtNode{},
-		CmtItem:   &idl.CmtItem{},
-		NodeCount: 0,
+		PostId:         post_id,
+		Children:       []*idl.CmtNode{},
+		CmtItem:        &idl.CmtItem{},
+		NodeCount:      0,
+		PublishedCount: 0,
 	}
 	children, err := ld.getCommentNodeChildren(0, 0, post_id)
 	if err != nil {
@@ -187,6 +194,7 @@ func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 		root_node.Children = append(root_node.Children, children...)
 		for _, item := range children {
 			root_node.NodeCount += item.NodeCount
+			root_node.PublishedCount += item.PublishedCount
 		}
 	}
 
@@ -235,12 +243,16 @@ func (ld *LiteDB) getCommentNodeChildren(level int, parent_id int, post_id strin
 	subNodeCount := 0
 	for ix, item_id := range level_ids {
 		node := &idl.CmtNode{
-			PostId:    post_id,
-			Children:  []*idl.CmtNode{},
-			NodeCount: 0,
+			PostId:         post_id,
+			Children:       []*idl.CmtNode{},
+			NodeCount:      0,
+			PublishedCount: 0,
 		}
 		node.CmtItem = arrCmtItem[ix]
 		node.NodeCount += 1
+		if node.CmtItem.Status == idl.STPublished {
+			node.PublishedCount += 1
+		}
 
 		children, err := ld.getCommentNodeChildren(nex_level, item_id, post_id)
 		if err != nil {
@@ -250,6 +262,7 @@ func (ld *LiteDB) getCommentNodeChildren(level int, parent_id int, post_id strin
 			node.Children = append(node.Children, children...)
 			for _, item := range children {
 				node.NodeCount += item.NodeCount
+				node.PublishedCount += item.PublishedCount
 				subNodeCount += item.NodeCount
 			}
 		}

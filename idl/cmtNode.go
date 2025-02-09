@@ -6,12 +6,12 @@ import (
 )
 
 func (cn *CmtNode) GetTextNumComments() string {
-	if cn.NodeCount == 1 {
+	if cn.PublishedCount == 1 {
 		return "1 commento"
-	} else if cn.NodeCount == 0 {
+	} else if cn.PublishedCount == 0 {
 		return "Nessun commento"
 	}
-	return fmt.Sprintf("%d commenti", cn.NodeCount)
+	return fmt.Sprintf("%d commenti", cn.PublishedCount)
 }
 
 func (cn *CmtNode) GetLines() []string {
@@ -19,8 +19,10 @@ func (cn *CmtNode) GetLines() []string {
 	res = append(res, "<ul>")
 	for _, item := range cn.Children {
 		if item.CmtItem != nil {
-			lines := item.getNodeLines()
-			res = append(res, lines...)
+			if item.CmtItem.Status == STPublished {
+				lines := item.getNodeLines()
+				res = append(res, lines...)
+			}
 		}
 	}
 	res = append(res, "</ul>")
@@ -34,8 +36,10 @@ func (cn *CmtNode) getNodeLines() []string {
 	if len(cn.Children) > 0 {
 		res = append(res, "<ul>")
 		for _, item := range cn.Children {
-			lines := item.getNodeLines()
-			res = append(res, lines...)
+			if item.CmtItem.Status == STPublished {
+				lines := item.getNodeLines()
+				res = append(res, lines...)
+			}
 		}
 		res = append(res, "</ul>")
 	}
