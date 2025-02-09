@@ -5,25 +5,24 @@
 
       <v-divider></v-divider>
 
-      <v-list
-        lines="three"
-        select-strategy="leaf"
+      <v-data-table
+        v-model="cmtSelected"
+        :headers="headers"
+        :items="Comments"
+        :loading="loadingData"
+        item-key="KeyStore"
+        show-select
+        class="elevation-1"
+        :search="search"
+        :footer-props="{
+          showFirstLastPage: true,
+          firstIcon: 'mdi-arrow-collapse-left',
+          lastIcon: 'mdi-arrow-collapse-right',
+          prevIcon: 'mdi-minus',
+          nextIcon: 'mdi-plus',
+        }"
       >
-        <v-list-item
-          v-for="cmt in Comments"
-          :key="cmt.Id"
-          :subtitle="cmt.PostId"
-          :title="cmt.Comment"
-        >
-          <template v-slot:append>
-            <v-btn
-              color="grey-lighten-1"
-              icon="mdi-information"
-              variant="text"
-            ></v-btn>
-          </template>
-        </v-list-item>
-      </v-list>
+      </v-data-table>
     </v-card>
   </v-container>
 </template>
