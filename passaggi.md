@@ -55,7 +55,38 @@ copia delle dimensioni di 320 pixel in larghezza.
 Non ho idea se sia possibile usare un generatore come Hugo o Jeckill per la mia applicazione.
 Ho trovato più divertente crearne uno mio.
 
-## Immagini
+## Formato mdhtml
+È un file che ha una sezione per i dati come i files md e una con il contenuto.
+Nella parte del contenuto uso il codice html. Per velocizzare la generazione dei tag, uso
+un preprocessor che mi genera un codice html. Esso supporta queste macro:
+
+- link
+- figstack
+
+Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
+
+### Link
+Il comando _link_ serve per avere un <a href> con il link url uguale al testo mostrato.
+Esempio:
+
+    [link 'https://wien-rundumadum-2024-130k.legendstracking.com/']
+genera:
+
+    <a href='https://wien-rundumadum-2024-130k.legendstracking.com/'>https://wien-rundumadum-2024-130k.legendstracking.com/ </a> 
+
+### figstack
+Serve per creare velocemente una galleria di immagini.
+Esempio:
+
+    [figstack
+        'AustriaBackyardUltra2024011.jpg', 'Partenza mondiale Backyard',
+        'backyard_award.png', 'Certificato finale'
+    ]
+Ogni coppia è rappresentata dal nome del file dell'immagine integrale e dal titolo.
+Il codice html generato lo trovo di seguito. Col file dell'immagine integrale 
+cosidero per dato il file d'immagine in formato ridotto di larghezza 320 pixel.
+
+## Immagini (html creato da figstack)
 Quondo ho una serie di immagini da inserire nel post, uso il seguente html:
 
     <section class="vertstack">

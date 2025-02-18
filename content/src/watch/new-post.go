@@ -34,6 +34,11 @@ func NewPost(title string, datepost string, watch_for_changes bool) error {
 	if err := post.createNewPost("../posts-src"); err != nil {
 		return err
 	}
+	if watch_for_changes {
+		if err := post.editPost("../posts-src"); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
