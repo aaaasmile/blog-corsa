@@ -24,7 +24,7 @@ type ObserveComments struct {
 
 func RunService(configfile string, simulate bool) error {
 
-	if _, err := conf.ReadConfig(configfile); err != nil {
+	if _, err := conf.ReadConfig(configfile, "./cert"); err != nil {
 		return err
 	}
 

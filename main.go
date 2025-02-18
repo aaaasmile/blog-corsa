@@ -24,7 +24,7 @@ func main() {
 	}
 
 	if *initAccount {
-		ac := crypto.NewUserCred()
+		ac := crypto.NewUserCred("./cert")
 		if err := ac.CreateAdminCredentials(); err != nil {
 			log.Fatal("Error: ", err)
 		}

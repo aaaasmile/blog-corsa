@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -28,11 +29,11 @@ type UserCred struct {
 	MyPubKey     *rsa.PublicKey
 }
 
-func NewUserCred() *UserCred {
+func NewUserCred(baseDir string) *UserCred {
 	res := UserCred{
-		CredFile:   "./cert/cred.json",
-		PemFile:    "./cert/key.pem",
-		PubPemfile: "./cert/pubkey.pem",
+		CredFile:   filepath.Join(baseDir, "cred.json"),
+		PemFile:    filepath.Join(baseDir, "key.pem"),
+		PubPemfile: filepath.Join(baseDir, "pubkey.pem"),
 		RsaLen:     1024 * 4,
 	}
 	return &res

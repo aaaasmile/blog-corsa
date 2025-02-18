@@ -57,7 +57,7 @@ type Relay struct {
 
 var Current = &Config{}
 
-func ReadConfig(configfile string) (*Config, error) {
+func ReadConfig(configfile, baseDirCert string) (*Config, error) {
 	_, err := os.Stat(configfile)
 	if err != nil {
 		return nil, err
@@ -68,7 +68,7 @@ func ReadConfig(configfile string) (*Config, error) {
 	if err := readCustomOverrideConfig(Current, configfile); err != nil {
 		return nil, err
 	}
-	ac := crypto.NewUserCred()
+	ac := crypto.NewUserCred(baseDirCert)
 	if err := ac.CredFromFile(); err != nil {
 		return nil, fmt.Errorf("[ReadConfig] Credential error. Please make sure that an account has been initialized. Error is: %v ", err)
 	}

@@ -43,7 +43,7 @@ func main() {
 		fmt.Printf("%s, version: %s", idl.Appname, idl.Buildnr)
 		os.Exit(0)
 	}
-	if _, err := conf.ReadConfig(*configfile); err != nil {
+	if _, err := conf.ReadConfig(*configfile, `../../cert`); err != nil {
 		log.Fatal("ERROR: ", err)
 	}
 	if *build {
