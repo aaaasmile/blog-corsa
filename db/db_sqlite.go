@@ -42,17 +42,24 @@ func (ld *LiteDB) openSqliteDatabase() error {
 }
 func (ld *LiteDB) DeleteComment(cmtItem *idl.CmtItem) error {
 	log.Println("[LiteDB - DELETE] delete comment on id ", cmtItem.Id)
-	q := fmt.Sprintf(`DELETE FROM comment WHERE id=%d AND req_id='%s';`, cmtItem.Id, cmtItem.ReqId)
+	q := `DELETE FROM comment WHERE id=? AND req_id=?;`
 	if ld.debugSQL {
-		log.Println("Query is", q)
+		log.Println("SQL is", q)
 	}
 	stmt, err := ld.connDb.Prepare(q)
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec()
+	res, err := stmt.Exec(cmtItem.Id, cmtItem.ReqId)
 	if err != nil {
 		return err
+	}
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
 	}
 	log.Println("[LiteDB - DELETE] ok")
 	return nil
