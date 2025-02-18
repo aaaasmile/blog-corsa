@@ -42,7 +42,7 @@ func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 		ph := PostHandler{
 			debug:       conf.Current.Debug,
 			liteDB:      ap.liteDB,
-			moderateCmt: conf.Current.Database.ModerateCmt,
+			moderateCmt: conf.Current.Comment.ModerateCmt,
 		}
 		if err := ph.handlePost(w, req); err != nil {
 			log.Println("[POST] Error: ", err)

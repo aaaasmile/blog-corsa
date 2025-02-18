@@ -12,28 +12,32 @@ import (
 )
 
 type Config struct {
-	ServiceURL       string
-	RootURLPattern   string
-	ServerName       string
-	StaticBlogDir    string
-	PostSubDir       string
-	PageSubDir       string
-	VuetifyLibName   string
-	VueLibName       string
-	Relay            *Relay
-	Telegram         *Telegram
-	Database         *Database
+	ServiceURL     string
+	RootURLPattern string
+	ServerName     string
+	StaticBlogDir  string
+	PostSubDir     string
+	PageSubDir     string
+	VuetifyLibName string
+	VueLibName     string
+	Relay          *Relay
+	Telegram       *Telegram
+	Database       *Database
+	SimulateAlarm  bool
+	Debug          bool
+	AdminCred      *crypto.UserCred
+	Comment        *Comment
+}
+
+type Comment struct {
 	AllowEmptyMail   bool
 	HasDateInCmtForm bool
-	SimulateAlarm    bool
-	Debug            bool
-	AdminCred        *crypto.UserCred
+	ModerateCmt      bool
 }
 
 type Database struct {
-	DbFileName  string
-	SQLDebug    bool
-	ModerateCmt bool
+	DbFileName string
+	SQLDebug   bool
 }
 
 type Telegram struct {

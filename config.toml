@@ -8,8 +8,11 @@ VueLibName = "vue.js"
 ServerName = "<todo in custom>"
 PostSubDir = "posts"
 PageSubDir = "pages"
+
+[Comment]
 AllowEmptyMail = false
 HasDateInCmtForm = false
+ModerateCmt = true
 
 [Relay]
 SendMail = false
@@ -27,4 +30,3 @@ APIString = "<todo in custom>"
 [Database]
 DbFileName = "blog-corsa.db"
 SQLDebug = false
-ModerateCmt = true

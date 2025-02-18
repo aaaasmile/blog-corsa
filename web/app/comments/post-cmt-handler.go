@@ -109,7 +109,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		return ch.renderResNewComment(cmtItem, errMsg, w)
 	}
 	if email == "" {
-		if conf.Current.AllowEmptyMail {
+		if conf.Current.Comment.AllowEmptyMail {
 			email = "noreply@invido.it"
 		} else {
 			errMsg = "email è vuota"
