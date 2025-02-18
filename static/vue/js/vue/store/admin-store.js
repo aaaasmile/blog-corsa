@@ -3,7 +3,7 @@ export default {
         server_name: '',
         loadingSync: false,
         token: '',
-        comments_to_mod: [{Id: 1, Comment: "Lol"}, {Id: 2, Comment: "Lol2"}],
+        comments_to_mod: [{Id: 1, Comment: "Lol-AA"}, {Id: 2, Comment: "Lol2-BB"}],
         cmtSelected: []
     },
     mutations: {

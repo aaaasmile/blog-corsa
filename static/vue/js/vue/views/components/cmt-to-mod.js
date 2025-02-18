@@ -1,14 +1,10 @@
 import API from '../../apicaller.js?version=101'
+
 const buildselectedParam = (that) => {
   let arr = []
   let stickarr = []
   that.$store.state.admin.cmtSelected.forEach(element => {
-    arr.push(element.KeyStore)
-  });
-  that.$store.state.admin.cmtSelected.forEach(element => {
-    if (element.is_sticky) {
-      stickarr.push(element.KeyStore)
-    }
+    arr.push(element.Id)
   });
   console.log("selection list", arr)
   let para = { selected: arr, sticky: stickarr, cmd: 'approve' }
@@ -72,7 +68,7 @@ export default {
         :headers="headers"
         :items="Comments"
         :loading="loadingData"
-        item-key="KeyStore"
+        item-key="Id"
         show-select
         class="elevation-1"
         :search="search"
@@ -86,6 +82,5 @@ export default {
       >
       </v-data-table>
     </v-card>
-  </v-container>
-`
+  </v-container>`
 }

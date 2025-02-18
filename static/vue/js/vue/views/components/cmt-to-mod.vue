@@ -10,7 +10,7 @@
         :headers="headers"
         :items="Comments"
         :loading="loadingData"
-        item-key="KeyStore"
+        item-key="Id"
         show-select
         class="elevation-1"
         :search="search"
