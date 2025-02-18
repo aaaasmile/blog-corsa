@@ -52,11 +52,11 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	}
 	if post_id, ok := isComments(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
-		return hc.HandleComments(w, req, post_id, false)
+		return hc.HandleCommentsTitle(w, req, post_id)
 	}
 	if post_id, ok := isCommentDetails(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
-		return hc.HandleComments(w, req, post_id, true)
+		return hc.HandleCommentsDetails(w, req, post_id)
 	}
 	if id, ok := isFormForReplyComment(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)

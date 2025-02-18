@@ -1,15 +1,7 @@
-{{define "head" -}}
+{{define "headTitle" -}}
 <details class="comments"  hx-get="/blog-admin/{{.PostId}}/cmtDetails" hx-trigger="toggle once" hx-target="#cmtRes">
     <summary>{{.CmtTotText}}</summary>
-{{end}}
-
-{{define "headform" -}}
-{{end}}
-{{define "tree"}}
     <span id="cmtRes"></span>
-{{- end}}
-
-{{define "foot"}}
 </details>
 {{- end}}
 

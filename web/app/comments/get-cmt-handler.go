@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"corsa-blog/conf"
 	"corsa-blog/db"
-	"corsa-blog/idl"
 	"log"
 	"net/http"
 	"text/template"
@@ -55,7 +54,7 @@ func (ch *CommentHandler) HandleFormForReplyComment(w http.ResponseWriter, req *
 	return nil
 }
 
-func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, post_id string, is_detail bool) error {
+func (ch *CommentHandler) HandleCommentsTitle(w http.ResponseWriter, req *http.Request, post_id string) error {
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleComments] get comments for id=%s, lang=%s", post_id, lang)
 
@@ -65,7 +64,7 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	}
 
 	templName := "templates/cmt/get-comments.html"
-	var partHeader, partForm, partTree, partFoot, partMerged bytes.Buffer
+	var partHeader bytes.Buffer
 	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
 
 	ctxHead := struct {
@@ -80,19 +79,43 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 		HasDate:    conf.Current.Comment.HasDateInCmtForm,
 	}
 
-	headSect := "headform"
-	treeSect := "tree"
-	if is_detail {
-		headSect = "headformDet"
-		treeSect = "treeDet"
-	} else {
-		if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
-			return err
-		}
-		partHeader.WriteTo(&partMerged)
+	if err := tmplBody.ExecuteTemplate(&partHeader, "headTitle", ctxHead); err != nil {
+		return err
 	}
 
-	if err := tmplBody.ExecuteTemplate(&partForm, headSect, ctxHead); err != nil {
+	if _, err = w.Write(partHeader.Bytes()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ch *CommentHandler) HandleCommentsDetails(w http.ResponseWriter, req *http.Request, post_id string) error {
+	lang := req.URL.Query().Get("lang")
+	log.Printf("[HandleCommentsDetails] get comments for id=%s, lang=%s", post_id, lang)
+
+	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
+	if err != nil {
+		return err
+	}
+
+	templName := "templates/cmt/get-comments.html"
+	var partForm, partTree, partMerged bytes.Buffer
+	tmplBody := template.Must(template.New("DocPart").ParseFiles(templName))
+
+	ctxHead := struct {
+		ParentId   int
+		PostId     string
+		CmtTotText string
+		HasDate    bool
+	}{
+		CmtTotText: cmtNode.GetTextNumComments(),
+		PostId:     post_id,
+		ParentId:   cmtNode.CmtItem.ParentId,
+		HasDate:    conf.Current.Comment.HasDateInCmtForm,
+	}
+
+	if err := tmplBody.ExecuteTemplate(&partForm, "headformDet", ctxHead); err != nil {
 		return err
 	}
 
@@ -101,20 +124,12 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	}{
 		CmtLines: cmtNode.GetLines(),
 	}
-	if err := tmplBody.ExecuteTemplate(&partTree, treeSect, ctxTree); err != nil {
+	if err := tmplBody.ExecuteTemplate(&partTree, "treeDet", ctxTree); err != nil {
 		return err
 	}
 
 	partForm.WriteTo(&partMerged)
 	partTree.WriteTo(&partMerged)
-
-	cmtItem := idl.CmtItem{}
-	if !is_detail {
-		if err := tmplBody.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
-			return err
-		}
-		partFoot.WriteTo(&partMerged)
-	}
 
 	if _, err = w.Write(partMerged.Bytes()); err != nil {
 		return err
