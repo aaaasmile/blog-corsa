@@ -21,16 +21,18 @@ import (
 type CommentHandler struct {
 	debug       bool
 	liteDB      *db.LiteDB
+	newCmt      chan *idl.CmtItem
 	start       time.Time
 	moderateCmt bool
 }
 
-func NewPostCommentHandler(liteDB *db.LiteDB, debug bool, moderateCmt bool) *CommentHandler {
+func NewPostCommentHandler(liteDB *db.LiteDB, debug bool, moderateCmt bool, newCmt chan *idl.CmtItem) *CommentHandler {
 	res := &CommentHandler{
 		debug:       debug,
 		liteDB:      liteDB,
 		moderateCmt: moderateCmt,
 		start:       time.Now(),
+		newCmt:      newCmt,
 	}
 	return res
 }
@@ -135,6 +137,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 	if err := ch.liteDB.InsertNewComment(cmtItem); err != nil {
 		return err
 	}
+	ch.newCmt <- cmtItem
 
 	return ch.renderResNewComment(cmtItem, errMsg, w)
 }

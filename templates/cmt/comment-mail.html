@@ -1,21 +1,18 @@
 {{define "mailSubj" -}}
-Subject: Birthday Alarm
+Subject: New Comment in Blog
 {{end}}
 
 {{define "mailbody" -}}
-<div>Hello my Friend,</div>
-<p>there are new comments that requires your attention.</p>
+<p>Hello my Friend,</p>
+<p>there is a new comment that requires your attention.</p>
 
-<div>
-    {{- range . -}}
-    <div>{{.Name}}</div>
-    <div>{{.Email}}</div>
-    <div>{{.Website}}</div>
-    <div>{{.Comment}}</div>
-    <div>{{.Time}}</div>
-    <hr>
-    {{- end}}
-</div>
+<ul>
+    <li>{{.Name}}</li>
+    <li>{{.Email}}</li>
+    <li>{{.Comment}}</li>
+    <li>{{.DateTime}}</li>
+    <li>{{.Status}}</li>
+</ul>
 
 <p>Enjoy,</p>
 <p>aaaasmile</p>
@@ -23,14 +20,13 @@ Subject: Birthday Alarm
 
 {{define "mailPlain" -}}
 Hello friend,
-there are new comments that requires your attention.
-{{ range . }}
+there is a new comment that requires your attention.
+
 {{.Name}}
 {{.Email}}
-{{.Website}}
 {{.Comment}}
-{{.Time}}
-{{- end}}
+{{.DateTime}}
+{{.Status}}
 
 Enjoy,
 aaaasmile

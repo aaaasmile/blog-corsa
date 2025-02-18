@@ -19,7 +19,7 @@ import (
 type ObserveComments struct {
 	simulation bool
 	debug      bool
-	newCmt     chan idl.CmtItem
+	newCmt     chan *idl.CmtItem
 }
 
 func RunService(configfile string, simulate bool) error {
@@ -45,7 +45,8 @@ func RunService(configfile string, simulate bool) error {
 	log.Println("static blog dir", staticBlogDirSrv)
 	http.Handle("/", http.StripPrefix("/", http.FileServer(staticBlogDirSrv)))
 	// app for GET and POST handling
-	myApp, err := app.NewApp()
+	chNewCmt := make(chan *idl.CmtItem, 1)
+	myApp, err := app.NewApp(chNewCmt)
 	if err != nil {
 		return err
 	}
@@ -54,7 +55,8 @@ func RunService(configfile string, simulate bool) error {
 	chShutdown := make(chan struct{}, 1)
 	go func(chs chan struct{}) {
 		sch := ObserveComments{simulation: (conf.Current.SimulateAlarm || simulate),
-			debug: conf.Current.Debug,
+			debug:  conf.Current.Debug,
+			newCmt: chNewCmt,
 		}
 		if err := sch.doObserving(); err != nil {
 			log.Println("Server is not observing anymore because: ", err)
@@ -104,8 +106,8 @@ loop:
 	for {
 		select {
 		case newCmt := <-sch.newCmt:
-			log.Println("new comment recognized", newCmt.Id)
-			if err = sch.sendNewCommentNtfy(&newCmt); err != nil {
+			log.Println("[ObserveComments] new comment recognized", newCmt.Id)
+			if err = sch.sendNewCommentNtfy(newCmt); err != nil {
 				break loop
 			}
 		}

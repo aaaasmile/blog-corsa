@@ -2,6 +2,7 @@ package app
 
 import (
 	"corsa-blog/db"
+	"corsa-blog/idl"
 	"corsa-blog/web/app/admin"
 	"corsa-blog/web/app/comments"
 	"log"
@@ -16,6 +17,7 @@ type PostHandler struct {
 	lastPath    string
 	start       time.Time
 	liteDB      *db.LiteDB
+	newCmt      chan *idl.CmtItem
 	moderateCmt bool
 }
 
@@ -28,11 +30,11 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 	}
 
 	if parent_id, post_id, ok := isNewComment(ph.lastPath, remPath); ok {
-		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
+		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt, ph.newCmt)
 		return hc.HandleFormNewComment(w, req, parent_id, post_id)
 	}
 	if id, post_id, ok := isDeleteComment(ph.lastPath, remPath); ok {
-		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt)
+		hc := comments.NewPostCommentHandler(ph.liteDB, ph.debug, ph.moderateCmt, ph.newCmt)
 		return hc.HandleFormDeleteComment(w, req, id, post_id)
 	}
 	if ok := isAdminReq(ph.lastPath); ok {

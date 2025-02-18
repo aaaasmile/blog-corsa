@@ -3,6 +3,7 @@ package app
 import (
 	"corsa-blog/conf"
 	"corsa-blog/db"
+	"corsa-blog/idl"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,10 +11,13 @@ import (
 
 type App struct {
 	liteDB *db.LiteDB
+	newCmt chan *idl.CmtItem
 }
 
-func NewApp() (*App, error) {
-	res := &App{}
+func NewApp(newCmt chan *idl.CmtItem) (*App, error) {
+	res := &App{
+		newCmt: newCmt,
+	}
 	var err error
 	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbFileName,
 		conf.Current.Database.SQLDebug); err != nil {
@@ -43,6 +47,7 @@ func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 			debug:       conf.Current.Debug,
 			liteDB:      ap.liteDB,
 			moderateCmt: conf.Current.Comment.ModerateCmt,
+			newCmt:      ap.newCmt,
 		}
 		if err := ph.handlePost(w, req); err != nil {
 			log.Println("[POST] Error: ", err)
