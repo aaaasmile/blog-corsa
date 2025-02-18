@@ -51,11 +51,14 @@ export default {
     this.CallDataService(that, req).then(result => {
       console.log('Call terminated ', result.data)
       that.$store.commit('clearMsgText')
-      that.$store.commit('storeCmtTodMod', [result.data])
-      Ok()
+      if(Ok){
+        Ok(result.data)
+      }
     }, error => {
       handleErrorMsg(that, error)
-      Err()
+      if(Err){
+        Err()
+      }
     });
   }
 }

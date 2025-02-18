@@ -23,13 +23,19 @@ export default {
       headers: [
         { text: 'ID', value: 'Id' },
         { text: 'Comment', value: 'Comment' },
+        { text: 'Name', value: 'Name' },
+        { text: 'Mail', value: 'Email' },
+        { text: 'Date', value: 'DateTime' },
       ],
     }
   },
   created() {
     console.log('cmt-to-mod created')
     let para = { cmd: 'list', type: 'to_moderate' }
-    API.DoCmt(this, para)
+    const that = this
+    API.DoCmt(this, para, (data) => {
+      that.$store.commit('storeCmtTodMod', data)
+    })
   },
   computed: {
     cmtSelected: {
@@ -73,7 +79,7 @@ export default {
       this.loadingCmt = true
       let para = { cmd: cmd_todo, list: items }
       console.log('do on selected comment list', cmd_todo, items)
-      API.DoCmt(this, para, () => {
+      API.DoCmt(this, para, (data) => {
         this.loadingCmt = false
       }, () => {
         console.log('something went wrong')

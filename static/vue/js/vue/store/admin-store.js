@@ -3,7 +3,7 @@ export default {
         server_name: '',
         loadingSync: false,
         token: '',
-        comments_to_mod: [{Id: 1, Comment: "Lol-AA"}, {Id: 2, Comment: "Lol2-BB"}],
+        comments_to_mod: [],
         cmtSelected: []
     },
     mutations: {
@@ -22,7 +22,7 @@ export default {
             state.token = token
         },
         storeCmtTodMod(state, data){
-            //state.comments_to_mod = data.Comments
+            state.comments_to_mod = data.Comments
             state.cmtSelected = []
         },
         setCmtSelected(state, selected){
