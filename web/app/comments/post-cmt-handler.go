@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"strings"
 	"text/template"
 	"time"
 
@@ -63,9 +64,23 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 	email := req.PostFormValue("email")
 	name := req.PostFormValue("name")
 	commentMd := req.PostFormValue("comment")
+	dateTimeIso := req.PostFormValue("date")
 	if ch.debug {
 		log.Println("orig comment:", commentMd)
-		log.Println("name, email:", name, email)
+		log.Println("name, email, date:", name, email, dateTimeIso)
+	}
+	dtCmt := time.Now()
+	if dateTimeIso != "" {
+		arr := strings.Split(dateTimeIso, " ")
+		parsStr := "2006-01-02"
+		if len(arr) == 2 {
+			parsStr = "2006-01-02 15:00"
+		}
+		dt, err := time.Parse(parsStr, dateTimeIso)
+		if err != nil {
+			return err
+		}
+		dtCmt = dt
 	}
 	unsafeComment := blackfriday.Run([]byte(commentMd), blackfriday.WithNoExtensions())
 	htmlCmt := bluemonday.StrictPolicy().SanitizeBytes(unsafeComment)
@@ -78,7 +93,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 		Email:    email,
 		Name:     name,
 		Status:   idl.STCreated,
-		DateTime: time.Now(),
+		DateTime: dtCmt,
 		Comment:  string(htmlCmt),
 		PostId:   post_id,
 		ParentId: parent_id,
