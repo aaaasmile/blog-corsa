@@ -12,21 +12,22 @@ import (
 )
 
 type Config struct {
-	ServiceURL     string
-	RootURLPattern string
-	ServerName     string
-	StaticBlogDir  string
-	PostSubDir     string
-	PageSubDir     string
-	VuetifyLibName string
-	VueLibName     string
-	Relay          *Relay
-	Telegram       *Telegram
-	Database       *Database
-	AllowEmptyMail bool
-	SimulateAlarm  bool
-	Debug          bool
-	AdminCred      *crypto.UserCred
+	ServiceURL       string
+	RootURLPattern   string
+	ServerName       string
+	StaticBlogDir    string
+	PostSubDir       string
+	PageSubDir       string
+	VuetifyLibName   string
+	VueLibName       string
+	Relay            *Relay
+	Telegram         *Telegram
+	Database         *Database
+	AllowEmptyMail   bool
+	HasDateInCmtForm bool
+	SimulateAlarm    bool
+	Debug            bool
+	AdminCred        *crypto.UserCred
 }
 
 type Database struct {

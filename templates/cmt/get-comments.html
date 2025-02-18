@@ -7,8 +7,10 @@
         <fieldset>
             <label for="name">Nome</label>
             <input id="name" name="name" value="" type="text" placeholder="Nome">
+            {{if .HasDate -}}
             <label for="date">Data</label>
             <input id="date" name="date" value="" type="text" placeholder="Data">
+            {{end -}}
             <label for="email">Email</label>
             <input hx-get="/blog-admin/validatoremail?lang=it" hx-target="next .error" name="email" id="email" type="email"
                 value="" placeholder="Email">

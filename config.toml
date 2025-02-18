@@ -9,6 +9,7 @@ ServerName = "<todo in custom>"
 PostSubDir = "posts"
 PageSubDir = "pages"
 AllowEmptyMail = false
+HasDateInCmtForm = false
 
 [Relay]
 SendMail = false

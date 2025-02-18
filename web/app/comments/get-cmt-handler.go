@@ -2,6 +2,7 @@ package comments
 
 import (
 	"bytes"
+	"corsa-blog/conf"
 	"corsa-blog/db"
 	"corsa-blog/idl"
 	"log"
@@ -35,9 +36,11 @@ func (ch *CommentHandler) HandleFormForReplyComment(w http.ResponseWriter, req *
 		ParentId   int
 		PostId     string
 		CmtTotText string
+		HasDate    bool
 	}{
 		PostId:   cmtNode.PostId,
 		ParentId: cmtNode.CmtItem.Id, // Remember this is a reply form to this Id
+		HasDate:  conf.Current.HasDateInCmtForm,
 	}
 	if err := tmplBody.ExecuteTemplate(&partForm, "headform", ctxHead); err != nil {
 		return err
@@ -69,10 +72,12 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 		ParentId   int
 		PostId     string
 		CmtTotText string
+		HasDate    bool
 	}{
 		CmtTotText: cmtNode.GetTextNumComments(),
 		PostId:     post_id,
 		ParentId:   cmtNode.CmtItem.ParentId,
+		HasDate:    conf.Current.HasDateInCmtForm,
 	}
 	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
 		return err
