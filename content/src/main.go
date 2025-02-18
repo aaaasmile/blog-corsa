@@ -16,7 +16,7 @@ import (
 //
 // Example new post:
 //
-//	go run .\main.go -config ..\..\config.toml  -newpost "Quo Vadis" -date "2023-01-04"
+//	go run .\main.go -config ..\..\config.toml  -newpost "Quo Vadis" -date "2023-01-04" -watch
 //
 // # Example edit page
 //

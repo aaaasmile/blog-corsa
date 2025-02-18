@@ -219,4 +219,7 @@ generata in con questo programma attraverso:
     openssl rsa -in key.pem -pubout -out pubkey.pem
 
 Il token Jwt vale un'ora e non uso il refresh. Viene memorizzato nel browser session store. È attaccabile via XSS (https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps), ma senza cors, nessun utente extra, l'unico punto dovrebbe essere il commento, che, utilizzando html, potrebbe eseguire del codice esterno che va a modificare la app (la static get). Quando inserisco un nuovo commento, ho un check del contenuto con Bluemonday in StrictPolicy, che non ammette html.
-Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere un html. Qui il rendering del post non deve assolutamente generare html, ma semplicemente mostrare una stringa html-escaped.        
+Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere un html. Qui il rendering del post non deve assolutamente generare html, ma semplicemente mostrare una stringa html-escaped. 
+
+## Dominio
+Hi riservato il nome: igorrun.invido.it
