@@ -42,7 +42,7 @@ func (ch *CommentHandler) HandleFormForReplyComment(w http.ResponseWriter, req *
 		ParentId: cmtNode.CmtItem.Id, // Remember this is a reply form to this Id
 		HasDate:  conf.Current.Comment.HasDateInCmtForm,
 	}
-	if err := tmplBody.ExecuteTemplate(&partForm, "headform", ctxHead); err != nil {
+	if err := tmplBody.ExecuteTemplate(&partForm, "headformDet", ctxHead); err != nil {
 		return err
 	}
 
@@ -55,7 +55,7 @@ func (ch *CommentHandler) HandleFormForReplyComment(w http.ResponseWriter, req *
 	return nil
 }
 
-func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, post_id string) error {
+func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Request, post_id string, is_detail bool) error {
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleComments] get comments for id=%s, lang=%s", post_id, lang)
 
@@ -79,10 +79,20 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 		ParentId:   cmtNode.CmtItem.ParentId,
 		HasDate:    conf.Current.Comment.HasDateInCmtForm,
 	}
-	if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
-		return err
+
+	headSect := "headform"
+	treeSect := "tree"
+	if is_detail {
+		headSect = "headformDet"
+		treeSect = "treeDet"
+	} else {
+		if err := tmplBody.ExecuteTemplate(&partHeader, "head", ctxHead); err != nil {
+			return err
+		}
+		partHeader.WriteTo(&partMerged)
 	}
-	if err := tmplBody.ExecuteTemplate(&partForm, "headform", ctxHead); err != nil {
+
+	if err := tmplBody.ExecuteTemplate(&partForm, headSect, ctxHead); err != nil {
 		return err
 	}
 
@@ -91,18 +101,20 @@ func (ch *CommentHandler) HandleComments(w http.ResponseWriter, req *http.Reques
 	}{
 		CmtLines: cmtNode.GetLines(),
 	}
-	if err := tmplBody.ExecuteTemplate(&partTree, "tree", ctxTree); err != nil {
+	if err := tmplBody.ExecuteTemplate(&partTree, treeSect, ctxTree); err != nil {
 		return err
 	}
 
-	cmtItem := idl.CmtItem{}
-	if err := tmplBody.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
-		return err
-	}
-	partHeader.WriteTo(&partMerged)
 	partForm.WriteTo(&partMerged)
 	partTree.WriteTo(&partMerged)
-	partFoot.WriteTo(&partMerged)
+
+	cmtItem := idl.CmtItem{}
+	if !is_detail {
+		if err := tmplBody.ExecuteTemplate(&partFoot, "foot", cmtItem); err != nil {
+			return err
+		}
+		partFoot.WriteTo(&partMerged)
+	}
 
 	if _, err = w.Write(partMerged.Bytes()); err != nil {
 		return err

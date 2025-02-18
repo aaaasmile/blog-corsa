@@ -1,8 +1,20 @@
 {{define "head" -}}
-<details class="comments">
+<details class="comments"  hx-get="/blog-admin/{{.PostId}}/cmtDetails" hx-trigger="toggle once" hx-target="#cmtRes">
     <summary>{{.CmtTotText}}</summary>
 {{end}}
+
 {{define "headform" -}}
+{{end}}
+{{define "tree"}}
+    <span id="cmtRes"></span>
+{{- end}}
+
+{{define "foot"}}
+</details>
+{{- end}}
+
+
+{{define "headformDet" -}}
     <form action="/blog-admin/{{.ParentId}}/{{.PostId}}/newcomment?lang=it" method="post" hx-boost="true">
         <fieldset>
             <label for="name">Nome</label>
@@ -25,14 +37,10 @@
     </form>
 {{end}}
 
-{{define "tree"}}
+{{define "treeDet"}}
     <ul>
         {{- range .CmtLines}}
         {{. -}}
         {{- end}}
     </ul>
-{{- end}}
-
-{{define "foot"}}
-</details>
 {{- end}}

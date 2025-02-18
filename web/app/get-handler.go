@@ -52,7 +52,11 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 	}
 	if post_id, ok := isComments(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
-		return hc.HandleComments(w, req, post_id)
+		return hc.HandleComments(w, req, post_id, false)
+	}
+	if post_id, ok := isCommentDetails(gh.lastPath, remPath); ok {
+		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
+		return hc.HandleComments(w, req, post_id, true)
 	}
 	if id, ok := isFormForReplyComment(gh.lastPath, remPath); ok {
 		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
@@ -70,6 +74,17 @@ func isValidateEmail(lastPath string) bool {
 
 func isComments(lastPath string, remPath string) (string, bool) {
 	if !strings.HasPrefix(lastPath, "comments") {
+		return "", false
+	}
+	arr := strings.Split(remPath, "/")
+	if len(arr) > 0 {
+		return arr[len(arr)-1], true
+	}
+	return "", false
+}
+
+func isCommentDetails(lastPath string, remPath string) (string, bool) {
+	if !strings.HasPrefix(lastPath, "cmtDetails") {
 		return "", false
 	}
 	arr := strings.Split(remPath, "/")
