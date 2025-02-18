@@ -4,6 +4,7 @@ import (
 	"corsa-blog/idl"
 	"encoding/json"
 	"fmt"
+	"log"
 )
 
 type CommentParam struct {
@@ -12,8 +13,17 @@ type CommentParam struct {
 	Type string `json:"type"`
 }
 
+type CommentParamList struct {
+	Cmd string `json:"cmd"`
+	Ids []int  `json:"list"`
+}
+
 type CommentReq struct {
 	Params CommentParam
+}
+
+type CommentReqWithList struct {
+	Params CommentParamList
 }
 
 func (ah *AdminHandler) doComment() error {
@@ -27,6 +37,8 @@ func (ah *AdminHandler) doComment() error {
 	switch cmtPara.Cmd {
 	case "list":
 		err = ah.doCmtList(cmtPara.Type)
+	case "approve":
+		err = ah.doCmtApprove(cmtPara.Type)
 	default:
 		return fmt.Errorf("[doComment]comment command not supported %v", cmtPara)
 	}
@@ -46,6 +58,16 @@ func (ah *AdminHandler) doCmtList(tt string) error {
 		return fmt.Errorf("[doCmtList] type %s not suported", tt)
 	}
 	return nil
+}
+
+func (ah *AdminHandler) doCmtApprove(tt string) error {
+	cmtReqList := CommentReqWithList{}
+	if err := json.Unmarshal(ah.rawbody, &cmtReqList); err != nil {
+		return err
+	}
+	log.Println("[doCmtApprove] the list ", cmtReqList.Params.Ids)
+	//fmt.Println("*** ", string(ah.rawbody))
+	return ah.doCmtListToModerate()
 }
 
 func (ah *AdminHandler) doCmtListToModerate() error {

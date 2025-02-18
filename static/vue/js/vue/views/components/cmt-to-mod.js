@@ -81,6 +81,7 @@ export default {
       console.log('do on selected comment list', cmd_todo, items)
       API.DoCmt(this, para, (data) => {
         this.loadingCmt = false
+        this.$store.commit('storeCmtTodMod', data)
       }, () => {
         console.log('something went wrong')
         this.loadingCmt = false
