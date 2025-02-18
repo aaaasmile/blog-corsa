@@ -176,6 +176,42 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 	return base_node, nil
 }
 
+func (ld *LiteDB) RejectComments(list []int) error {
+	tx, err := ld.connDb.Begin()
+	if err != nil {
+		return err
+	}
+	for _, id := range list {
+		if err := ld.rejectSingleComment(tx, id); err != nil {
+			return err
+		}
+	}
+	err = tx.Commit()
+	return err
+}
+
+func (ld *LiteDB) rejectSingleComment(tx *sql.Tx, id int) error {
+	q := `DELETE FROM comment WHERE id=?;`
+	if ld.debugSQL {
+		log.Println("SQL is:", q, id)
+	}
+
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	res, err := tx.Stmt(stm).Exec(id)
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
+	}
+	return err
+}
+
 func (ld *LiteDB) ApproveComments(list []int) error {
 	tx, err := ld.connDb.Begin()
 	if err != nil {
