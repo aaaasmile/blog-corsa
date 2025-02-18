@@ -176,7 +176,43 @@ func (ld *LiteDB) GetCommentForId(id string) (*idl.CmtNode, error) {
 	return base_node, nil
 }
 
-func (ld *LiteDB) GeCommentsToModerate() ([]*idl.CmtItem, error) {
+func (ld *LiteDB) ApproveComments(list []int) error {
+	tx, err := ld.connDb.Begin()
+	if err != nil {
+		return err
+	}
+	for _, id := range list {
+		if err := ld.approveSingleComment(tx, id); err != nil {
+			return err
+		}
+	}
+	err = tx.Commit()
+	return err
+}
+
+func (ld *LiteDB) approveSingleComment(tx *sql.Tx, id int) error {
+	q := `UPDATE comment SET status=1 WHERE id=?;`
+	if ld.debugSQL {
+		log.Println("SQL is:", q, id)
+	}
+
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	res, err := tx.Stmt(stm).Exec(id)
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
+	}
+	return err
+}
+
+func (ld *LiteDB) GetCommentsToModerate() ([]*idl.CmtItem, error) {
 	log.Println("[LiteDB-SELECT] get comments to moderate ")
 	res := []*idl.CmtItem{}
 	q := `SELECT id,name,email,comment,timestamp,status,post_id,parent_id from comment where status = 0;`

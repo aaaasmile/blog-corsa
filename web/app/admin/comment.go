@@ -38,7 +38,7 @@ func (ah *AdminHandler) doComment() error {
 	case "list":
 		err = ah.doCmtList(cmtPara.Type)
 	case "approve":
-		err = ah.doCmtApprove(cmtPara.Type)
+		err = ah.doCmtApprove()
 	default:
 		return fmt.Errorf("[doComment]comment command not supported %v", cmtPara)
 	}
@@ -60,18 +60,21 @@ func (ah *AdminHandler) doCmtList(tt string) error {
 	return nil
 }
 
-func (ah *AdminHandler) doCmtApprove(tt string) error {
+func (ah *AdminHandler) doCmtApprove() error {
 	cmtReqList := CommentReqWithList{}
 	if err := json.Unmarshal(ah.rawbody, &cmtReqList); err != nil {
 		return err
 	}
 	log.Println("[doCmtApprove] the list ", cmtReqList.Params.Ids)
+	if err := ah.liteDB.ApproveComments(cmtReqList.Params.Ids); err != nil {
+		return err
+	}
 	//fmt.Println("*** ", string(ah.rawbody))
 	return ah.doCmtListToModerate()
 }
 
 func (ah *AdminHandler) doCmtListToModerate() error {
-	cmts, err := ah.liteDB.GeCommentsToModerate()
+	cmts, err := ah.liteDB.GetCommentsToModerate()
 	if err != nil {
 		return err
 	}
