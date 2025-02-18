@@ -2,13 +2,11 @@ import API from '../../apicaller.js?version=101'
 
 const buildselectedParam = (that) => {
   let arr = []
-  let stickarr = []
   that.$store.state.admin.cmtSelected.forEach(element => {
     arr.push(element.Id)
   });
   console.log("selection list", arr)
-  let para = { selected: arr, sticky: stickarr, cmd: 'approve' }
-  return para
+  return arr
 }
 
 export default {
@@ -17,7 +15,8 @@ export default {
       loadingCmt: false,
       loadingPage: false,
       dialogApprove: false,
-      keyreq: '',
+      current_command: '',
+      current_selection: 0,
       transition: 'scale-transition',
       search: '',
       loadingData: false,
@@ -49,12 +48,38 @@ export default {
   },
   methods: {
     approveCmtList() {
-      this.dialogApprove = false
-      this.loadingCmt = true
-      console.log('Approve selected comment list')
-      let para = buildselectedParam(this)
-      API.DoCmt(this, para)
+      this.current_command = 'approve'
+      const items = buildselectedParam(this)
+      if (items.length <= 0){
+        return
+      }
+      this.current_selection = items.length
+      this.dialogApprove = true
     },
+    rejectCmtList() {
+      this.current_command = 'reject'
+      const items = buildselectedParam(this)
+      if (items.length <= 0){
+        return
+      }
+      this.current_selection = items.length
+      this.dialogApprove = true
+    },
+    okDoIt() {
+      const cmd_todo = this.current_command
+      console.log('command to do: ', cmd_todo)
+      this.dialogApprove = false
+      const items = buildselectedParam(this)
+      this.loadingCmt = true
+      let para = { cmd: cmd_todo, list: items }
+      console.log('do on selected comment list', cmd_todo, items)
+      API.DoCmt(this, para, () => {
+        this.loadingCmt = false
+      }, () => {
+        console.log('something went wrong')
+        this.loadingCmt = false
+      })
+    }
   },
   template: `
   <v-container>
@@ -81,6 +106,30 @@ export default {
         }"
       >
       </v-data-table>
+      <v-card-actions>
+        <v-btn text :loading="loadingCmt" @click="approveCmtList">
+          Approve
+        </v-btn>
+        <v-btn color="red" text :loading="loadingCmt" @click="rejectCmtList">
+          Reject
+        </v-btn>
+      </v-card-actions>
     </v-card>
-  </v-container>`
+    <v-dialog v-model="dialogApprove" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">Question</v-card-title>
+        <v-card-text
+          >Do you want {{current_command}} on {{current_selection}} selected comments?</v-card-text
+        >
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="okDoIt">OK</v-btn>
+          <v-btn color="green darken-1" text @click="dialogApprove = false"
+            >Cancel</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+`
 }

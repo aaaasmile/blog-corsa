@@ -46,14 +46,16 @@ export default {
       handleErrorMsg(that, error)
     });
   },
-  DoCmt(that, params, Ok) {
+  DoCmt(that, params, Ok, Err) {
     let req = { method: 'DoComment', Params: params }
     this.CallDataService(that, req).then(result => {
       console.log('Call terminated ', result.data)
       that.$store.commit('clearMsgText')
       that.$store.commit('storeCmtTodMod', [result.data])
+      Ok()
     }, error => {
       handleErrorMsg(that, error)
+      Err()
     });
   }
 }
