@@ -30,6 +30,7 @@
     </header>
     <section>
       <p>Oggi una bella giornata: mountain bike rubata e l'altra bici segata nel telaio. Dura la vita del ciclista cittadino.</p>
+      <section class="vertstack">    <figure>        <a href="#" id="00" onclick="appGallery.displayImage(`${id}`)"><img src="foto_320.jpg" alt="Telaio tagliato" /></a>        <figcaption>Telaio tagliato</figcaption>    </figure></section>
     </section>    
     </article>
     <span class="comments" hx-get="/blog-admin/10-10-23-Lebellegiornate-PS/comments" hx-trigger="revealed"></span>
@@ -67,5 +68,18 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  <div id="image-wrapper" class="gone">
+    <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
+    <div id="image-panel">
+      <div id="previous-btn" class="btn slider-button" onclick="appGallery.prevImage()">&lt;</div>
+      <img id="the-image" class="hidden">
+      <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
+    </div>
+  </div>
   </body>
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  window.appGallery = appGallery()
+  window.appGallery.loadData()
+</script>
 </html>

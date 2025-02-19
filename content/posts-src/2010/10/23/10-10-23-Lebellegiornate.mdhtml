@@ -11,4 +11,7 @@ tags:
 </header>
 <section>
   <p>Oggi una bella giornata: mountain bike rubata e l'altra bici segata nel telaio. Dura la vita del ciclista cittadino.</p>
+  [figstack
+        'foto.jpg', 'Telaio tagliato'
+  ]
 </section>    
