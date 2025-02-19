@@ -1,0 +1,20 @@
+title: La neve
+datetime: 2010-12-04
+id: 10-12-04-Laneve-PS
+tags:
+---
+<header>
+  <div>
+    <h1>La neve</h1>
+    <time>4 Dicembre 2010</time>
+  </div>
+</header>
+<section>
+  <p>Vienna è in pieno inverno. Il bello della neve è che si può cavalcare in bici. 
+    Le foto le ho scattate durante una sessione di corsa nel fine settimana.</p>
+  [figstack
+        'P1020809.jpg', 'Cartello per la corsa',
+        'P1020811.jpg', 'Strada ghiacciata',
+        'P1020814.jpg', 'La ciclabile'
+  ]
+</section>    
