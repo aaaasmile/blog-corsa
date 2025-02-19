@@ -23,6 +23,15 @@ func buildDescrInLex(l *L) {
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
 
+	fn = DescrFnItem{
+		KeyName:       "linkcap",
+		Labels:        []string{"Caption", "Url"},
+		ItemTokenType: itemLinkCaption,
+		IsMultiline:   false,
+	}
+	fn.NumParam = len(fn.Labels)
+	arr = append(arr, fn)
+
 	arr2 := make([]DescrFnItem, 0, len(arr))
 	for ix, v := range arr {
 		v.CustomID = ix + 1

@@ -236,6 +236,7 @@ const (
 	itemEndOfBlock
 	itemFigStack
 	itemLinkSimple
+	itemLinkCaption
 	itemEOF
 )
 

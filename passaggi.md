@@ -74,6 +74,15 @@ genera:
 
     <a href='https://wien-rundumadum-2024-130k.legendstracking.com/'>https://wien-rundumadum-2024-130k.legendstracking.com/ </a> 
 
+### Link caption
+Un link che però ha anche la caption.
+Esempio:
+
+    [linkcap 'Tracker', 'https://wien-rundumadum-2024-130k.legendstracking.com/']
+genera:
+
+    <a href='https://wien-rundumadum-2024-130k.legendstracking.com/'>Tracker</a> 
+
 ### figstack
 Serve per creare velocemente una galleria di immagini.
 Esempio:

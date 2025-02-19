@@ -50,6 +50,8 @@ func (i TokenType) String() string {
 		return "itemLinkSimple"
 	case itemFigStack:
 		return "itemFigStack"
+	case itemLinkCaption:
+		return "itemLinkCaption"
 	}
 	return fmt.Sprintf("TokenType %d undef", i)
 }

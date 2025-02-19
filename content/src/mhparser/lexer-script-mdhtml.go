@@ -215,6 +215,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		}
 	case item.Type == itemLinkSimple:
 		mh._curr_Node = trans.NewLinkSimpleNode(item.Value)
+	case item.Type == itemLinkCaption:
+		mh._curr_Node = trans.NewLinkCaptionNode(item.Value)
 	case item.Type == itemFigStack:
 		mh._curr_Node = trans.NewFigStackNode(item.Value)
 	case item.Type == itemText:
