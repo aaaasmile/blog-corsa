@@ -130,6 +130,12 @@ Commento.js è un file di 60k non min.
 
 Quando uso htmx, invece, il server fornisce la parte html già creata senza passare da json. 
 
+### Protezione Spam
+Quando avevo un Guestbook gestito attraverso un Form, esso era bersaglio di
+scraping che automaticamente mandavano dei messaggi. 
+La mia protezione è il Form posizionato all'interno del tag html _details_.
+Il form compare quando l'utente apre il tag details attraverso htmx.
+
 ## Dashboard Admin
 La parte che riguarda l'amministrazione del blog è gestita con vue in modalità single page.
 Per contro, la parte testuale dei vari post è generata staticamente in html.
@@ -140,9 +146,8 @@ La URL di riferimento è: http://localhost:5572/blog-admin/
 
 ### TODO
 - Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
-- La pagina admin deve essere protetta da un token di sign-in 
-- Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti
-- config_custom.toml va cryptato nel valore di diversi campi
+- La pagina admin deve essere protetta da un token di sign-in [DONE] 
+- Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti [DONE]
 
 ### Stop del service
 Per stoppare il sevice si usa:
@@ -262,4 +267,4 @@ Il token Jwt vale un'ora e non uso il refresh. Viene memorizzato nel browser ses
 Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere un html. Qui il rendering del post non deve assolutamente generare html, ma semplicemente mostrare una stringa html-escaped. 
 
 ## Dominio
-Hi riservato il nome: igorrun.invido.it
+Ho riservato il nome: igorrun.invido.it
