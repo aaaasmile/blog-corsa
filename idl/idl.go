@@ -61,5 +61,6 @@ func (fg *ImgDataItem) CalcReduced() error {
 	}
 	bare_name := strings.Replace(fg.Name, ext, "", -1)
 	fg.Redux = fmt.Sprintf("%s_320%s", bare_name, ext)
+	fg.Id = fmt.Sprintf("%s_%s", bare_name, fg.Id)
 	return nil
 }

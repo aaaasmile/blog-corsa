@@ -366,11 +366,11 @@ id: 20241108-00
 		return
 	}
 	secline = ll.ArrayValue[1]
-	if !strings.Contains(secline, `<a id="00" onclick="appGallery.displayImage`) {
+	if !strings.Contains(secline, `id="AustriaBackyardUltra2024011_00" onclick="appGallery.displayImage`) {
 		t.Errorf("expected AustriaBackyardUltra2024011 in generated  html, but %s ", secline)
 		return
 	}
-	if !strings.Contains(secline, `<a id="02" onclick="appGallery.displayImage`) {
+	if !strings.Contains(secline, `id="backyard_award_02" onclick="appGallery.displayImage`) {
 		t.Errorf("expected backyard_award.png in generated  html, but %s ", secline)
 		return
 	}
