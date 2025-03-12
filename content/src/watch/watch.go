@@ -151,6 +151,7 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	}
 	isPng := strings.HasPrefix(ext, ".png")
 	isJpeg := strings.HasPrefix(ext, ".jpg")
+	isJpeg = isJpeg || strings.HasPrefix(ext, ".JPG")
 	if !(isJpeg || isPng) {
 		log.Println("[processNewImage] file ignored", newFname)
 		return nil
@@ -192,7 +193,7 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 	}
 	if original_image.Bounds().Max.X <= newWidth {
 		log.Println("[processNewImage] image is already on resize width or smaller", newWidth)
-		return nil
+		newWidth = original_image.Bounds().Max.X
 	}
 
 	output, _ := os.Create(ff_full_reduced)
