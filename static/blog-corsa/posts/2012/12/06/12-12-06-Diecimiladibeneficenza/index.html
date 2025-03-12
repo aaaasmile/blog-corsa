@@ -6,7 +6,7 @@
   <meta name="description" content="IgorRun Blog">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="title">
-    Intermezzo
+    Diecimila di beneficenza
   </title>
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <script src="/js/htmx.min.js"></script>
@@ -22,24 +22,28 @@
   </nav>
   <main>
     <article class="post">
-      <header>
+      <header class="withimg">
         <div>
-          <h1>Intermezzo</h1>
-          <time>20 Novembre 2012</time>
+          <h1>Diecimila di beneficenza</h1>
+          <time>6 Dicembre 2012</time>
         </div>
+        <img src="foto1.jpg" /> 
       </header>
       <section>
-        <p>Dopo le ultime quattro gare in quattro settimane è arrivato il tempo di rifiatare un po'. Non è ancora arrivato però, il tanto l'agognato tempo in cui le uniche ripetute riguarderanno le dita dell'indice e del pollice per pigiare il telecomando, ma ci sto lavorando. Nel frattempo sono stato un po' in giro per la vecchia Europa e non sono riuscito a stare fermo. Così a Dublino mi sono divertito, prima della colazione, a correre sulle colline di Bray passando anche per il mitico Cliff Walk. Mare, prati, cavalli in libertà e trails fantastici mi hanno piacevolmente sorpreso. Era lo stesso week-end della maratona di Dublino, ma con dei posti simili, chi rimpiange la corsa sulle strade asfaltate della metropoli irlandese? Dopo qualche giorno mi sono spostato nell'eterna Breda Cisoni con la voglia di correre ancora una volta sugli arginelli. Nebbia e fango non mi hanno fermato, anzi ho aggiunto anche un giro della civetta per arrivare ad una ventina di km. Correre in solitudine nella nebbia tra le campagne bredesi è sempre molto piacevole.</p>
-        <p> Per concludere il mini ciclo delle corse in natura senza orologio e cardio, l'ultimo fine settimana l'ho dedicato a corse particolari. Sabato mattina alle 5, con altri 35 temerari del mio gruppo sportivo, abbiamo fatto un giro sulle colline Viennesi per l'ormai leggendario giro del Kahlenberg, non un giro qualsiasi, ma un rito. Partenza nel cuore della città, quando le discoteche suonavano ancora e arrivo dopo 36 km per una colazione che è diventato un menu completo a tre portate.</p>
-        <p><iframe allowfullscreen="allowfullscreen" frameborder="0" height="266" mozallowfullscreen="mozallowfullscreen" src="https://www.youtube.com/embed/IOP7RhDnLnw?feature=player_embedded\" webkitallowfullscreen="webkitallowfullscreen" width="320"></iframe></p>
+        <p>Qual è il senso della corsa?</p>
+        <p>La stagione sta per finire ed ho ancora in programma un paio di gare veloci. La prima è quella che si svolge domenica 25 novembre 2012 al Prater, organizzata dal mio club Freunde des Laufsports. Oltre all'aspetto benefico della competizione, il ricavato va tutto in beneficenza, la gara si svolge su di un circuito pressoché piatto con buone possibilità di fare un gran tempo. Riuscirò a ripetere la prestazione dell'anno scorso dove ho infranto il muro dei 40 minuti sui 10 km? Quest'anno alla partenza ci sono molti più concorrenti, c'è un pallido sole a scalfire la nebbia e la temperatura è gradevole. Ottime condizioni per premere sull'acceleratore. Al via mi presento, come faccio sempre in questo periodo, senza orologio. Mi sto allenando a sensazione e vorrei continuare con questo metodo almeno per qualche mese prima di giudicarne i risultati.</p> 
+        <p>La tattica di oggi è molto semplice, ci sono 4 giri, basta correrli ognuno sotto i dieci minuti e il personale è fatto. Al via parto davanti e mi lascio sfilare. Al termine del primo giro il cronometro segna 9':50", è un ottimo tempo se non fosse che sono già al gancio. Al secondo giro sono ai 20 minuti esatti, ancora perfettamente in tabella. Però non ne ho più, vorrei smettere e magari classificarmi nella gara dei cinquemila. Le gambe però sono di un altro pensiero e vado avanti. Al terzo giro comincio a gestire le forze, non vorrei rimanere piantato alla fine e magari perdere un buon piazzamento. Al quarto giro sono di nuovo in palla e provo ad aumentare, non di molto, ma mi basta per mantenere la decima posizione in assoluto, la terza di categoria con un bel podio finale.
+          Il senso della corsa? Durante la mia prima maratona un tizio si affacciò alla finestra e disse pressapoco questo nel suo austro-tedesco:"Se andate a lavorare fate senza correre".</p>
+          <p>Tempo finale per i 10 km: 40':28", posizione 10 e terzo categoria M40.</p>
+        <section class="vertstack">    <figure>        <a href="#" id="foto2_00" onclick="appGallery.displayImage(`${id}`)"><img src="foto2_320.jpg" alt="terzo gradino del podio M40 " /></a>        <figcaption>terzo gradino del podio M40 </figcaption>    </figure>    <figure>        <a href="#" id="foto3_02" onclick="appGallery.displayImage(`${id}`)"><img src="foto3_320.jpg" alt=" " /></a>        <figcaption> </figcaption>    </figure></section>
       </section>    
     </article>
-    <span class="comments" hx-get="/blog-admin/12-11-20-Intermezzo-PS/comments" hx-trigger="revealed"></span>
+    <span class="comments" hx-get="/blog-admin/12-12-06-Diecimiladibeneficenza-PS/comments" hx-trigger="revealed"></span>
     </main>
   <footer>
     <p>
       Pubblicato:
-      <time datetime="2012-11-20 00:00">20 Novembre 2012</time>
+      <time datetime="2012-12-06 00:00">6 Dicembre 2012</time>
     </p>
     <nav>
       <a href="/">Home</a>
@@ -78,5 +82,18 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  <div id="image-wrapper" class="gone">
+    <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
+    <div id="image-panel">
+      <div id="previous-btn" class="btn slider-button" onclick="appGallery.prevImage()">&lt;</div>
+      <img id="the-image" class="hidden">
+      <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
+    </div>
+  </div>
   </body>
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  window.appGallery = appGallery()
+  window.appGallery.loadData()
+</script>
 </html>
