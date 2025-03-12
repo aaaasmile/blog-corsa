@@ -95,6 +95,13 @@ Ogni coppia è rappresentata dal nome del file dell'immagine integrale e dal tit
 Il codice html generato lo trovo di seguito. Col file dell'immagine integrale 
 cosidero per dato il file d'immagine in formato ridotto di larghezza 320 pixel.
 
+### youtube
+Genera l'iframe che serve per contenere il video player di youtube.  
+Esempio:
+
+    [youtube 'IOP7RhDnLnw'] 
+Dove IOP7RhDnLnw è il video ID su youtube.
+
 ## Immagini (html creato da figstack)
 Quondo ho una serie di immagini da inserire nel post, uso il seguente html:
 

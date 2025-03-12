@@ -237,6 +237,7 @@ const (
 	itemFigStack
 	itemLinkSimple
 	itemLinkCaption
+	itemYouTubeEmbed
 	itemEOF
 )
 
