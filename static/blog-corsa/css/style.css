@@ -133,6 +133,14 @@ article.post p:first-child::first-letter {
   padding: 0px 0.05em 0px 0px;
 }
 
+.capitalized{
+  font-size: 60px;
+  float: left;
+  margin-bottom: -0.2em;
+  margin-top: -0.3em;
+  padding: 0px 0.05em 0px 0px;
+}
+
 .centered {
   align-self: center;
   text-align: center;
