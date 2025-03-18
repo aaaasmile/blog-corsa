@@ -12,4 +12,14 @@ CREATE TABLE IF NOT EXISTS "comment" (
 	"req_id"	TEXT,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+CREATE TABLE IF NOT EXISTS "post" (
+	"id"	INTEGER,
+	"title"	TEXT,
+	"post_id"	TEXT NOT NULL,
+	"timestamp"	NUMERIC,
+	"abstract"	TEXT,
+	"uri"	TEXT,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE VIRTUAL TABLE postsearch USING fts5(post_rowid, content);
 COMMIT;
