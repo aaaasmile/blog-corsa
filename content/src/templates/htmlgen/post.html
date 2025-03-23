@@ -26,9 +26,9 @@
       {{- range .Lines}}
       {{. -}}
       {{- end}}
-      {{- end -}}
+{{- end -}}
 
-      {{define "postfinal"}}
+{{define "postfinal"}}
     </article>
     {{if .HasComments -}}
     <span class="comments" hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>

@@ -37,6 +37,7 @@ func main() {
 	var newpage = flag.String("newpage", "", "name of the new page")
 	var name = flag.String("name", "", "name of the page")
 	var build = flag.Bool("build", false, "create all htmls (post and pages)")
+	var scancontent = flag.Bool("scancontent", false, "fill the db table with souce content")
 	flag.Parse()
 
 	if *ver {
@@ -45,6 +46,12 @@ func main() {
 	}
 	if _, err := conf.ReadConfig(*configfile, `../../cert`); err != nil {
 		log.Fatal("ERROR: ", err)
+	}
+	if *scancontent {
+		if err := watch.ScanContent(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+		return
 	}
 	if *build {
 		if err := watch.Build(); err != nil {
