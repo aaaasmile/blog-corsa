@@ -36,6 +36,7 @@
           <p>La gara LCC Eisbärlauf 3 l'ho conclusa in 1h:32':51", solo venti secondi in più rispetto al mio personale segnato nel 2012, con tre giri da sette chilometri fatti sempre impiccato (30':09",30':51' e 31':45"). Al primo giro non sono neanche riuscito a riconosce Michele che mi ha accompagnato per un breve tratto. Un risultato alla vigilia inaspettato. 
           La classifica completa della gara si trova <a href="https://www.pentek-timing.at/results.html?pnr=13101&cnr=3" target="_blank">qui</a>.</p>
           <p>Prossimi appuntamenti con le gare: domenica prossima con la 10km a Fischament, un classico che ho affrontato già tre volte e la novità del Lindkogel trail la settimana dopo.</p>
+          <p><section class="vertstack">    <figure>        <a href="#" id="foto2_00" onclick="appGallery.displayImage(`${id}`)"><img src="foto2_320.jpg" alt=" " /></a>        <figcaption> </figcaption>    </figure>    <figure>        <a href="#" id="foto3_02" onclick="appGallery.displayImage(`${id}`)"><img src="foto3_320.jpg" alt=" " /></a>        <figcaption> </figcaption>    </figure>    <figure>        <a href="#" id="foto4_04" onclick="appGallery.displayImage(`${id}`)"><img src="foto4_320.jpg" alt=" " /></a>        <figcaption> </figcaption>    </figure></section> </p>
       </section>    
     </article>
     <span class="comments" hx-get="/blog-admin/17-03-19-Ritornoallagare-PS/comments" hx-trigger="revealed"></span>
@@ -82,5 +83,18 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  <div id="image-wrapper" class="gone">
+    <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
+    <div id="image-panel">
+      <div id="previous-btn" class="btn slider-button" onclick="appGallery.prevImage()">&lt;</div>
+      <img id="the-image" class="hidden">
+      <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
+    </div>
+  </div>
   </body>
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  window.appGallery = appGallery()
+  window.appGallery.loadData()
+</script>
 </html>
