@@ -1,0 +1,5 @@
+fieldset.edit {
+    display: flex;
+    padding: 1em;
+    column-gap: 1em;
+  }
