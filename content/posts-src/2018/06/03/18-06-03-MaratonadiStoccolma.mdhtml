@@ -1,0 +1,26 @@
+title: Maratona di Stoccolma
+datetime: 2018-06-03
+id: 18-06-03-MaratonadiStoccolma-PS
+tags: MaratonaGara
+---
+<header class="withimg">
+  <div>
+    <h1>Maratona di Stoccolma</h1>
+    <time>3 Giugno 2018</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Terminata anche la maratona di Stoccolma, la mia ventesima gara su questa distanza.</p>
+    <p>Condizioni ambientali non molto differenti rispetto alla maratona di Vienna, se non peggiori, con molto caldo (29 gradi), pollini molto fastidiosi e start alle ore 12. Un mix che mi hanno fatto propendere molto alla svelta per una conduzione di gara da gita turistica. Visto il meteo davvero inusuale a queste latitudini, e l'ora, tutta la città ha partecipato all'evento incitando tutti i corridori. 14500 i finisher, perlopiù scandinavi. Percorso sempre ricco di piccoli saliscendi e qualche tratto davvero inusuale, come un pezzo del tunnel della tangenziale. L'arrivo nello stadio di atletica, la medaglia della quarantesima edizione, la maglietta da finisher e il ricco ristoro finale hanno dato molto pregio alla manifestazione.</p>   
+    <p>Il mio tempo di 3h:56':15" mi ha regalato la posizione 2881. Heja!</p>
+    <p>[figstack 
+      'foto2.jpg', ' ',
+      'foto3.jpg', ' ',
+      'foto4.jpg', ' '
+    ] </p>
+    <figure>
+      [youtube 'WMtsv2U8JcE']
+      <figcaption>Il video personale della gara</figcaption>
+    </figure>
+</section>    
