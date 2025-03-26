@@ -1,15 +1,26 @@
 title: WRU 2018
 datetime: 2018-11-05
 id: 18-11-05-WRU2018-PS
-tags:
+tags: UltraGara, WRU
 ---
 <header class="withimg">
   <div>
     <h1>WRU 2018</h1>
     <time>5 Novembre 2018</time>
   </div>
-  <img src="foto1.jpg" /> 
+  <img src="foto2.jpg" /> 
 </header>
 <section>
-  <p>Here your awesome post!</p>
+  <p>È stato un grande piacere poter terminare, anche quest'anno, la stagione delle gare ultra con il Wien Rundumadum (WRU), il classico giro a piedi attorno alla città di Vienna.
+    È stata la mia quinta volta e la mia prestazione, visto i tempi che ho avuto nelle mie ultime ultra,  è stata superiore alle attese. Decima prestazione di giornata in 15h:25' (il mio personale è di 13h:35'), con una graduatoria che si trova 
+    [linkcap 'qui', 'https://drive.google.com/file/d/1Dzb1kZMgfw5omtzNAFbzQT9Y5FHUjWu1/view?usp=sharing']. 
+    Sembra così definitivamente tramontare quest'anno bipolare con una prestazione finalmente in media.</p>
+    <p>Sembrano molto lontane le sofferenze del Dirndltal o l'apprensione che mi ha portato all'Adamello, che quasi quasi non riesco bene a registrare l'aver terminato una corsa del genere da 130km e 1600D+ in una relativa tranquillità.</p>
+    <p>Eravamo in cinque che avevano terminato quattro volte il WRU, ora, alla fine della quinta edizione, siamo rimasti ancora in cinque ad averlo sempre terminato nella variante del giro completo.</p>
+    <p>[figstack 
+      'foto1.jpg', 'Arrivo a mano aperta',
+      'foto3.jpg', 'Primo checkpoint',
+      'foto4.jpg', 'Kaiserschmarr party pregara',
+      'foto5.jpg', ' '
+    ] </p>
 </section>    
