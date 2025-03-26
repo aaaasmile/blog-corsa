@@ -1,0 +1,19 @@
+title: La prossima gara
+datetime: 2018-09-11
+id: 18-09-11-Laprossimagara-PS
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>La prossima gara? Adamello of course!</h1>
+    <time>11 Settembre 2018</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Passato l'esperimento non molto fortunato del Vienna Trail per vedere il mio stato di forma, ecco che si sta avvicinando a grandi passi il mio prossimo appuntamento. Che naturalmente sarà l'Adamello Ultra Trail edizione 2018, che da quanto ho appreso sul sito, sarà su di un percorso un po' diverso dalle altre edizioni. Finirlo per la quarta volta filata nonostante tutto, non sarebbe affatto male.</p>
+  <p>[figstack 
+    'foto2.jpg', 'I commit, I won`t quit'
+  ] </p>
+
+</section>    
