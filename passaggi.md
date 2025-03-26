@@ -102,6 +102,18 @@ Esempio:
     [youtube 'IOP7RhDnLnw'] 
 Dove IOP7RhDnLnw è il video ID su youtube.
 
+Per centrare il video come le figure:
+
+    <figure>
+      [youtube 'vsC8SXH6Ffg']
+      <figcaption>Il video ufficiale della gara</figcaption>
+    </figure>
+Oppure
+
+    <p class="center">
+        [youtube 'vsC8SXH6Ffg']
+    </p>
+
 ## Immagini (html creato da figstack)
 Quondo ho una serie di immagini da inserire nel post, uso il seguente html:
 

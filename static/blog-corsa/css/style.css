@@ -607,3 +607,7 @@ form {
     background-color: #e7c157;
   }
 }
+
+p.center {
+  text-align: center;
+}
