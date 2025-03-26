@@ -1,0 +1,23 @@
+title: Maratona di Reggio Emilia
+datetime: 2018-12-10
+id: 18-12-10-MaratonadiReggioEmilia-PS
+tags: MaratonaGara
+---
+<header class="withimg">
+  <div>
+    <h1>Maratona di Reggio Emilia</h1>
+    <time>10 Dicembre 2018</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Interessante la mia seconda maratona di Reggio Emilia. Questa volta l'ho finita in 3h:26':27", ben due secondi in più rispetto al 2011. Non male per questa maratona fuori programma dove, finalmente, ritrovo in maratona un tempo finale molto migliore rispetto a Vienna e Stoccolma. Evidentemente il clima dicembrino mi è molto più amico del clima primaverile carico di pollini e calura. Un clima autunnale che ha controbilanciato una preparazione specifica inesistente con la mia mente già proiettata al 2019. In ogni modo quello che mi interessava era un responso sulla mia condizione attuale in una gara come la maratona in vista della prossima stagione.  
+    Un altro passo avanti verso il completo recupero.</p>
+    <p>[figstack 
+      'foto2.jpg', ' ',
+      'foto3.jpg', ' ',
+      'foto4.jpg', ' ',
+      'foto5.jpg', ' ',
+      'foto6.jpg', ' '
+    ] </p>
+</section>    
