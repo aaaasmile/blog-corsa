@@ -1,0 +1,29 @@
+title: Welschlauf al primo posto
+datetime: 2019-05-10
+id: 19-05-10-Welschlaufalprimoposto-PS
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>Welschlauf al primo posto</h1>
+    <time>10 Maggio 2019</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Alla maratona del Welsch questa volta è stato un bel primo posto nella classifica "gruppi". Vale a dire che nel gruppo composto da cinque maratoneti, il quinto peggior tempo viene considerato come tempo finale dell'intero gruppo.
+    Il nostro team (il "Gretzel") è sempre rimasto compatto fino al traguardo. Nessun altro gruppo ha fatto meglio del nostro tempo finale di 4h:03' così nel tendone die Wies siamo saliti sul gradino più alto del podio. Non male.</p>
+  <h3>Le mie statistiche alla maratona del Welsch (5 partecipazioni)</h3>
+    <p>2012: da Wies a Erenhausen, tempo 3h:40':07". Classifica "Gretzel": non classificato</p>
+    <p>2013: da Erenhausen a Wies, tempo  3h:52':53". Classifica "Gretzel", 2-ndo posto</p>
+    <p>2015: da Erenhausen a Wies, tempo  4h:20':37". Classifica "Gretzel", 3-erzo posto</p>
+    <p>2017: da Erenhausen a Wies, tempo  4h:07':56". Classifica "Gretzel": non classificato</p>
+    <p>2019: da Erenhausen a Wies, tempo  4h:03':30". Classifica "Gretzel": 1-mo posto</p>
+
+    <p>[figstack 
+      'foto2.jpg', ' ',
+      'foto3.jpg', ' ',
+      'foto4.jpg', ' '
+    ] </p>
+
+</section>    
