@@ -1,0 +1,26 @@
+title: VCM 2019
+datetime: 2019-04-09
+id: 19-04-09-VCM2019-PS
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>VCM 2019</h1>
+    <time>9 Aprile 2019</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Tempo: 3h:47':35".</p>
+    <p><code>prima mezza   01:43:50</code></p>
+    <p><code>seconda mezza  02:03:45</code></p>
+    <p>Splendidi i tratti senza sentire l'aria molesta.</p>
+    <p>[figstack 
+      'foto2.jpg', ' ',
+      'foto3.jpg', ' ',
+      'foto4.jpg', ' ',
+      'foto5.jpg', ' ',
+      'foto6.jpg', ' ',
+      'foto7.jpg', ' '
+    ] </p>
+</section>    
