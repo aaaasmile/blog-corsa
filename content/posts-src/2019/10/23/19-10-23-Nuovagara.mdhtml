@@ -1,0 +1,23 @@
+title: Nuova gara
+datetime: 2019-10-23
+id: 19-10-23-Nuovagara-PS
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>Nuova gara</h1>
+    <time>23 Ottobre 2019</time>
+  </div>
+  <img src="foto3.jpg" /> 
+</header>
+<section>
+  <p>Altra settimana, altra gara. Questa volta al Prater, nella classica gara di beneficenza organizzata, come ogni anno, dal mio gruppo sportivo "Freunde des Laufsports".</p>
+
+    <p>Ancora menomato dalle fatiche della domenica precedente nella maratona di Colonia, ho pensato più che altro a non farmi male. Infatti ho un piede che non è in perfette condizioni e a due settimane dal Wienrundumadum non vale la pena forzare. Ne è uscita una gara in 45' sui dieci chilometri, un ritmo che non mi ha rattristato più di tanto. 
+      La classifica si trova [linkcap 'qui', 'https://www.pentek-timing.at/results.html?pnr=13779&cnr=2'].</p>
+  
+  <p>[figstack 
+    'foto1.jpg', ' ',
+    'foto2.jpg', ' '
+  ] </p>    
+</section>    
