@@ -1,0 +1,42 @@
+title: Spine Race 2020
+datetime: 2020-01-20
+id: 20-01-20-SpineRace2020-PS
+tags: UltraGara
+---
+<header class="withimg">
+  <div>
+    <h1>Spine Race 2020: well done!</h1>
+    <time>20 Gennaio 2020</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Dopo 138h:48':37" ho terminato la Spine Race 2020 in 23-ema posizione uomini (27 generale). Gara ben oltre le mie aspettative che mi ha sorpreso per la difficoltà del terreno fangoso, pioggia, neve  e con condizioni di vento alle quali non avevo mai avuto a che fare.
+    Totale di 63 finisher, 83 ritirati durante la gara e 16 non si sono presentati al via.</p>
+    
+    <p>Un resoconto completo segue.</p>
+
+    <p>[figstack 
+      'foto2.jpg', '200 miglia appena passate'
+    ] </p> 
+
+    <figure>
+      [youtube '0_lS00lzuXY']
+      <figcaption>Video dell'arrivo venerdì notte</figcaption>
+    </figure>
+    <figure>
+      [youtube 'cImDjZQNKx8']
+      <figcaption>Intervista sul muro di Adriano, dopo 200 miglia, giovedì</figcaption>
+    </figure>
+    <figure>
+      [youtube 'lv97BW9LS9c']
+      <figcaption>Uscita dal CP4 in Alston</figcaption>
+    </figure>
+    <figure>
+      [youtube '2Pr1wsXJS7A']
+      <figcaption>Reportage della tv Giapponese</figcaption>
+    </figure>
+    <p>[figstack 
+      'foto1.jpg', 'Arrivo con Antonio'
+    ] </p> 
+</section>    
