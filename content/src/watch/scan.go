@@ -11,6 +11,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"golang.org/x/net/html"
 )
 
 func ScanContent() error {
@@ -82,7 +84,16 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	dir_stack := []string{arr[last_ix-3], arr[last_ix-2], arr[last_ix-1], arr[last_ix]}
 	remain := strings.Join(dir_stack, "/")
 	postItem.Uri = fmt.Sprintf("/%s/%s/#", subDir, remain)
-	fmt.Println("*** uri is ", postItem.Uri)
-
+	//fmt.Println("*** uri is ", postItem.Uri)
+	//fmt.Println("*** title is ", postItem.Title)
+	bufRead := strings.NewReader(prc.HtmlGen)
+	doc, err := html.Parse(bufRead)
+	if err != nil {
+		return err
+	}
+	traverse(doc)
 	return nil
+}
+func traverse(n *html.Node) {
+	// TODO: recognize title, abstract an photolink
 }
