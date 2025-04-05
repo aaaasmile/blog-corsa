@@ -64,3 +64,12 @@ func (fg *ImgDataItem) CalcReduced() error {
 	fg.Id = fmt.Sprintf("%s_%s", bare_name, fg.Id)
 	return nil
 }
+
+type PostItem struct {
+	Id       int
+	PostId   string
+	Title    string
+	DateTime time.Time
+	Abstract string
+	Uri      string
+}

@@ -37,6 +37,10 @@ func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
 	return &res
 }
 
+func (mp *MdHtmlProcess) GetScriptGrammar() *mhparser.ScriptGrammar {
+	return &mp.scrGramm
+}
+
 func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
 	log.Println("[ProcessToHtml] is called with a script len ", len(script))
 	if script == "" {
@@ -199,18 +203,27 @@ func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fnam
 	return nil
 }
 
-func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
-	log.Println("[PostCreateOrUpdateStaticHtml] on ", sourceName)
+func GetDirNameArray(sourceName string) ([]string, error) {
 	sourceNameAgn := strings.ReplaceAll(sourceName, "\\", "/")
 	arr := strings.Split(sourceNameAgn, "/")
 	if len(arr) < 4 {
-		return fmt.Errorf("source filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml, but it is %s", sourceNameAgn)
+		return nil, fmt.Errorf("source filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml, but it is %s", sourceNameAgn)
 	}
 	log.Println("Processing stack from source ", arr)
 	last_ix := len(arr) - 1
 	ext := path.Ext(arr[last_ix])
 	last_dir := strings.Replace(arr[last_ix], ext, "", -1)
 	arr[last_ix] = last_dir
+	return arr, nil
+}
+
+func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
+	log.Println("[PostCreateOrUpdateStaticHtml] on ", sourceName)
+	arr, err := GetDirNameArray(sourceName)
+	if err != nil {
+		return err
+	}
+	last_ix := len(arr) - 1
 	dir_stack := []string{arr[last_ix-3], arr[last_ix-2], arr[last_ix-1], arr[last_ix]}
 	if mp.debug {
 		log.Println("dir structure for output ", dir_stack)

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"time"
 
@@ -19,6 +20,10 @@ type LiteDB struct {
 }
 
 func OpenSqliteDatabase(dbPath string, debugSql bool) (*LiteDB, error) {
+	_, err := os.Stat(dbPath)
+	if err != nil {
+		return nil, err
+	}
 	ld := &LiteDB{
 		dBPath:   dbPath,
 		debugSQL: debugSql,
@@ -376,4 +381,45 @@ func (ld *LiteDB) getCommentNodeChildren(level int, parent_id int, post_id strin
 	}
 	log.Printf("[getCommentNodeChild] on level %d found %d nodes with parent id %d, sub-count %d", level, len(nodes), parent_id, subNodeCount)
 	return nodes, nil
+}
+
+/// Post
+
+func (ld *LiteDB) GetTransaction() (*sql.Tx, error) {
+	return ld.connDb.Begin()
+}
+
+func (ld *LiteDB) InsertNewPost(postItem *idl.PostItem) error {
+	log.Println("[LiteDB - InsertNewPost] insert new Post on post id ", postItem.PostId)
+
+	q := `INSERT INTO post(title,post_id,timestamp,abstract,uri) VALUES(?,?,?,?,?);`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+
+	stmt, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(postItem.Title,
+		postItem.PostId,
+		postItem.DateTime.Local().Unix(),
+		postItem.Abstract,
+		postItem.Uri)
+	if err != nil {
+		return err
+	}
+	q = `SELECT last_insert_rowid()`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	var id int
+	err = ld.connDb.QueryRow(q).Scan(&id)
+	if err != nil {
+		return err
+	}
+	postItem.Id = id
+	log.Println("Post added into the db OK: ", postItem.Id)
+	return nil
 }

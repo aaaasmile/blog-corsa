@@ -2,6 +2,7 @@ package watch
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/db"
 	"log"
 	"os"
 	"path"
@@ -11,8 +12,9 @@ import (
 )
 
 type Builder struct {
-	mdsFn []string
-	pages []string
+	mdsFn  []string
+	pages  []string
+	liteDB *db.LiteDB
 }
 
 func Build() error {
