@@ -36,7 +36,6 @@ func Build() error {
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
 		return err
 	}
-	return nil // test IGSA
 	if err := bb.rebuildPages("../page-src"); err != nil {
 		return err
 	}
