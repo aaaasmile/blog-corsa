@@ -31,5 +31,7 @@ tags: UltraGara
       'foto2.jpg', 'sabato mattina (14-ema ora)',
       'foto3.jpg', 'Intorno alla 14-ema ora con la pioggia'
     ] </p>
-    <p>[youtube 'iB_UZJ2ODIg']</p>
+    <p><figure>
+          [youtube 'iB_UZJ2ODIg']
+        </figure></p>
 </section>    

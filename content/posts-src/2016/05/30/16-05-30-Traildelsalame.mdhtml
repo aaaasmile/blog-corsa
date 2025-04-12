@@ -23,5 +23,7 @@ tags:
       'foto5.jpg', 'A pochi chilometri dal traguardo',
       'foto6.jpg', 'Una delle tante discese infangate'
     ] </p>
-    <p>[youtube 'jkLuh2gkmoA']</p>
+    <p><figure>
+      [youtube 'jkLuh2gkmoA']
+    </figure></p>
 </section>    
