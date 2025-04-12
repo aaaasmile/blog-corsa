@@ -125,7 +125,8 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 				if a.Key == "src" {
 					img_src := a.Val
 					//fmt.Println("*** image in title ", img_src)
-					postItem.TitleImgUri = fmt.Sprintf("%s/%s", postItem.Uri, img_src)
+					postItem.TitleImgUri = strings.TrimRight(postItem.Uri, "/#")
+					postItem.TitleImgUri = fmt.Sprintf("%s/%s", postItem.TitleImgUri, img_src)
 					fmt.Println("*** TitleImgUri ", postItem.TitleImgUri)
 					break
 				}
