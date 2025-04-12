@@ -48,7 +48,6 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 		if err := bb.scanPostItem(item, tx); err != nil {
 			return err
 		}
-		break // IGSA test
 	}
 	err = tx.Commit()
 	if err != nil {
@@ -148,12 +147,17 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 		if section_first && n.Type == html.ElementNode && n.DataAtom == atom.P {
 			if n.FirstChild != nil {
 				abstract := n.FirstChild.Data
+				abstract = strings.Trim(abstract, " ")
+				abstract = strings.Trim(abstract, "\n")
+				abstract = strings.Trim(abstract, " ")
 				maxlen := 40
 				if len(abstract) > maxlen-3 {
 					abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
 				}
 				//fmt.Println("** abstract ", abstract)
-				postItem.Abstract = abstract
+				if len(abstract) > 4 {
+					postItem.Abstract = abstract
+				}
 			}
 			return
 		}
