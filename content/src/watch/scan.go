@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 func ScanContent() error {
@@ -46,11 +47,12 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 		if err := bb.scanPostItem(item, tx); err != nil {
 			return err
 		}
+		break // IGSA: only one
 	}
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
+	// err = tx.Commit()
+	// if err != nil {
+	// 	return err
+	// }
 	log.Printf("%d posts processed ", len(bb.mdsFn))
 	return nil
 }
@@ -91,9 +93,31 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	if err != nil {
 		return err
 	}
-	traverse(doc)
+	traverse(doc, &postItem)
 	return nil
 }
-func traverse(n *html.Node) {
-	// TODO: recognize title, abstract an photolink
+func traverse(doc *html.Node, postItem *idl.PostItem) {
+	section_first := false
+	title_first := false
+	for n := range doc.Descendants() {
+		if !title_first && n.Type == html.ElementNode && n.DataAtom == atom.H1 {
+			title := n.FirstChild.Data
+			fmt.Println("** title ", title)
+			postItem.Title = title
+			title_first = true
+		}
+		if n.Type == html.ElementNode && n.DataAtom == atom.Section {
+			section_first = true
+		}
+		if section_first && n.Type == html.ElementNode && n.DataAtom == atom.P {
+			abstract := n.FirstChild.Data
+			maxlen := 40
+			if len(abstract) > maxlen-3 {
+				abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
+			}
+			fmt.Println("** abstract ", abstract)
+			postItem.Abstract = abstract
+			return
+		}
+	}
 }
