@@ -112,7 +112,7 @@ nav a:hover {
   text-decoration: underline;
 }
 
-main{
+main {
   display: grid;
   grid-template-columns: 1fr;
   align-self: center;
@@ -133,7 +133,7 @@ article.post p:first-child::first-letter {
   padding: 0px 0.05em 0px 0px;
 }
 
-.capitalized{
+.capitalized {
   font-size: 60px;
   float: left;
   margin-bottom: -0.2em;
@@ -337,6 +337,13 @@ footer {
   }
 }
 
+.postnav {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr 2.5fr;
+  padding: 1.5em;
+  text-align: center;
+}
+
 .flatnav {
   display: flex;
   flex-direction: row;
@@ -412,7 +419,7 @@ header {
   }
 }
 
-button{
+button {
   cursor: pointer;
 }
 

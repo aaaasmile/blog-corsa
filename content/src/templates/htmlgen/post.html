@@ -29,20 +29,19 @@
 {{- end -}}
 
 {{define "postfinal"}}
+      <nav class="postnav">
+        {{- if .HasPrev}}
+          <a href="{{.PrevURI}}">&lt; Post precedente</a>
+        {{end -}}
+        <a href="/">Home</a>
+        {{- if .HasNext}}
+          <a href="{{.NextURI}}">Post successivo &gt;</a>
+        {{end -}}
+      </nav>
     </article>
     {{if .HasComments -}}
     <span class="comments" hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
     {{end -}}
-    <nav>
-      <nav class="flatnav">
-      {{- if .HasPrev}}
-        <a href="{{.PrevURI}}">Post precedente</a>
-      {{end -}}
-      {{- if .HasNext}}
-        <a href="{{.NextURI}}">Post successivo</a>
-      {{end -}}
-      </nav>
-    </nav>
   </main>
   <footer>
     <p>
@@ -50,7 +49,6 @@
       <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
     </p>
     <nav>
-      <a href="/">Home</a>
       <a href="https://corsa.invido.it/" target="_blank">Tools per la Corsa</a>
       <a href="https://invido.it/" target="_blank">Invido</a>
       <nav class="flatnav">
