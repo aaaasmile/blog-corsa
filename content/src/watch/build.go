@@ -3,6 +3,8 @@ package watch
 import (
 	"corsa-blog/conf"
 	"corsa-blog/db"
+	"corsa-blog/idl"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -12,14 +14,26 @@ import (
 )
 
 type Builder struct {
-	mdsFn  []string
-	pages  []string
-	liteDB *db.LiteDB
+	mdsFn    []string
+	pages    []string
+	liteDB   *db.LiteDB
+	mapLinks *idl.MapPostsLinks
 }
 
 func Build() error {
 	start := time.Now()
+	log.Println("[Build] the full site")
+
 	bb := Builder{}
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if err := bb.createMapLinks(); err != nil {
+		return err
+	}
+	return nil // IGSA TEST
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
 		return err
 	}
@@ -27,6 +41,49 @@ func Build() error {
 		return err
 	}
 	log.Println("[Build] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
+func (bb *Builder) createMapLinks() error {
+	bb.mapLinks = &idl.MapPostsLinks{
+		MapPost:  map[string]idl.PostLinks{},
+		ListPost: []idl.PostItem{},
+	}
+	var err error
+	bb.mapLinks.ListPost, err = bb.liteDB.GetPostList()
+	if err != nil {
+		return err
+	}
+	//fmt.Println("*** Posts ", bb.mapLinks.ListPost)
+	last_ix := len(bb.mapLinks.ListPost) - 1
+	prev_item := &idl.PostItem{}
+	next_item := &idl.PostItem{}
+
+	for ix, item := range bb.mapLinks.ListPost {
+		postLinks := idl.PostLinks{
+			Item: &item,
+		}
+		if last_ix > 0 {
+			// at least 2 or more elements
+			if ix == 0 {
+				next_item = &bb.mapLinks.ListPost[ix+1]
+				postLinks.NextLink = next_item.Uri
+				postLinks.NextPostID = next_item.PostId
+			} else if ix == last_ix {
+				postLinks.PrevLink = prev_item.Uri
+				postLinks.PrevPostID = prev_item.PostId
+			} else {
+				next_item = &bb.mapLinks.ListPost[ix+1]
+				postLinks.NextLink = next_item.Uri
+				postLinks.NextPostID = next_item.PostId
+				postLinks.PrevLink = prev_item.Uri
+				postLinks.PrevPostID = prev_item.PostId
+			}
+			prev_item = &bb.mapLinks.ListPost[ix]
+		}
+		bb.mapLinks.MapPost[item.PostId] = postLinks
+	}
+	//fmt.Println("*** map ", bb.mapLinks.MapPost)
 	return nil
 }
 
@@ -95,6 +152,7 @@ func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
 		debug:         conf.Current.Debug,
 		staticBlogDir: conf.Current.StaticBlogDir,
 		is_page:       is_page,
+		mapLinks:      bb.mapLinks,
 	}
 	if is_page {
 		wmh.staticSubDir = conf.Current.PageSubDir

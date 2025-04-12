@@ -253,7 +253,7 @@ func (ld *LiteDB) GetCommentsToModerate() ([]*idl.CmtItem, error) {
 	return res, nil
 }
 
-func (ld *LiteDB) GeCommentsForPostId(post_id string) (*idl.CmtNode, error) {
+func (ld *LiteDB) GetCommentsForPostId(post_id string) (*idl.CmtNode, error) {
 	// used to display all comments for a post
 	log.Println("[LiteDB-SELECT] get comments for post id ", post_id)
 	root_node := &idl.CmtNode{

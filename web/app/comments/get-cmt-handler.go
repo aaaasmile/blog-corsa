@@ -58,7 +58,7 @@ func (ch *CommentHandler) HandleCommentsTitle(w http.ResponseWriter, req *http.R
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleComments] get comments for id=%s, lang=%s", post_id, lang)
 
-	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
+	cmtNode, err := ch.liteDB.GetCommentsForPostId(post_id)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (ch *CommentHandler) HandleCommentsDetails(w http.ResponseWriter, req *http
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleCommentsDetails] get comments for id=%s, lang=%s", post_id, lang)
 
-	cmtNode, err := ch.liteDB.GeCommentsForPostId(post_id)
+	cmtNode, err := ch.liteDB.GetCommentsForPostId(post_id)
 	if err != nil {
 		return err
 	}

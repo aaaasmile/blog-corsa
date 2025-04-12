@@ -4,7 +4,6 @@ config_custom.toml
 *.bin
 *.jpg
 *.png
-*.db
 cert/cred.json
 cert/key.pem
 cert/pubkey.pem

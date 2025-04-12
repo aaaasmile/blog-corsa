@@ -26,13 +26,17 @@ type MdHtmlProcess struct {
 	RootStaticDir     string
 	TargetDir         string
 	CreatedFnHtml     string
+	prevLink          string
+	nextLink          string
+	mapLinks          *idl.MapPostsLinks
 }
 
-func NewMdHtmlProcess(debug bool) *MdHtmlProcess {
+func NewMdHtmlProcess(debug bool, mpLks *idl.MapPostsLinks) *MdHtmlProcess {
 	res := MdHtmlProcess{
 		debug:             debug,
 		validateMandatory: true,
 		templDir:          "templates/htmlgen",
+		mapLinks:          mpLks,
 	}
 	return &res
 }
@@ -157,6 +161,9 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	if err := tmplPage.ExecuteTemplate(&partFirst, "postbeg", CtxFirst); err != nil {
 		return err
 	}
+	if err := mp.calculatePrevNextLink(); err != nil {
+		return err
+	}
 
 	CtxSecond := struct {
 		DateFormatted string
@@ -164,12 +171,20 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		PostId        string
 		HasGallery    bool
 		HasComments   bool
+		HasPrev       bool
+		HasNext       bool
+		PrevURI       string
+		NextURI       string
 	}{
 		DateTime:      mp.scrGramm.Datetime.Format("2006-01-02 15:00"),
 		DateFormatted: util.FormatDateIt(mp.scrGramm.Datetime),
 		PostId:        mp.scrGramm.PostId,
 		HasGallery:    len(mp.ImgJsonGen) > 0,
 		HasComments:   true,
+		HasPrev:       len(mp.prevLink) > 0,
+		HasNext:       len(mp.nextLink) > 0,
+		PrevURI:       mp.prevLink,
+		NextURI:       mp.nextLink,
 	}
 	if val, ok := mp.scrGramm.CustomData["comments"]; ok {
 		if val == "no" || val == "false" {
@@ -183,6 +198,20 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	partSecond.WriteTo(&partMerged)
 	mp.HtmlGen = partMerged.String()
 	mp.printGenHTML()
+	return nil
+}
+
+func (mp *MdHtmlProcess) calculatePrevNextLink() error {
+	mp.nextLink = ""
+	mp.prevLink = ""
+	if mp.mapLinks == nil {
+		return nil
+	}
+	mapLinks := mp.mapLinks.MapPost
+	if links, ok := mapLinks[mp.scrGramm.PostId]; ok {
+		mp.nextLink = links.NextLink
+		mp.prevLink = links.PrevLink
+	}
 	return nil
 }
 

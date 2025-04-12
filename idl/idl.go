@@ -73,4 +73,18 @@ type PostItem struct {
 	DateTime    time.Time
 	Abstract    string
 	Uri         string
+	Md5         string
+}
+
+type PostLinks struct {
+	PrevLink   string
+	PrevPostID string
+	NextLink   string
+	NextPostID string
+	Item       *PostItem
+}
+
+type MapPostsLinks struct {
+	MapPost  map[string]PostLinks
+	ListPost []PostItem
 }

@@ -65,7 +65,7 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		return err
 	}
 	//log.Println("read: ", mdhtml)
-	prc := mhproc.NewMdHtmlProcess(false)
+	prc := mhproc.NewMdHtmlProcess(false, nil)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[scanPostItem] HTML error: ", err)
 		return err

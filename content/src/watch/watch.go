@@ -5,6 +5,7 @@ import (
 	"corsa-blog/conf"
 	"corsa-blog/content/src/mhproc"
 	"corsa-blog/content/src/syncdir"
+	"corsa-blog/idl"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -28,6 +29,7 @@ type WatcherMdHtml struct {
 	staticSubDir    string
 	filesToIgnore   []string
 	is_page         bool
+	mapLinks        *idl.MapPostsLinks
 }
 
 func RunWatcher(targetDir string, subDir string, is_page bool) error {
@@ -252,7 +254,7 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 		return err
 	}
 	//log.Println("read: ", mdhtml)
-	prc := mhproc.NewMdHtmlProcess(false)
+	prc := mhproc.NewMdHtmlProcess(false, wmh.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[processMdHtmlChange] HTML error: ", err)
 		return nil
