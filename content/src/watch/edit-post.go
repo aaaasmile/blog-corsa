@@ -2,6 +2,7 @@ package watch
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/db"
 	"fmt"
 	"log"
 	"os"
@@ -18,6 +19,7 @@ type Post struct {
 	contentDir    string
 	templDir      string
 	postId        string
+	liteDB        *db.LiteDB
 }
 
 func EditPost(datepost string) error {
@@ -25,6 +27,11 @@ func EditPost(datepost string) error {
 		DatetimeOrig: datepost,
 	}
 	if err := post.setDateTimeFromString(datepost); err != nil {
+		return err
+	}
+	var err error
+	if post.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
 		return err
 	}
 	if err := post.editPost("../posts-src"); err != nil {
@@ -47,7 +54,11 @@ func (pp *Post) editPost(contentRootDir string) error {
 	if !info.IsDir() {
 		return fmt.Errorf("[editPost] expected dir on %s", contentDir)
 	}
-	if err := RunWatcher(contentDir, conf.Current.PostSubDir, false); err != nil {
+	mapLinks, err := CreateMapLinks(pp.liteDB)
+	if err != nil {
+		return err
+	}
+	if err := RunWatcher(contentDir, conf.Current.PostSubDir, false, mapLinks); err != nil {
 		log.Println("[editPost] error on watch")
 		return err
 	}

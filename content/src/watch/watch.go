@@ -32,7 +32,7 @@ type WatcherMdHtml struct {
 	mapLinks        *idl.MapPostsLinks
 }
 
-func RunWatcher(targetDir string, subDir string, is_page bool) error {
+func RunWatcher(targetDir string, subDir string, is_page bool, maplinks *idl.MapPostsLinks) error {
 	if targetDir == "" {
 		return fmt.Errorf("target dir is empty")
 	}
@@ -52,6 +52,7 @@ func RunWatcher(targetDir string, subDir string, is_page bool) error {
 			staticBlogDir: conf.Current.StaticBlogDir,
 			staticSubDir:  subDir,
 			is_page:       is_page,
+			mapLinks:      maplinks,
 		}
 		if err := wmh.doWatch(); err != nil {
 			log.Println("Server is not watching anymore because: ", err)

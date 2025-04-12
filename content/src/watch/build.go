@@ -30,7 +30,7 @@ func Build() error {
 		conf.Current.Database.SQLDebug); err != nil {
 		return err
 	}
-	if err := bb.createMapLinks(); err != nil {
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err
 	}
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
@@ -41,50 +41,6 @@ func Build() error {
 		return err
 	}
 	log.Println("[Build] completed, elapsed time ", time.Since(start))
-	return nil
-}
-
-func (bb *Builder) createMapLinks() error {
-	bb.mapLinks = &idl.MapPostsLinks{
-		MapPost:  map[string]idl.PostLinks{},
-		ListPost: []idl.PostItem{},
-	}
-	var err error
-	bb.mapLinks.ListPost, err = bb.liteDB.GetPostList()
-	if err != nil {
-		return err
-	}
-	//fmt.Println("*** Posts ", bb.mapLinks.ListPost)
-	last_ix := len(bb.mapLinks.ListPost) - 1
-	prev_item := &idl.PostItem{}
-	next_item := &idl.PostItem{}
-
-	for ix, item := range bb.mapLinks.ListPost {
-		postLinks := idl.PostLinks{
-			Item: &item,
-		}
-		if last_ix > 0 {
-			// at least 2 or more elements
-			if ix == 0 {
-				next_item = &bb.mapLinks.ListPost[ix+1]
-				postLinks.NextLink = next_item.Uri
-				postLinks.NextPostID = next_item.PostId
-			} else if ix == last_ix {
-				postLinks.PrevLink = prev_item.Uri
-				postLinks.PrevPostID = prev_item.PostId
-			} else {
-				next_item = &bb.mapLinks.ListPost[ix+1]
-				postLinks.NextLink = next_item.Uri
-				postLinks.NextPostID = next_item.PostId
-				postLinks.PrevLink = prev_item.Uri
-				postLinks.PrevPostID = prev_item.PostId
-			}
-			prev_item = &bb.mapLinks.ListPost[ix]
-		}
-		bb.mapLinks.MapPost[item.PostId] = postLinks
-	}
-	//fmt.Println("*** map ", bb.mapLinks.MapPost)
-	log.Printf("Built map with %d items", len(bb.mapLinks.MapPost))
 	return nil
 }
 

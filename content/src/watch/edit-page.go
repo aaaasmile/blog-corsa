@@ -2,6 +2,7 @@ package watch
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/db"
 	"fmt"
 	"log"
 	"os"
@@ -18,6 +19,7 @@ type Page struct {
 	contentDir   string
 	templDir     string
 	Id           string
+	liteDB       *db.LiteDB
 }
 
 func EditPage(name string) error {
@@ -26,6 +28,11 @@ func EditPage(name string) error {
 	}
 	page := Page{
 		Name: name,
+	}
+	var err error
+	if page.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
 	}
 	if err := page.editPage("../page-src"); err != nil {
 		return err
@@ -46,7 +53,11 @@ func (pg *Page) editPage(targetRootDir string) error {
 	if !info.IsDir() {
 		return fmt.Errorf("[editPage] expected dir on %s", contentDir)
 	}
-	if err := RunWatcher(contentDir, conf.Current.PageSubDir, true); err != nil {
+	mapLinks, err := CreateMapLinks(pg.liteDB)
+	if err != nil {
+		return err
+	}
+	if err := RunWatcher(contentDir, conf.Current.PageSubDir, true, mapLinks); err != nil {
 		log.Println("[editPage] error on watch")
 		return err
 	}
