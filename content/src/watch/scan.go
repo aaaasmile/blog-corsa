@@ -47,7 +47,6 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 		if err := bb.scanPostItem(item, tx); err != nil {
 			return err
 		}
-		break // IGSA: only one
 	}
 	// err = tx.Commit()
 	// if err != nil {
@@ -99,24 +98,51 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 func traverse(doc *html.Node, postItem *idl.PostItem) {
 	section_first := false
 	title_first := false
+	has_title_img := false
 	for n := range doc.Descendants() {
+		if !title_first && n.Type == html.ElementNode && n.DataAtom == atom.Header {
+			for _, a := range n.Attr {
+				if a.Key == "class" {
+					if a.Val == "withimg" {
+						fmt.Println("** has an image in title ")
+						has_title_img = true
+					}
+					break
+				}
+			}
+		}
 		if !title_first && n.Type == html.ElementNode && n.DataAtom == atom.H1 {
-			title := n.FirstChild.Data
-			fmt.Println("** title ", title)
-			postItem.Title = title
+			if n.FirstChild != nil {
+				title := n.FirstChild.Data
+				fmt.Println("** title ", title)
+				postItem.Title = title
+			}
 			title_first = true
+		}
+		if has_title_img && n.Type == html.ElementNode && n.DataAtom == atom.Img {
+			has_title_img = false
+			for _, a := range n.Attr {
+				if a.Key == "src" {
+					img_src := a.Val
+					fmt.Println("*** image in title ", img_src)
+					break
+				}
+			}
 		}
 		if n.Type == html.ElementNode && n.DataAtom == atom.Section {
 			section_first = true
+			has_title_img = false
 		}
 		if section_first && n.Type == html.ElementNode && n.DataAtom == atom.P {
-			abstract := n.FirstChild.Data
-			maxlen := 40
-			if len(abstract) > maxlen-3 {
-				abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
+			if n.FirstChild != nil {
+				abstract := n.FirstChild.Data
+				maxlen := 40
+				if len(abstract) > maxlen-3 {
+					abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
+				}
+				fmt.Println("** abstract ", abstract)
+				postItem.Abstract = abstract
 			}
-			fmt.Println("** abstract ", abstract)
-			postItem.Abstract = abstract
 			return
 		}
 	}
