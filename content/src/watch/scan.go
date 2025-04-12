@@ -104,7 +104,7 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 			for _, a := range n.Attr {
 				if a.Key == "class" {
 					if a.Val == "withimg" {
-						fmt.Println("** has an image in title ")
+						//fmt.Println("** has an image in title ")
 						has_title_img = true
 					}
 					break
@@ -114,7 +114,7 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 		if !title_first && n.Type == html.ElementNode && n.DataAtom == atom.H1 {
 			if n.FirstChild != nil {
 				title := n.FirstChild.Data
-				fmt.Println("** title ", title)
+				//fmt.Println("** title ", title)
 				postItem.Title = title
 			}
 			title_first = true
@@ -124,7 +124,9 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 			for _, a := range n.Attr {
 				if a.Key == "src" {
 					img_src := a.Val
-					fmt.Println("*** image in title ", img_src)
+					//fmt.Println("*** image in title ", img_src)
+					postItem.TitleImgUri = fmt.Sprintf("%s/%s", postItem.Uri, img_src)
+					fmt.Println("*** TitleImgUri ", postItem.TitleImgUri)
 					break
 				}
 			}
@@ -140,7 +142,7 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 				if len(abstract) > maxlen-3 {
 					abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
 				}
-				fmt.Println("** abstract ", abstract)
+				//fmt.Println("** abstract ", abstract)
 				postItem.Abstract = abstract
 			}
 			return

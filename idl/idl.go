@@ -66,10 +66,11 @@ func (fg *ImgDataItem) CalcReduced() error {
 }
 
 type PostItem struct {
-	Id       int
-	PostId   string
-	Title    string
-	DateTime time.Time
-	Abstract string
-	Uri      string
+	Id          int
+	PostId      string
+	Title       string
+	TitleImgUri string
+	DateTime    time.Time
+	Abstract    string
+	Uri         string
 }
