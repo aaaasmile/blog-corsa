@@ -42,16 +42,18 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 	if err != nil {
 		return err
 	}
+	bb.liteDB.DeleteAllPostItem(tx)
 
 	for _, item := range bb.mdsFn {
 		if err := bb.scanPostItem(item, tx); err != nil {
 			return err
 		}
+		break // IGSA test
 	}
-	// err = tx.Commit()
-	// if err != nil {
-	// 	return err
-	// }
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
 	log.Printf("%d posts processed ", len(bb.mdsFn))
 	return nil
 }
@@ -75,7 +77,6 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		PostId:   grm.PostId,
 		DateTime: grm.Datetime,
 	}
-	//staticBlogDir := conf.Current.StaticBlogDir
 	subDir := conf.Current.PostSubDir
 	arr, err := mhproc.GetDirNameArray(mdHtmlFname)
 	if err != nil {
@@ -93,9 +94,17 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		return err
 	}
 	traverse(doc, &postItem)
+
+	err = bb.liteDB.InsertNewPost(tx, &postItem)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 func traverse(doc *html.Node, postItem *idl.PostItem) {
+	// We need here the title, abstract and header image
+	// Information are from parsing the mdhtml file
 	section_first := false
 	title_first := false
 	has_title_img := false
@@ -127,7 +136,7 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 					//fmt.Println("*** image in title ", img_src)
 					postItem.TitleImgUri = strings.TrimRight(postItem.Uri, "/#")
 					postItem.TitleImgUri = fmt.Sprintf("%s/%s", postItem.TitleImgUri, img_src)
-					fmt.Println("*** TitleImgUri ", postItem.TitleImgUri)
+					//fmt.Println("*** TitleImgUri ", postItem.TitleImgUri)
 					break
 				}
 			}
