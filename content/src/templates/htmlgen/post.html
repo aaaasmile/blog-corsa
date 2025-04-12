@@ -33,13 +33,15 @@
     {{if .HasComments -}}
     <span class="comments" hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
     {{end -}}
-    <nav class="flatnav">
-      {{if .HasPrev -}}
+    <nav>
+      <nav class="flatnav">
+      {{- if .HasPrev}}
         <a href="{{.PrevURI}}">Post precedente</a>
       {{end -}}
-      {{if .HasNext -}}
+      {{- if .HasNext}}
         <a href="{{.NextURI}}">Post successivo</a>
       {{end -}}
+      </nav>
     </nav>
   </main>
   <footer>

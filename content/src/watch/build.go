@@ -33,10 +33,10 @@ func Build() error {
 	if err := bb.createMapLinks(); err != nil {
 		return err
 	}
-	return nil // IGSA TEST
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
 		return err
 	}
+	return nil // test IGSA
 	if err := bb.rebuildPages("../page-src"); err != nil {
 		return err
 	}
@@ -84,6 +84,7 @@ func (bb *Builder) createMapLinks() error {
 		bb.mapLinks.MapPost[item.PostId] = postLinks
 	}
 	//fmt.Println("*** map ", bb.mapLinks.MapPost)
+	log.Printf("Built map with %d items", len(bb.mapLinks.MapPost))
 	return nil
 }
 
