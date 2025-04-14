@@ -26,6 +26,8 @@ import (
 // go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
 // Example build all
 // go run .\main.go -config ..\..\config.toml  -build
+// Scan for info
+// go run .\main.go -config ..\..\config.toml  -scancontent
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
