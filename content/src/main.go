@@ -24,8 +24,8 @@ import (
 // Example new page:
 //
 // go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
-// Example build all
-// go run .\main.go -config ..\..\config.toml  -build
+// Example rebuild all
+// go run .\main.go -config ..\..\config.toml  -rebuildall
 // Scan for info
 // go run .\main.go -config ..\..\config.toml  -scancontent
 func main() {
@@ -38,7 +38,7 @@ func main() {
 	var editpage = flag.Bool("editpage", false, "edit page at name")
 	var newpage = flag.String("newpage", "", "name of the new page")
 	var name = flag.String("name", "", "name of the page")
-	var build = flag.Bool("build", false, "create all htmls (post and pages)")
+	var rebuildall = flag.Bool("rebuildall", false, "create all htmls (post and pages)")
 	var scancontent = flag.Bool("scancontent", false, "fill the db table with souce content")
 	flag.Parse()
 
@@ -55,8 +55,8 @@ func main() {
 		}
 		return
 	}
-	if *build {
-		if err := watch.Build(); err != nil {
+	if *rebuildall {
+		if err := watch.RebuildAll(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *editpost {

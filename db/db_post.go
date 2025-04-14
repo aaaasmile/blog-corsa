@@ -30,6 +30,29 @@ func (ld *LiteDB) DeleteAllPostItem(tx *sql.Tx) error {
 	return err
 }
 
+func (ld *LiteDB) UpdateMd5Post(tx *sql.Tx, postItem *idl.PostItem) error {
+	log.Println("[LiteDB - UpdateMd5Post] update md5 on post id ", postItem.PostId)
+	q := `UPDATE post SET md5=? WHERE post_id=?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	res, err := tx.Stmt(stm).Exec(postItem.Md5, postItem.PostId)
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
+	}
+
+	return err
+}
+
 func (ld *LiteDB) InsertNewPost(tx *sql.Tx, postItem *idl.PostItem) error {
 	log.Println("[LiteDB - InsertNewPost] insert new Post on post id ", postItem.PostId)
 

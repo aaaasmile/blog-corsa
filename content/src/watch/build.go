@@ -2,9 +2,13 @@ package watch
 
 import (
 	"corsa-blog/conf"
+	"corsa-blog/content/src/mhproc"
 	"corsa-blog/db"
 	"corsa-blog/idl"
+	"crypto/md5"
+	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -17,14 +21,16 @@ type Builder struct {
 	mdsFn    []string
 	pages    []string
 	liteDB   *db.LiteDB
+	tx       *sql.Tx
 	mapLinks *idl.MapPostsLinks
+	force    bool
 }
 
-func Build() error {
+func RebuildAll() error {
 	start := time.Now()
 	log.Println("[Build] the full site")
 
-	bb := Builder{}
+	bb := Builder{force: true}
 	var err error
 	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
 		conf.Current.Database.SQLDebug); err != nil {
@@ -39,7 +45,15 @@ func Build() error {
 	if err := bb.rebuildPages("../page-src"); err != nil {
 		return err
 	}
+	if err := bb.rebuildMainPage(); err != nil {
+		return err
+	}
 	log.Println("[Build] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
+func (bb *Builder) rebuildMainPage() error {
+	//TODO
 	return nil
 }
 
@@ -50,12 +64,17 @@ func (bb *Builder) rebuildPosts(srcDir string) error {
 	if err != nil {
 		return err
 	}
+	bb.tx, err = bb.liteDB.GetTransaction()
+	if err != nil {
+		return err
+	}
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
 	for _, item := range bb.mdsFn {
 		if err := bb.buildItem(item, false); err != nil {
 			return err
 		}
 	}
+	bb.tx.Commit()
 	log.Printf("%d posts processed ", len(bb.mdsFn))
 	return nil
 }
@@ -104,20 +123,68 @@ func getFilesinDir(dirAbs string, ini []string) ([]string, error) {
 }
 
 func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
+	var err error
 	wmh := WatcherMdHtml{
 		debug:         conf.Current.Debug,
 		staticBlogDir: conf.Current.StaticBlogDir,
 		is_page:       is_page,
 		mapLinks:      bb.mapLinks,
 	}
+	is_same := true
+	postItem := &idl.PostItem{}
 	if is_page {
 		wmh.staticSubDir = conf.Current.PageSubDir
 	} else {
+		postItem, is_same, err = bb.hasSameMd5(mdHtmlFname)
+		if err != nil {
+			return nil
+		}
 		wmh.staticSubDir = conf.Current.PostSubDir
+		if !bb.force && is_same {
+			log.Println("[buildItem] ignore because unchanged", mdHtmlFname)
+		}
 	}
 	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
 		return err
 	}
+	if (postItem.PostId != "") && !is_same {
+		if err := bb.liteDB.UpdateMd5Post(bb.tx, postItem); err != nil {
+			return err
+		}
+	}
 	log.Println("created HTML: ", wmh.CreatedHtmlFile)
 	return nil
+}
+
+func (bb *Builder) hasSameMd5(mdHtmlFname string) (*idl.PostItem, bool, error) {
+	f, err := os.Open(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	defer f.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return nil, false, err
+	}
+	mMd5 := string(h.Sum(nil))
+
+	mdhtml, err := os.ReadFile(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	prc := mhproc.NewMdHtmlProcess(false, nil)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("[hasSameMd5] ProcessToHtml error: ", err)
+		return nil, false, err
+	}
+	gr := prc.GetScriptGrammar()
+	mMd5Db, ok := bb.mapLinks.MapPost[gr.PostId]
+	if !ok {
+		return nil, false, fmt.Errorf("[hasSameMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.PostId)
+	}
+	same := mMd5 == mMd5Db.Item.Md5
+	postItem := idl.PostItem{PostId: gr.PostId, Md5: mMd5}
+	return &postItem, same, nil
+
 }

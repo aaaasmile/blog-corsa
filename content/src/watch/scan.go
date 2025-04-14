@@ -5,10 +5,8 @@ import (
 	"corsa-blog/content/src/mhproc"
 	"corsa-blog/db"
 	"corsa-blog/idl"
-	"crypto/md5"
 	"database/sql"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strings"
@@ -78,12 +76,6 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		PostId:   grm.PostId,
 		DateTime: grm.Datetime,
 	}
-	h := md5.New()
-	_, err = io.Writer.Write(h, mdhtml)
-	if err != nil {
-		return err
-	}
-	postItem.Md5 = string(h.Sum(nil))
 
 	subDir := conf.Current.PostSubDir
 	arr, err := mhproc.GetDirNameArray(mdHtmlFname)
