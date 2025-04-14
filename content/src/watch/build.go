@@ -28,7 +28,7 @@ type Builder struct {
 
 func RebuildAll() error {
 	start := time.Now()
-	log.Println("[Build] the full site")
+	log.Println("[RebuildAll] the full site")
 
 	bb := Builder{force: true}
 	var err error
@@ -48,7 +48,27 @@ func RebuildAll() error {
 	if err := bb.rebuildMainPage(); err != nil {
 		return err
 	}
-	log.Println("[Build] completed, elapsed time ", time.Since(start))
+	log.Println("[RebuildAll] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
+func BuildPosts() error {
+	start := time.Now()
+	log.Println("[BuildPosts] changed posts")
+
+	bb := Builder{}
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
+	if err := bb.rebuildPosts("../posts-src"); err != nil {
+		return err
+	}
+	log.Println("[BuildPosts] completed, elapsed time ", time.Since(start))
 	return nil
 }
 
@@ -137,11 +157,12 @@ func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
 	} else {
 		postItem, is_same, err = bb.hasSameMd5(mdHtmlFname)
 		if err != nil {
-			return nil
+			return err
 		}
 		wmh.staticSubDir = conf.Current.PostSubDir
 		if !bb.force && is_same {
 			log.Println("[buildItem] ignore because unchanged", mdHtmlFname)
+			return nil
 		}
 	}
 	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
