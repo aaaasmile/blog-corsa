@@ -1,13 +1,16 @@
 package watch
 
 import (
+	"bytes"
 	"corsa-blog/conf"
 	"corsa-blog/content/src/mhproc"
 	"corsa-blog/db"
 	"corsa-blog/idl"
+	"corsa-blog/util"
 	"crypto/md5"
 	"database/sql"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"os"
@@ -93,9 +96,71 @@ func BuildPages() error {
 	return nil
 }
 
-func (bb *Builder) rebuildMainPage() error {
-	//TODO
+func BuildMain() error {
+	start := time.Now()
+	log.Println("[BuildMain] changed posts")
+
+	bb := Builder{}
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
+	if err := bb.rebuildMainPage(); err != nil {
+		return err
+	}
+
+	log.Println("[BuildMain] completed, elapsed time ", time.Since(start))
 	return nil
+}
+
+type PostWithData struct {
+	DateFormatted string
+	DateTime      string
+	Title         string
+	Link          string
+}
+
+func (bb *Builder) rebuildMainPage() error {
+	log.Println("[rebuildMainPage] start")
+	templDir := "templates/htmlgen"
+	templName := path.Join(templDir, "mainpage.html")
+	var partFirst bytes.Buffer
+	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
+	latestPosts := []*PostWithData{}
+	for ix, item := range bb.mapLinks.ListPost {
+		pwd := PostWithData{
+			DateFormatted: util.FormatDateIt(item.DateTime),
+			DateTime:      item.DateTime.Format("2006-01-02 15:00"),
+			Title:         item.Title,
+			Link:          item.Uri,
+		}
+		latestPosts = append(latestPosts, &pwd)
+		if ix >= 5 {
+			break
+		}
+	}
+	CtxFirst := struct {
+		Title       string
+		LatestPosts []*PostWithData
+	}{
+		Title:       "IgorRun Blog",
+		LatestPosts: latestPosts,
+	}
+
+	if err := tmplPage.ExecuteTemplate(&partFirst, "mainpage", CtxFirst); err != nil {
+		return err
+	}
+	prc := mhproc.NewMdHtmlProcess(false, nil)
+	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s", conf.Current.StaticBlogDir)
+	prc.HtmlGen = partFirst.String()
+	prc.TargetDir = prc.RootStaticDir
+	err := prc.CreateOnlyIndexStaticHtml()
+
+	return err
 }
 
 func (bb *Builder) rebuildPosts(srcDir string) error {

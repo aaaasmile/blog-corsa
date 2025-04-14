@@ -232,6 +232,20 @@ func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fnam
 	return nil
 }
 
+func (mp *MdHtmlProcess) CreateOnlyIndexStaticHtml() error {
+	if mp.TargetDir == "" {
+		return fmt.Errorf("target dir not set")
+	}
+	if mp.HtmlGen == "" {
+		return fmt.Errorf("html dir not set")
+	}
+	log.Println("target dir for Index", mp.TargetDir)
+	if err := mp.createIndexHtml(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetDirNameArray(sourceName string) ([]string, error) {
 	sourceNameAgn := strings.ReplaceAll(sourceName, "\\", "/")
 	arr := strings.Split(sourceNameAgn, "/")

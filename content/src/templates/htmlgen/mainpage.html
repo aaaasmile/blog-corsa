@@ -1,3 +1,4 @@
+{{- define "mainpage" -}}
 <!DOCTYPE html>
 <html>
 
@@ -5,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="description" content="IgorRun Blog">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title id="title">IgorRun Blog</title>
+    <title id="title">{{.Title}}</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="/js/htmx.min.js"></script>
 </head>
@@ -27,30 +28,12 @@
             </p>
             <h3 class="centered subtitle">Ultimi post</h3>
             <ul>
+                {{- range .LatestPosts}}
                 <li>
-                    <a href="/posts/2024/12/01/24-12-01-WienRundumadum2024/#">Wien Rundumadum 2024</a>
-                    <time datetime="2024-12-01 01:00">1 Dicembre 2024</time>
+                    <a href="{{.Link}}">{{.Title}}</a>
+                    <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
                 </li>
-                <li>
-                    <a href="/posts/2024/11/08/24-11-08-ProssimaGara/#">Prossima gara: Wien Rundumadum</a>
-                    <time datetime="2024-11-08 20:00">8 Novembre 2024</time>
-                </li>
-                <li>
-                    <a href="/posts/2024/10/02/24-10-02-Prossimoappuntamento/#">Prossimo appuntamento: Backyard World Team Championship</a>
-                    <time datetime="2024-10-02 02:00">2 Ottobre 2024</time>
-                </li>
-                <li>
-                    <a href="/posts/2024/09/12/24-09-12-Risultatiultimegare/#">Risultati ultime gare</a>
-                    <time datetime="2024-09-12 02:00">12 Settembre 2024</time>
-                </li>
-                <li>
-                    <a href="/posts/2024/08/26/24-08-26-Prossimoappuntamento/#">Prossimo appuntamento</a>
-                    <time datetime="2024-08-26 02:00">26 Agosto 2024</time>
-                </li>
-                <li>
-                    <a href="/posts/2024/07/11/24-07-11-BackyardinFrankemarkt/#">Backyard in Frankemarkt</a>
-                    <time datetime="2024-07-11 02:00">11 Luglio 2024</time>
-                </li>
+                {{- end}}
             </ul>
         </article>
     </main>
@@ -96,3 +79,4 @@
 </body>
 
 </html>
+{{end}}

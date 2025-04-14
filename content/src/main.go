@@ -30,6 +30,8 @@ import (
 // go run .\main.go -config ..\..\config.toml  -buildposts
 // Example build only pages (all pages)
 // go run .\main.go -config ..\..\config.toml  -buildpages
+// Build the manin index page
+// go run .\main.go -config ..\..\config.toml  -buildmain
 // Scan and update post info in db
 // go run .\main.go -config ..\..\config.toml  -scancontent
 func main() {
@@ -46,6 +48,7 @@ func main() {
 	var scancontent = flag.Bool("scancontent", false, "fill the db table with souce content")
 	var buildposts = flag.Bool("buildposts", false, "create posts (only changed)")
 	var buildpages = flag.Bool("buildpages", false, "create pages (all)")
+	var buildmain = flag.Bool("buildmain", false, "create main index.html")
 	flag.Parse()
 
 	if *ver {
@@ -60,16 +63,18 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 		return
+	} else if *buildmain {
+		if err := watch.BuildMain(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
 	} else if *buildpages {
 		if err := watch.BuildPages(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
-
 	} else if *buildposts {
 		if err := watch.BuildPosts(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
-
 	} else if *rebuildall {
 		if err := watch.RebuildAll(); err != nil {
 			log.Fatal("ERROR: ", err)
