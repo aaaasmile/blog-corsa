@@ -24,10 +24,12 @@ import (
 // Example new page:
 //
 // go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
-// Example rebuild all
+// Example rebuild all (use it when templates are changed)
 // go run .\main.go -config ..\..\config.toml  -rebuildall
 // Example build only changed posts
 // go run .\main.go -config ..\..\config.toml  -buildposts
+// Example build only pages (all pages)
+// go run .\main.go -config ..\..\config.toml  -buildpages
 // Scan and update post info in db
 // go run .\main.go -config ..\..\config.toml  -scancontent
 func main() {
@@ -43,6 +45,7 @@ func main() {
 	var rebuildall = flag.Bool("rebuildall", false, "force to create all htmls (main, post and pages)")
 	var scancontent = flag.Bool("scancontent", false, "fill the db table with souce content")
 	var buildposts = flag.Bool("buildposts", false, "create posts (only changed)")
+	var buildpages = flag.Bool("buildpages", false, "create pages (all)")
 	flag.Parse()
 
 	if *ver {
@@ -57,13 +60,17 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 		return
-	}
-	if *buildposts {
+	} else if *buildpages {
+		if err := watch.BuildPages(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+
+	} else if *buildposts {
 		if err := watch.BuildPosts(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
-	}
-	if *rebuildall {
+
+	} else if *rebuildall {
 		if err := watch.RebuildAll(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}

@@ -72,6 +72,27 @@ func BuildPosts() error {
 	return nil
 }
 
+func BuildPages() error {
+	start := time.Now()
+	log.Println("[BuildPages] changed posts")
+
+	bb := Builder{}
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
+	if err := bb.rebuildPages("../page-src"); err != nil {
+		return err
+	}
+
+	log.Println("[BuildPages] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
 func (bb *Builder) rebuildMainPage() error {
 	//TODO
 	return nil
