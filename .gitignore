@@ -9,3 +9,4 @@ cert/key.pem
 cert/pubkey.pem
 cert/readme-keypem.md
 blog-corsa.db-journal
+sync_blog.sh
