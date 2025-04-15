@@ -31,11 +31,11 @@
 {{define "postfinal"}}
       <nav class="postnav">
         {{- if .HasPrev}}
-          <a href="{{.PrevURI}}">&lt; Post precedente</a>
+          <a href="{{.PrevURI}}">&lt; Post successivo</a>
         {{end -}}
         <a href="/">Home</a>
         {{- if .HasNext}}
-          <a href="{{.NextURI}}">Post successivo &gt;</a>
+          <a href="{{.NextURI}}">Post precedente &gt;</a>
         {{end -}}
       </nav>
     </article>
