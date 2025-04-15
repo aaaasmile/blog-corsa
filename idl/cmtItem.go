@@ -24,14 +24,15 @@ func GetStaticLocation(id string) (res string, ok bool) {
 	last := arr[len(arr)-1]
 	if last == "PS" {
 		// Example of result "/posts/2024/11/08/24-11-08-ProssimaGara/" from PostId 24-11-08-ProssimaGara-PS
-		if len(arr) != 5 {
+		if len(arr) < 5 {
 			log.Println("[GetStaticLocation] WARN id for Post not recognized", id)
 			return
 		}
 		yy := arr[0]
 		mm := arr[1]
 		dd := arr[2]
-		title := strings.Join(arr[0:4], "-")
+		title_ix := len(arr) - 1
+		title := strings.Join(arr[0:title_ix], "-")
 		res = fmt.Sprintf("/%s/20%s/%s/%s/%s/",
 			conf.Current.PostSubDir,
 			yy,
