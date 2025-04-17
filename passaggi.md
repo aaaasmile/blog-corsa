@@ -208,8 +208,8 @@ e così si ha l'accesso.
 WantedBy=multi-user.target
 
 [Unit]
-Description=corsa-blog service
-ConditionPathExists=/home/igor/app/go/corsa-blog/current/corsa-blog.bin
+Description=igorrun service
+ConditionPathExists=/home/igor/app/go/igorrun/current/blog-corsa.bin
 After=network.target
 
 [Service]
@@ -222,14 +222,14 @@ Restart=on-failure
 RestartSec=10
 startLimitIntervalSec=60
 
-WorkingDirectory=/home/igor/app/go/corsa-blog/current/
-ExecStart=/home/igor/app/go/corsa-blog/current/corsa-blog.bin
+WorkingDirectory=/home/igor/app/go/igorrun/current/
+ExecStart=/home/igor/app/go/igorrun/current/blog-corsa.bin
 
 # make sure log directory exists and owned by syslog
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p /var/log/corsa-blog
-ExecStartPre=/bin/chown igor:igor /var/log/corsa-blog
-ExecStartPre=/bin/chmod 755 /var/log/corsa-blog
+ExecStartPre=/bin/mkdir -p /var/log/igorrun
+ExecStartPre=/bin/chown igor:igor /var/log/igorrun
+ExecStartPre=/bin/chmod 755 /var/log/igorrun
 StandardOutput=syslog
 StandardError=syslog
 ```
@@ -239,11 +239,11 @@ StandardError=syslog
 Mi serve in quanto config.toml si trova su gitHub, mentre config_custom.toml è
 solo locale fuori da git. Si trova in:
 
-    /home/igor/app/go/corsa-blog/current/
+    /home/igor/app/go/igorrun/current/
 
 ## Visual Code
 Per lo sviluppo iniziale ho usato windows, poi, per l'update del service,
-ho usato Visual Code Remote nella directory ~/build/corsa-blog.
+ho usato Visual Code Remote nella directory ~/build/blog-corsa.
 
 ## nginx proxy
 todo

@@ -1,5 +1,5 @@
 #!/bin/bash
-read -p "Update the comment-blog (comment-blog on invido.it) y/n ? " -n 1 -r
+read -p "Update the igorrun service (igorrun on invido.it) y/n ? " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Nn]$ ]]
 then
@@ -8,7 +8,7 @@ then
 
 fi
 echo "Stop the service"
-sudo systemctl stop comment-blog
+sudo systemctl stop igorrun
 
 ZIPDIR="./zips"
 CURRDIR="./current"
@@ -27,7 +27,9 @@ echo "Backup dir is: $bckdir"
 [ ! -d "$bckdir" ] && mkdir -p "$bckdir" 
 
 mv $CURRDIR'/templates' $bckdir
+mv $CURRDIR'/static/vue' $bckdir
 mv $CURRDIR'/'*.bin $bckdir
+mv $CURRDIR'/'*.db $bckdir
 mv $CURRDIR'/config.toml' $bckdir
 
 #zips=$(ls $ZIPDIR)
@@ -44,10 +46,10 @@ destpath=$CURRDIR'/'
 echo "The source is $zippath and destination is $destpath"
 unzip $zippath -d $destpath
 
-chmod +x $destpath'/'comment-blog.bin
+chmod +x $destpath'/'blog-corsa.bin
 
 echo "Start the service"
-sudo systemctl start comment-blog
+sudo systemctl start igorrun
 
 
 echo "That's all folks!"

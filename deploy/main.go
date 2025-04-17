@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	defOutDir = "~/app/go/comment-blog/zips/"
+	defOutDir = "~/app/go/igorrun/zips/"
 )
 
 func main() {
@@ -27,11 +27,11 @@ func main() {
 	flag.Parse()
 
 	rootDirRel := ".."
-	pathItems := []string{"comment-blog.bin", "templates", "static"}
+	// please copy blog-corsa.db and config_custom.toml manually
+	pathItems := []string{"blog-corsa.bin", "templates", "static", "cert"}
 	switch *target {
 	case service:
 		pathItems = append(pathItems, "deploy/config_files/service_config.toml")
-		pathItems[0] = "comment-blog.bin"
 	default:
 		log.Fatalf("Deployment target %s is not recognized or not specified", *target)
 	}
@@ -54,7 +54,7 @@ func getOutFileName(outdir string, tgt string) string {
 	log.Println("Version is ", vn)
 
 	currentTime := time.Now()
-	s := fmt.Sprintf("comment-blog_%s_%s_%s.zip", strings.Replace(vn, ".", "-", -1), currentTime.Format("02012006-150405"), tgt) // current date-time stamp using 2006 date time format template
+	s := fmt.Sprintf("igorrun_%s_%s_%s.zip", strings.Replace(vn, ".", "-", -1), currentTime.Format("02012006-150405"), tgt) // current date-time stamp using 2006 date time format template
 	s = filepath.Join(outdir, s)
 	return s
 }
