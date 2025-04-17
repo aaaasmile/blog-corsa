@@ -197,8 +197,8 @@ Logs sono disponibili con:
 
     sudo journalctl -f -u igorrun
 
-## corsa-blog.service
-Qui segue il contenuto del file corsa-blog.service
+## igorrun.service
+Qui segue il contenuto del file igorrun.service
 Nota il Type=idle che è meglio di simple. Così 
 viene fatto partire dopo che la wlan ha ottenuto l'IP intranet
 e così si ha l'accesso.
