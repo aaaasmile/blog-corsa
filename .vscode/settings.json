@@ -1,5 +1,12 @@
 {
     "files.associations": {
         "*.mdhtml": "html"
-    }
+    },
+    "cSpell.language": "en,it",
+    "cSpell.words": [
+        "Blogspot",
+        "igorrun",
+        "invido",
+        "linkcap"
+    ]
 }

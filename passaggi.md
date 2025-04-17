@@ -287,3 +287,21 @@ Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere 
 
 ## Dominio
 Ho riservato il nome: igorrun.invido.it
+
+## Creare un nuovo Post
+Al momento il processo funziona con Visual Code.
+Il database sarebbe meglio scaricarlo da current su invido.it.
+Per il nuovo post:
+
+    cd .\content\src\
+    .\src.exe -config ..\..\config.toml  -editpost -date "2025-04-17" -watch
+Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
+Ora devo attualizzare i links:
+
+   .\src.exe -config ..\..\config.toml -scancontent
+Creare i posts:
+
+    .\src.exe -config ..\..\config.toml -buildposts
+Creare la main page:
+
+    .\src.exe -config ..\..\config.toml -buildmain
