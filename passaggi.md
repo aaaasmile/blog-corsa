@@ -171,11 +171,11 @@ La URL di riferimento è: http://localhost:5572/blog-admin/
 ### Stop del service
 Per stoppare il sevice si usa:
 
-    sudo systemctl stop corsa-blog
+    sudo systemctl stop igorrun
 
 ## Deployment su ubuntu direttamente
 
-    cd ~/build/corsa-blog
+    cd ~/build/blog-corsa
     git pull --all
     ./publish-service.sh
 Oppure uso Visual Code in remoto dove uso il synch di git. Qui nel terminal mi basta usare:
@@ -183,19 +183,19 @@ Oppure uso Visual Code in remoto dove uso il synch di git. Qui nel terminal mi b
     ./publish-service.sh
 
 ## Service Config
-Per prima cosa va creato il file corsa-blog.service.
+Per prima cosa va creato il file igorrun.service.
 Il contenuto l'ho messo sotto in una sezione apposita.
 
-    sudo nano /lib/systemd/system/corsa-blog.service
+    sudo nano /lib/systemd/system/igorrun.service
 Poi si fa l'enable:
 
-    sudo systemctl enable corsa-blog.service
+    sudo systemctl enable igorrun.service
 E infine lo start:
 
-    sudo systemctl start corsa-blog
+    sudo systemctl start igorrun
 Logs sono disponibili con:
 
-    sudo journalctl -f -u corsa-blog
+    sudo journalctl -f -u igorrun
 
 ## corsa-blog.service
 Qui segue il contenuto del file corsa-blog.service
