@@ -246,7 +246,7 @@ Per lo sviluppo iniziale ho usato windows, poi, per l'update del service,
 ho usato Visual Code Remote nella directory ~/build/blog-corsa.
 
 ## nginx proxy
-todo
+Vedi il documento locale readme_Hetzner.txt.
 
 ## Links utili
 
