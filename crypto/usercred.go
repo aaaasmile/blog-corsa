@@ -109,9 +109,9 @@ func (uc *UserCred) credFromPrompt() error {
 		fmt.Println("CAUTION: Please enter the right pwd for the ", genKeyFile)
 		fmt.Println("A wrong secret for the pem wil make the service unusable. If you recreate the key, please remember that old encrypted files are not available anymore.")
 		fmt.Scanln(&pwdpem)
-		if len(pwdpem) < 6 {
-			return fmt.Errorf("the pem key is too short")
-		}
+		// if len(pwdpem) < 6 {
+		// 	return fmt.Errorf("the pem key is too short")
+		// }
 	}
 
 	salt := make([]byte, 32)

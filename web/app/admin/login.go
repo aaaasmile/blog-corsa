@@ -33,6 +33,7 @@ func (ah *AdminHandler) doLogin() error {
 		//fmt.Println("*** refcred", refCred)
 		hash := crypto.GetHashOfSecret(credReq.Password, refCred.Salt)
 		//log.Println("Hash is: ", hash)
+		//fmt.Println("*** hash is ", hash)
 		if hash == refCred.PasswordHash {
 			return tokenResult(200, credReq.User, ah._w)
 		}
