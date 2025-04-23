@@ -35,8 +35,7 @@ func RebuildAll() error {
 
 	bb := Builder{force: true}
 	var err error
-	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
-		conf.Current.Database.SQLDebug); err != nil {
+	if err := bb.scanMdHtml("../posts-src"); err != nil {
 		return err
 	}
 	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
@@ -139,7 +138,7 @@ func (bb *Builder) rebuildMainPage() error {
 			Link:          item.Uri,
 		}
 		latestPosts = append(latestPosts, &pwd)
-		if ix >= 5 {
+		if ix >= 7 {
 			break
 		}
 	}

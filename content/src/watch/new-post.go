@@ -2,6 +2,8 @@ package watch
 
 import (
 	"bytes"
+	"corsa-blog/conf"
+	"corsa-blog/db"
 	"corsa-blog/util"
 	"fmt"
 	"html/template"
@@ -18,9 +20,10 @@ func NewPost(title string, datepost string, watch_for_changes bool) error {
 		return fmt.Errorf("title could not be null")
 	}
 	tit_compr := strings.ReplaceAll(title, " ", "")
-	tit_compr = strings.ReplaceAll(tit_compr, ":", "-")
-	tit_compr = strings.ReplaceAll(tit_compr, ";", "-")
-	tit_compr = strings.ReplaceAll(tit_compr, ".", "-")
+	tit_compr = strings.ReplaceAll(tit_compr, ":", "_")
+	tit_compr = strings.ReplaceAll(tit_compr, ";", "_")
+	tit_compr = strings.ReplaceAll(tit_compr, ".", "_")
+	tit_compr = strings.ReplaceAll(tit_compr, "-", "_")
 	post := Post{
 		Title:         title,
 		TitleCompress: tit_compr,
@@ -61,6 +64,15 @@ func (pp *Post) setDateTimeFromString(datepost string) error {
 
 func (pp *Post) createNewPost(targetRootDir string) error {
 	log.Printf("[createNewPost] create new post '%s' on '%s'", pp.Title, pp.Datetime)
+	var err error
+
+	if pp.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if pp.mapLinks, err = CreateMapLinks(pp.liteDB); err != nil {
+		return err
+	}
 	yy := fmt.Sprintf("%d", pp.Datetime.Year())
 	mm := fmt.Sprintf("%02d", pp.Datetime.Month())
 	dd := fmt.Sprintf("%02d", pp.Datetime.Day())
@@ -89,6 +101,19 @@ func (pp *Post) createNewPost(targetRootDir string) error {
 	log.Println("content dir is empty, lets generate the file", pp.mdhtmlName)
 	if err := pp.createMdHtml(); err != nil {
 		return err
+	}
+	for ix, item := range pp.mapLinks.ListPost {
+		if item.DateTime.Before(pp.Datetime) {
+			prev_ix := ix - 1
+			if prev_ix >= 0 {
+				prev_Item := pp.mapLinks.ListPost[prev_ix]
+				log.Println("[createNewPost] previous post_id is also invalid", prev_Item.PostId)
+				pp.liteDB.DeletePostId(prev_Item.PostId)
+			}
+			log.Println("[createNewPost] post_id is before, now is invalid", item.PostId)
+			pp.liteDB.DeletePostId(item.PostId)
+			break
+		}
 	}
 	return nil
 }

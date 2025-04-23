@@ -3,6 +3,7 @@ package watch
 import (
 	"corsa-blog/conf"
 	"corsa-blog/db"
+	"corsa-blog/idl"
 	"fmt"
 	"log"
 	"os"
@@ -19,6 +20,7 @@ type Post struct {
 	contentDir    string
 	templDir      string
 	postId        string
+	mapLinks      *idl.MapPostsLinks
 	liteDB        *db.LiteDB
 }
 

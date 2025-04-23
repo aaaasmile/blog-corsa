@@ -1,0 +1,39 @@
+title: Maratona di Vienna
+datetime: 2025-04-23
+id: 25-04-23-MaratonadiVienna-PS
+tags:
+---
+<header class="withimg">
+  <div>
+    <h1>Maratona di Vienna</h1>
+    <time>23 Aprile 2025</time>
+  </div>
+  <img src="foto3.jpg" /> 
+</header>
+<section>
+  <p>Anche quest'anno ho partecipato alla maratona di Vienna, la mia dodicesima di fila.</p>
+  <p>Mi chiedo quale sia la mia condizione alla vigilia di questa nuova maratona. Come gli scorsi anni,
+    l'inverno l'ho passato a preparare questa gara, anche se questa volta, la novità è che, in questo 2025, 
+    non ho ancora attaccato il numero alla maglia. Che sia di buono auspicio? Di sicuro sono riuscito a tenere
+    segreta la mia preparazione, almeno su questo blog. 
+  </p>
+  <p>Il via alle nove in punto di domenica sei aprile. Fa freddo, molto freddo e il termometro segna -1 una temperatura inusuale.
+    Colpa del vento. Posso andare veloce? Penso proprio di si e i primi ventuno chilometri li percorro in 1h:46'. 
+    Non male direi e sembra
+    proprio una delle maratone di Vienna più veloci degli anni duemila e venti. 
+  </p>
+  <p>Nella seconda parte il vento e la fatica si fanno sentire e le mie gambe cominciano a titubare. 
+    Non tanto, ma il recupero dello scorso anno negli ultimi dodici chilometri sembra un lontano ricordo. Infatti
+    devo solo limitare i danni. Alla fine taglio il traguardo in 3h:37':31" e se voglio trovare una maratona viennese
+    con un tempo inferiore, devo andare a pescare l'edizione del 2017, che sembra lontana anni luce. 
+  </p>
+  <p>Visto i miei dubbi e le mie titubanze ho deciso di replicare subito con la  maratona di Linz.</p>
+
+  <p>[figstack 
+    'foto4.jpg', 'Tensione prima della partenza'
+  ]</p>  
+  <figure>
+    [youtube 'tVYRoz4CCXI']
+    <figcaption>Video che ho girato durante la gara</figcaption>
+  </figure>
+</section>    

@@ -42,7 +42,13 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 	if err != nil {
 		return err
 	}
-	bb.liteDB.DeleteAllPostItem(tx)
+	if bb.force {
+		bb.liteDB.DeleteAllPostItem(tx)
+	} else {
+		if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+			return err
+		}
+	}
 
 	for _, item := range bb.mdsFn {
 		if err := bb.scanPostItem(item, tx); err != nil {
@@ -95,9 +101,13 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	}
 	traverse(doc, &postItem)
 
-	err = bb.liteDB.InsertNewPost(tx, &postItem)
-	if err != nil {
-		return err
+	if _, ok := bb.mapLinks.MapPost[postItem.PostId]; !ok {
+		err = bb.liteDB.InsertNewPost(tx, &postItem)
+		if err != nil {
+			return err
+		}
+	} else {
+		log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
 	}
 
 	return nil

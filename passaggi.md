@@ -294,7 +294,10 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -editpost -date "2025-04-17" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Maratona di Vienna" -date "2025-04-23" -watch
+se devo editare il post in uno step successivo:
+
+    .\src.exe -config ..\..\config.toml  -editpost -date "2025-04-23" -watch
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 Ora devo attualizzare i links:
 
@@ -305,3 +308,7 @@ Creare i posts:
 Creare la main page:
 
     .\src.exe -config ..\..\config.toml -buildmain
+
+Se per caso devo ricreare il sito (links, pages e posts)
+
+    .\src.exe -config ..\..\config.toml -rebuildall
