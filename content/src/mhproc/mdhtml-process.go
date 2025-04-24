@@ -46,7 +46,9 @@ func (mp *MdHtmlProcess) GetScriptGrammar() *mhparser.ScriptGrammar {
 }
 
 func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
-	log.Println("[ProcessToHtml] is called with a script len ", len(script))
+	if mp.debug {
+		log.Println("[ProcessToHtml] is called with a script len ", len(script))
+	}
 	if script == "" {
 		return fmt.Errorf("[ProcessToHtml] script is empty")
 	}

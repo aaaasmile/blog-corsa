@@ -27,6 +27,7 @@ type Builder struct {
 	tx       *sql.Tx
 	mapLinks *idl.MapPostsLinks
 	force    bool
+	debug    bool
 }
 
 func RebuildAll() error {
@@ -80,7 +81,9 @@ func BuildPosts() error {
 	start := time.Now()
 	log.Println("[BuildPosts] start")
 
-	bb := Builder{}
+	bb := Builder{
+		debug: conf.Current.Debug,
+	}
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
@@ -187,6 +190,7 @@ func (bb *Builder) rebuildMainPage() error {
 }
 
 func (bb *Builder) rebuildFeed() error {
+	log.Println("[rebuildFeed] start ")
 	templDir := "templates/xml"
 	templName := path.Join(templDir, "feed.xml")
 	var partFirst bytes.Buffer
@@ -295,7 +299,9 @@ func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
 		}
 		wmh.staticSubDir = conf.Current.PostSubDir
 		if !bb.force && is_same {
-			log.Println("[buildItem] ignore because unchanged", mdHtmlFname)
+			if bb.debug {
+				log.Println("[buildItem] ignore because unchanged", mdHtmlFname)
+			}
 			return nil
 		}
 	}
