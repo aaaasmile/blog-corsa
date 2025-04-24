@@ -302,7 +302,7 @@ Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra
 Ora devo attualizzare i links:
 
    .\src.exe -config ..\..\config.toml -scancontent
-Creare i posts:
+Creare i posts col feed:
 
     .\src.exe -config ..\..\config.toml -buildposts
 Creare la main page:
@@ -312,3 +312,8 @@ Creare la main page:
 Se per caso devo ricreare il sito (links, pages e posts)
 
     .\src.exe -config ..\..\config.toml -rebuildall
+
+Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
+bisogna far ripartire il service
+
+    sudo systemctl restart igorrun

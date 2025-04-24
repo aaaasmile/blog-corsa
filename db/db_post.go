@@ -143,6 +143,7 @@ func (ld *LiteDB) GetPostList() ([]idl.PostItem, error) {
 			return nil, err
 		}
 		item.DateTime = time.Unix(ts, 0)
+		item.DateTimeRfC822 = item.DateTime.Format(time.RFC822Z)
 		res = append(res, item)
 	}
 	log.Printf("[LiteDB - GetPostList] posts read %d", len(res))
