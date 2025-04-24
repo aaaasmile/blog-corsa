@@ -38,12 +38,12 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 		return err
 	}
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
+	if bb.force {
+		bb.liteDB.DeleteAllPostItem()
+	}
 	tx, err := bb.liteDB.GetTransaction()
 	if err != nil {
 		return err
-	}
-	if bb.force {
-		bb.liteDB.DeleteAllPostItem(tx)
 	}
 	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err
@@ -58,12 +58,17 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 	if err != nil {
 		return err
 	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
 	log.Printf("%d posts processed ", len(bb.mdsFn))
 	return nil
 }
 
 func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
-	log.Println("[scanPostItem] file is ", mdHtmlFname)
+	if bb.debug {
+		log.Println("[scanPostItem] file is ", mdHtmlFname)
+	}
 
 	mdhtml, err := os.ReadFile(mdHtmlFname)
 	if err != nil {
@@ -106,7 +111,9 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 			return err
 		}
 	} else {
-		log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
+		if bb.debug {
+			log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
+		}
 	}
 
 	return nil

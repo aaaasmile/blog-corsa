@@ -254,7 +254,7 @@ func GetDirNameArray(sourceName string) ([]string, error) {
 	if len(arr) < 4 {
 		return nil, fmt.Errorf("source filename is not conform to expected path: <optional/>yyyy/mm/dd/fname.mdhtml, but it is %s", sourceNameAgn)
 	}
-	log.Println("Processing stack from source ", arr)
+	//log.Println("Processing stack from source ", arr)
 	last_ix := len(arr) - 1
 	ext := path.Ext(arr[last_ix])
 	last_dir := strings.Replace(arr[last_ix], ext, "", -1)

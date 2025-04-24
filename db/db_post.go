@@ -9,7 +9,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (ld *LiteDB) DeleteAllPostItem(tx *sql.Tx) error {
+func (ld *LiteDB) DeleteAllPostItem() error {
+	log.Println("[LiteDB - DeleteAllPostItem] start")
 	q := `DELETE FROM post;`
 	if ld.debugSQL {
 		log.Println("SQL is:", q)
@@ -19,7 +20,7 @@ func (ld *LiteDB) DeleteAllPostItem(tx *sql.Tx) error {
 	if err != nil {
 		return err
 	}
-	res, err := tx.Stmt(stm).Exec()
+	res, err := stm.Exec()
 	if ld.debugSQL {
 		ra, err := res.RowsAffected()
 		if err != nil {
@@ -79,7 +80,9 @@ func (ld *LiteDB) UpdateMd5Post(tx *sql.Tx, postItem *idl.PostItem) error {
 }
 
 func (ld *LiteDB) InsertNewPost(tx *sql.Tx, postItem *idl.PostItem) error {
-	log.Println("[LiteDB - InsertNewPost] insert new Post on post id ", postItem.PostId)
+	if ld.debugSQL {
+		log.Println("[LiteDB - InsertNewPost] insert new Post on post id ", postItem.PostId)
+	}
 
 	q := `INSERT INTO post(title,post_id,timestamp,abstract,uri,title_img_uri,md5) VALUES(?,?,?,?,?,?,?);`
 	if ld.debugSQL {
@@ -111,7 +114,9 @@ func (ld *LiteDB) InsertNewPost(tx *sql.Tx, postItem *idl.PostItem) error {
 		return err
 	}
 	postItem.Id = id
-	log.Println("Post added into the db OK: ", postItem.Id)
+	if ld.debugSQL {
+		log.Println("Post added into the db OK: ", postItem.Id)
+	}
 	return nil
 }
 
