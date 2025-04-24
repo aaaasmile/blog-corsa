@@ -3,7 +3,6 @@ package watch
 import (
 	"corsa-blog/conf"
 	"corsa-blog/content/src/mhproc"
-	"corsa-blog/db"
 	"corsa-blog/idl"
 	"database/sql"
 	"fmt"
@@ -28,10 +27,6 @@ func ScanContent() error {
 
 func (bb *Builder) scanMdHtml(srcDir string) error {
 	var err error
-	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
-		conf.Current.Database.SQLDebug); err != nil {
-		return err
-	}
 	bb.mdsFn = make([]string, 0)
 	bb.mdsFn, err = getFilesinDir(srcDir, bb.mdsFn)
 	if err != nil {

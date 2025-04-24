@@ -34,10 +34,13 @@ func RebuildAll() error {
 	log.Println("[RebuildAll] the full site")
 
 	bb := Builder{force: true}
-	var err error
+	if err := bb.InitDBData(); err != nil {
+		return err
+	}
 	if err := bb.scanMdHtml("../posts-src"); err != nil {
 		return err
 	}
+	var err error
 	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err
 	}
@@ -54,20 +57,35 @@ func RebuildAll() error {
 	return nil
 }
 
-func BuildPosts() error {
+func BuildFeed() error {
 	start := time.Now()
-	log.Println("[BuildPosts] changed posts")
+	log.Println("[BuildFeed] start")
 
 	bb := Builder{}
-	var err error
-	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
-		conf.Current.Database.SQLDebug); err != nil {
+	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+
+	if err := bb.rebuildFeed(); err != nil {
 		return err
 	}
+	log.Println("[BuildFeed] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
+func BuildPosts() error {
+	start := time.Now()
+	log.Println("[BuildPosts] start")
+
+	bb := Builder{}
+	if err := bb.InitDBData(); err != nil {
+		return err
+	}
+
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
+		return err
+	}
+	if err := bb.rebuildFeed(); err != nil {
 		return err
 	}
 	log.Println("[BuildPosts] completed, elapsed time ", time.Since(start))
@@ -76,15 +94,10 @@ func BuildPosts() error {
 
 func BuildPages() error {
 	start := time.Now()
-	log.Println("[BuildPages] changed posts")
+	log.Println("[BuildPages] start")
 
 	bb := Builder{}
-	var err error
-	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
-		conf.Current.Database.SQLDebug); err != nil {
-		return err
-	}
-	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+	if err := bb.InitDBData(); err != nil {
 		return err
 	}
 	if err := bb.rebuildPages("../page-src"); err != nil {
@@ -96,16 +109,12 @@ func BuildPages() error {
 }
 
 func BuildMain() error {
+	// TODO integrate this in build page
 	start := time.Now()
-	log.Println("[BuildMain] changed posts")
+	log.Println("[BuildMain] started")
 
 	bb := Builder{}
-	var err error
-	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
-		conf.Current.Database.SQLDebug); err != nil {
-		return err
-	}
-	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+	if err := bb.InitDBData(); err != nil {
 		return err
 	}
 	if err := bb.rebuildMainPage(); err != nil {
@@ -121,6 +130,18 @@ type PostWithData struct {
 	DateTime      string
 	Title         string
 	Link          string
+}
+
+func (bb *Builder) InitDBData() error {
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (bb *Builder) rebuildMainPage() error {
@@ -160,6 +181,31 @@ func (bb *Builder) rebuildMainPage() error {
 	err := prc.CreateOnlyIndexStaticHtml()
 
 	return err
+}
+
+func (bb *Builder) rebuildFeed() error {
+	templDir := "templates/xml"
+	templName := path.Join(templDir, "feed.xml")
+	var partFirst bytes.Buffer
+	tmplPage := template.Must(template.New("FeedSrc").ParseFiles(templName))
+
+	if err := tmplPage.ExecuteTemplate(&partFirst, "feedbeg", bb.mapLinks.ListPost); err != nil {
+		return err
+	}
+	rootStaticDir := fmt.Sprintf("..\\..\\static\\%s\\", conf.Current.StaticBlogDir)
+	fname := path.Join(rootStaticDir, "feed")
+	f, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.Write(partFirst.Bytes()); err != nil {
+		return err
+	}
+	log.Println("file created ", fname)
+
+	return nil
 }
 
 func (bb *Builder) rebuildPosts(srcDir string) error {

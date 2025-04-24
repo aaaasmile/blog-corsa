@@ -1,0 +1,21 @@
+{{- define "feedbeg" -}}
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Igorrun Blog</title>
+    <description>Igor personal Blog on running</description>
+    <link>https://igorrun.invido.it</link>
+    <copyright>All rights reserved</copyright>
+    <pubDate>Sat, 19 apr 2025 16:20:00 +0000</pubDate>
+
+    {{- range .}}
+    <item>
+        <title>{{.Title}}</title>
+        <description>{{.Abstract}}</description>
+        <link>https://igorrun.invido.it/{{.Uri}}</link>
+        <pubDate>{{.DateTime}}</pubDate>
+    </item>
+    {{- end}}
+</channel>
+</rss>
+{{- end -}}

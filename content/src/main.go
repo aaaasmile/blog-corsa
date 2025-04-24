@@ -49,6 +49,7 @@ func main() {
 	var buildposts = flag.Bool("buildposts", false, "create posts (only changed)")
 	var buildpages = flag.Bool("buildpages", false, "create pages (all)")
 	var buildmain = flag.Bool("buildmain", false, "create main index.html")
+	var buildfeed = flag.Bool("buildfeed", false, "create feed.xml")
 	flag.Parse()
 
 	if *ver {
@@ -93,6 +94,10 @@ func main() {
 		}
 	} else if *editpage {
 		if err := watch.EditPage(*name); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *buildfeed {
+		if err := watch.BuildFeed(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	}
