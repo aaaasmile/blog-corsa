@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+ <title>Igorrun Blog</title>
+ <description>Igor personal Blog on running</description>
+ <link>https://igorrun.invido.it</link>
+ <copyright>All rights reserved</copyright>
+ <pubDate>Sat, 19 apr 2025 16:20:00 +0000</pubDate>
+
+ <item>
+  <title>Maratona di Vienna</title>
+  <description>Anche quest'anno ho partecipato alla mar...</description>
+  <link>https://igorrun.invido.it/posts/2025/04/23/25-04-23-MaratonadiVienna</link>
+  <pubDate>Wen, 23 apr 2025 16:20:00 +0000</pubDate>
+ </item>
+
+</channel>
+</rss>
