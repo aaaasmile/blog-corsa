@@ -6,7 +6,7 @@
     <description>Igor personal Blog on running</description>
     <link>https://igorrun.invido.it</link>
     <copyright>All rights reserved</copyright>
-    <pubDate>Sat, 19 apr 2025 16:20:00 +0000</pubDate>
+    <pubDate>23 Apr 25 02:00 +0200</pubDate>
 
     {{- range .}}
     <item>
