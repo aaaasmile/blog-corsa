@@ -28,5 +28,13 @@
             "program": "${workspaceFolder}/content/src/main.go",
             "args": ["-config", "${workspaceFolder}/config.toml", "-rebuildall" ]
         },
+        {
+            "name": "scancontent",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/content/src/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml", "-scancontent", "-force" ]
+        },
     ]
 }

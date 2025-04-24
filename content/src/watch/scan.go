@@ -15,9 +15,14 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-func ScanContent() error {
+func ScanContent(force bool) error {
 	start := time.Now()
-	bb := Builder{}
+	bb := Builder{
+		force: force,
+	}
+	if err := bb.InitDBData(); err != nil {
+		return err
+	}
 	if err := bb.scanMdHtml("../posts-src"); err != nil {
 		return err
 	}
@@ -39,10 +44,9 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 	}
 	if bb.force {
 		bb.liteDB.DeleteAllPostItem(tx)
-	} else {
-		if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
-			return err
-		}
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
 	}
 
 	for _, item := range bb.mdsFn {
@@ -156,9 +160,17 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 				abstract = strings.Trim(abstract, " ")
 				abstract = strings.Trim(abstract, "\n")
 				abstract = strings.Trim(abstract, " ")
+
 				maxlen := 40
-				if len(abstract) > maxlen-3 {
-					abstract = fmt.Sprintf("%s...", abstract[0:maxlen])
+				cutPos := maxlen - 3
+				if len(abstract) > cutPos {
+					cutted := abstract[0:cutPos]
+					rest := abstract[cutPos:]
+					next_space_ix := strings.Index(rest, " ")
+					if next_space_ix > 0 {
+						cutted = fmt.Sprintf("%s%s", cutted, rest[0:next_space_ix])
+					}
+					abstract = fmt.Sprintf("%s...", cutted)
 				}
 				//fmt.Println("** abstract ", abstract)
 				if len(abstract) > 4 {

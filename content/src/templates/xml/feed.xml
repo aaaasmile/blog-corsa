@@ -12,7 +12,7 @@
     <item>
         <title>{{.Title}}</title>
         <description>{{.Abstract}}</description>
-        <link>https://igorrun.invido.it/{{.Uri}}</link>
+        <link>https://igorrun.invido.it{{.Uri}}</link>
         <pubDate>{{.DateTime}}</pubDate>
     </item>
     {{- end}}

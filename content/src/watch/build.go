@@ -10,13 +10,13 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -45,6 +45,9 @@ func RebuildAll() error {
 		return err
 	}
 	if err := bb.rebuildPosts("../posts-src"); err != nil {
+		return err
+	}
+	if err := bb.rebuildFeed(); err != nil {
 		return err
 	}
 	if err := bb.rebuildPages("../page-src"); err != nil {
