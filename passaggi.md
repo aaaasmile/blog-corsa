@@ -288,16 +288,19 @@ Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere 
 ## Dominio
 Ho riservato il nome: igorrun.invido.it
 
+## Ricreare il sito da zero
+Se per caso devo ricreare il sito (links, pages e posts)
+
+    .\src.exe -config ..\..\config.toml -rebuildall
+
 ## Creare un nuovo Post
-Al momento il processo funziona con Visual Code.
+Al momento il processo funziona con Visual Code (profilo Edit Post).
 Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
     .\src.exe -config ..\..\config.toml  -newpost "Maratona di Linz" -date "2025-04-27" -watch
-se devo editare il post in uno step successivo:
 
-    .\src.exe -config ..\..\config.toml  -editpost -date "2025-04-23" -watch
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 Ora devo attualizzare i links:
 
@@ -309,11 +312,10 @@ Creare la main page:
 
     .\src.exe -config ..\..\config.toml -buildmain
 
-Se per caso devo ricreare il sito (links, pages e posts)
-
-    .\src.exe -config ..\..\config.toml -rebuildall
 
 Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
 bisogna far ripartire il service
 
     sudo systemctl restart igorrun
+Al momeneto il sync del db ha senso solo se ci sono nuovi commenti.
+In futuro, con la funzione "cerca", il sync sarà sempre necessario.
