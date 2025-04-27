@@ -1,0 +1,48 @@
+title: Maratona di Linz
+datetime: 2025-04-27
+id: 25-04-27-MaratonadiLinz-PS
+tags: MaratonaGara
+---
+<header class="withimg">
+  <div>
+    <h1>Maratona di Linz</h1>
+    <time>27 Aprile 2025</time>
+  </div>
+  <img src="foto1.jpg" /> 
+</header>
+<section>
+  <p>Dopo neanche una settimana di pausa dalla maratona di Vienna decido di ripetere
+    l'esperienza nella maratona di Linz. Il percorso lo conosco, sono due giri da 21 km che si 
+    snodano lungo la città dell' Alta Austria. Nell'allenamento infrasettimanale di giovedì  mi sono
+    subito accorto che dovrò ridimensionare i miei sogni di personal best. Di quanto sarà da vedere.
+  </p>
+  <p>Alla partenza mi sistemo dietro al pacer delle 3h:45', una posizione che sottintende ambizione. 
+    Il meteo è fresco, nuvoloso e, al contrario di Vienna, 
+    senza vento. Condizioni ideali per correre al massimo. Se avessi le gambe per farlo. Dopo pochi chilometri mi
+    rendo subito conto che il pacer delle 3h:45' è una chimera. Il passaggio alla mezza in 1h:54' mi dice che sono 
+    otto minuti più lento di Vienna, ma il peggio deve ancora venire. Dopo soli 21 chilometri non ne ho più nelle gambe. 
+  </p>
+  <p>Tengo botta fino al km 33 quando mi raggiunge e mi stacca il pacer delle quattro ore. Il morale è sotto i tacchi
+    e la voglia di passare ad un ritmo Backyard fino al traguardo è tanta (7 min/km e qualche camminata). 
+    Ma in qualche modo rimango nella scia di quelli che sono al gancio del pacer, anche se è chiaro che si stanno per staccare
+    e finire risucchiati magari dal pacer delle 4h:15'. Raggiunto da un pacer dopo l'altro, l'oblio del maratoneta.
+    Un cartello di una simpatica spettatrice mostra che con la terapia psicologica farei senza correre la maratona.
+  </p>
+  <p>Però, al chilometro 34 succede qualcosa al quale, nella maratona, non ero abituato. Vale a dire che riesco, in una fase
+  decadente, a ritrovare vigore riuscendo a riagganciarmi al pacer che mi aveva staccato. L'euforia del riaggancio
+  mi fa dimenticare tutti i dolori ai muscoli delle gambe, così da riuscire a tenere il ritmo del pacer fino alla fine.
+  Termino la maratona in un ottimo 3h:59':01" e non riesco a nascondere la mia soddisfazione.
+  La psicologa può aspettare. Un nota di merito va al 
+  pacer delle quattro ore che è stato veramente di grande aiuto.</p> 
+  <p>Con Linz termina qui la mia stagione delle maratone,
+  ora mi aspettano le ultra. Ma per questo ci sarà tempo.   
+  </p>
+
+  <p>[figstack 
+    'foto2.jpg', ' '
+  ]</p> 
+  <figure>
+    [youtube 'cIYBUEbXjsg']
+    <figcaption>In gara a Linz</figcaption>
+  </figure>
+</section>    

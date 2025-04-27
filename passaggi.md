@@ -294,7 +294,7 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Maratona di Vienna" -date "2025-04-23" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Maratona di Linz" -date "2025-04-27" -watch
 se devo editare il post in uno step successivo:
 
     .\src.exe -config ..\..\config.toml  -editpost -date "2025-04-23" -watch
