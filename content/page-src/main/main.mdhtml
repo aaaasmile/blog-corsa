@@ -10,3 +10,22 @@ path: /
     Ovvero perché mi alleno così raramente con il giro della civetta
 </p>
 [latest_posts 'IgorRun Blog', '7']
+<section>
+    <h3>Post in Evidenza</h3>
+    <ul>
+        <li><a href="/posts/2016/02/19/16-02-19-Dialogosullamaratona/#">Dialogo sulla maratona</a></li>
+        <li><a href="/posts/2015/08/10/15-08-10-Ultratrailicomandamenti/#">Ultratrail i comandamenti per iniziare</a></li>
+        <li><a href="/posts/2023/01/04/23-01-04-QuoVadis/#">Quo Vadis</a></li>
+        <li><a href="/posts/2020/01/20/20-01-20-SpineRace2020/#">Spine Race</a></li>
+        <li><a href="/posts/2022/06/23/22-06-23-CapeWrathUltra/#">Cape Wrath</a></li>
+        <li><a href="/posts/2015/01/25/15-01-25-PreparazioneVCM/#">Preparazione VCM</a></li>
+        <li><a href="/posts/2015/09/28/15-09-28-AdamelloUltraTrail180/#">Adamello Ultra Trail 180</a></li>
+        <li><a href="/posts/2021/09/19/21-09-19-SwissPeak360/#">Swiss Peaks 360</a></li>
+        <li><a href="/posts/2018/01/13/18-01-13-ViennaWinterTrail/#">Secondo posto per il team "Grazie Mille!"</a></li>
+        <li><a href="/posts/2019/08/04/19-08-04-DirndltalExtreme2019/#">Dirndltal Extreme</a></li>
+        <li><a href="/posts/2017/10/29/17-10-29-WienRundumadum2017/#">Wien Rundumadum</a></li>
+        <li><a href="/posts/2023/06/27/23-06-27-Backyardildebutto/#">Backyard il debutto</a></li>
+        <li><a href="/posts/2019/07/25/19-07-25-BadwaterUltramarathon/#">Badwater Ultramarathon nel team di supporto</a></li>
+        <li><a href="/posts/2010/10/10/10-10-10-Maratoneta/#">Maratoneta</a></li>
+    </ul>
+</section>
