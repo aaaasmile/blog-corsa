@@ -29,7 +29,7 @@ echo "Backup dir is: $bckdir"
 mv $CURRDIR'/templates' $bckdir
 mv $CURRDIR'/static/vue' $bckdir
 mv $CURRDIR'/'*.bin $bckdir
-mv $CURRDIR'/'*.db $bckdir
+#mv $CURRDIR'/'*.db $bckdir
 mv $CURRDIR'/config.toml' $bckdir
 
 #zips=$(ls $ZIPDIR)
