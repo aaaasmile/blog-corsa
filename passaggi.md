@@ -137,7 +137,7 @@ la stessa immagine in un altro post.
 Nella pagina proncipale ho bisogno di un sommario degli ultimi post. Per questo uso la macro:
 
     [latest_posts 'IgorRun Blog', '7']
-    
+
 Dove 'IgorRun Blog' rappresenta il titolo e '7' è il numero dei post da mettere.
 Il risultato è un html con la lista degli ultimi 7 post. L'elenco viene creato leggendo il
 database.
@@ -318,7 +318,8 @@ Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra
 
 Ora devo attualizzare i links:
 
-   .\src.exe -config ..\..\config.toml -scancontent
+    .\src.exe -config ..\..\config.toml -scancontent
+
 Creare i posts col feed:
 
     .\src.exe -config ..\..\config.toml -buildposts
