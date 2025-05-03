@@ -9,7 +9,7 @@ func (cn *CmtNode) GetTextNumComments() string {
 	if cn.PublishedCount == 1 {
 		return "1 commento"
 	} else if cn.PublishedCount == 0 {
-		return "Nessun commento"
+		return "Nessun commento (espandi per commentare)"
 	}
 	return fmt.Sprintf("%d commenti", cn.PublishedCount)
 }

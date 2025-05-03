@@ -128,8 +128,8 @@ func (ch *CommentHandler) HandleCommentsDetails(w http.ResponseWriter, req *http
 		return err
 	}
 
-	partForm.WriteTo(&partMerged)
 	partTree.WriteTo(&partMerged)
+	partForm.WriteTo(&partMerged)
 
 	if _, err = w.Write(partMerged.Bytes()); err != nil {
 		return err
