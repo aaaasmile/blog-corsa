@@ -32,6 +32,8 @@
       <nav class="postnav">
         {{- if .HasPrev}}
           <a href="{{.PrevURI}}">&lt; Post successivo</a>
+        {{- else }}
+          <span>&lt; Post successivo</span>
         {{end -}}
         <a href="/">Home</a>
         {{- if .HasNext}}

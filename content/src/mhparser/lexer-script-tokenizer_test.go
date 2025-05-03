@@ -602,8 +602,8 @@ func TestParseHtmlLastPost(t *testing.T) {
 datetime: 2024-12-23
 id: 20241108-00
 ---
-<p>Pa</p>
-<p>Tracker: [latest_posts 'IgorRun Blog', '7']</p>`
+<p>first line</p>
+s<p>[latest_posts 'IgorRun Blog', '7']</p>e`
 
 	lex := ScriptGrammar{
 		Debug:    true,
