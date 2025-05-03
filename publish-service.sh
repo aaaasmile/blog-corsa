@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Builds app"
-go build -o blog-cosrsa.bin
+go build -o blog-corsa.bin
 
 cd ./deploy
 
