@@ -168,7 +168,6 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	}
 
 	CtxSecond := struct {
-		Updated       string
 		DateFormatted string
 		DateTime      string
 		PostId        string
@@ -198,12 +197,10 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
 			return err
 		}
-		CtxSecond.Updated = "Pubblicato"
 	} else {
 		if err := tmplPage.ExecuteTemplate(&partSecond, "pagefinal", CtxSecond); err != nil {
 			return err
 		}
-		CtxSecond.Updated = "Sito aggiornato"
 	}
 	if err := tmplPage.ExecuteTemplate(&partThird, "footer", CtxSecond); err != nil {
 		return err

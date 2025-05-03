@@ -6,7 +6,6 @@ import (
 	"corsa-blog/content/src/mhproc"
 	"corsa-blog/db"
 	"corsa-blog/idl"
-	"corsa-blog/util"
 	"crypto/md5"
 	"database/sql"
 	"fmt"
@@ -55,9 +54,6 @@ func RebuildAll() error {
 		return err
 	}
 	if err := bb.buildPages("../page-src"); err != nil {
-		return err
-	}
-	if err := bb.rebuildMainPage(); err != nil {
 		return err
 	}
 	log.Println("[RebuildAll] completed, elapsed time ", time.Since(start))
@@ -118,8 +114,6 @@ func BuildPages() error {
 }
 
 func BuildMain() error {
-	// TODO integrate this in build page
-	log.Println("[BuildMain] WARNING this should be an obsolete function")
 	start := time.Now()
 	log.Println("[BuildMain] started")
 
@@ -127,7 +121,7 @@ func BuildMain() error {
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.rebuildMainPage(); err != nil {
+	if err := bb.buildPages("../page-src/main"); err != nil {
 		return err
 	}
 
@@ -152,45 +146,6 @@ func (bb *Builder) InitDBData() error {
 		return err
 	}
 	return nil
-}
-
-func (bb *Builder) rebuildMainPage() error {
-	log.Println("[rebuildMainPage] start")
-	templDir := "templates/htmlgen"
-	templName := path.Join(templDir, "mainpage.html")
-	var partFirst bytes.Buffer
-	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
-	latestPosts := []*PostWithData{}
-	for ix, item := range bb.mapLinks.ListPost {
-		pwd := PostWithData{
-			DateFormatted: util.FormatDateIt(item.DateTime),
-			DateTime:      item.DateTime.Format("2006-01-02 15:00"),
-			Title:         item.Title,
-			Link:          item.Uri,
-		}
-		latestPosts = append(latestPosts, &pwd)
-		if ix >= 7 {
-			break
-		}
-	}
-	CtxFirst := struct {
-		Title       string
-		LatestPosts []*PostWithData
-	}{
-		Title:       "IgorRun Blog",
-		LatestPosts: latestPosts,
-	}
-
-	if err := tmplPage.ExecuteTemplate(&partFirst, "mainpage", CtxFirst); err != nil {
-		return err
-	}
-	prc := mhproc.NewMdHtmlProcess(false, nil)
-	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s", conf.Current.StaticBlogDir)
-	prc.HtmlGen = partFirst.String()
-	prc.TargetDir = prc.RootStaticDir
-	err := prc.CreateOnlyIndexStaticHtml()
-
-	return err
 }
 
 func (bb *Builder) buildFeed() error {

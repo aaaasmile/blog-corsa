@@ -43,19 +43,24 @@
     <span class="comments" hx-get="/blog-admin/{{.PostId}}/comments" hx-trigger="revealed"></span>
     {{end -}}
   </main>
+  <footer>
+    <p>
+      Pubblicato:
+      <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+    </p>
 {{- end -}}
 
 {{define "pagefinal"}}
     </article>
   </main>
+  <footer>
+    <p>
+      Sito aggiornato:
+      <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+    </p>
 {{- end -}}
 
 {{define "footer"}}
-  <footer>
-    <p>
-      {{.Updated}}:
-      <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
-    </p>
     <nav>
       <a href="https://corsa.invido.it/" target="_blank">Tools per la Corsa</a>
       <a href="https://invido.it/" target="_blank">Invido</a>
