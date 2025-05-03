@@ -16,3 +16,15 @@
 {{- define "youtube" -}}
 <iframe allowfullscreen="allowfullscreen" frameborder="0" height="266" mozallowfullscreen="mozallowfullscreen" src="https://www.youtube.com/embed/{{.VideoID}}?feature=player_embedded\" webkitallowfullscreen="webkitallowfullscreen" width="320"></iframe>
 {{- end -}}
+
+{{- define "latestposts" -}}
+<h3 class="centered subtitle">Ultimi post</h3>
+<ul>
+    {{- range .LatestPosts}}
+    <li>
+        <a href="{{.Link}}">{{.Title}}</a>
+        <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+    </li>
+    {{- end}}
+</ul>
+{{- end -}}

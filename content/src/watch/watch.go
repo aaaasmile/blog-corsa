@@ -245,6 +245,7 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 	if err != nil {
 		return err
 	}
+	src_path_name := fi_src.Name()
 	ext := filepath.Ext(srcMdHtmlFname)
 	if !strings.HasPrefix(ext, ".mdhtml") {
 		log.Println("[processMdHtmlChange] file ignored", srcMdHtmlFname)
@@ -263,12 +264,13 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 	grm := prc.GetScriptGrammar()
 	if item, ok := grm.CustomData["path"]; ok {
 		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s%s", wmh.staticBlogDir, item)
+		src_path_name = item
 	} else {
 		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
 	}
-	log.Println("Root dir is ", prc.RootStaticDir)
+	log.Println("[processMdHtmlChange] Root dir is ", prc.RootStaticDir)
 	if wmh.is_page {
-		if err = prc.PageCreateOrUpdateStaticHtml(srcMdHtmlFname, fi_src.Name()); err != nil {
+		if err = prc.PageCreateOrUpdateStaticHtml(srcMdHtmlFname, src_path_name); err != nil {
 			return err
 		}
 	} else {

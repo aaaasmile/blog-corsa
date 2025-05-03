@@ -140,8 +140,8 @@ func (mp *MdHtmlProcess) printGenHTML() {
 }
 
 func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
-	templName := path.Join(mp.templDir, "post.html")
-	var partFirst, partSecond, partMerged bytes.Buffer
+	templName := path.Join(mp.templDir, "post_or_page.html")
+	var partFirst, partSecond, partThird, partMerged bytes.Buffer
 	tmplPage := template.Must(template.New("Page").ParseFiles(templName))
 	linesNoCr := []string{}
 	for _, item := range lines {
@@ -168,6 +168,7 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	}
 
 	CtxSecond := struct {
+		Updated       string
 		DateFormatted string
 		DateTime      string
 		PostId        string
@@ -193,11 +194,23 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 			CtxSecond.HasComments = false
 		}
 	}
-	if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
+	if CtxSecond.HasComments {
+		if err := tmplPage.ExecuteTemplate(&partSecond, "postfinal", CtxSecond); err != nil {
+			return err
+		}
+		CtxSecond.Updated = "Pubblicato"
+	} else {
+		if err := tmplPage.ExecuteTemplate(&partSecond, "pagefinal", CtxSecond); err != nil {
+			return err
+		}
+		CtxSecond.Updated = "Sito aggiornato"
+	}
+	if err := tmplPage.ExecuteTemplate(&partThird, "footer", CtxSecond); err != nil {
 		return err
 	}
 	partFirst.WriteTo(&partMerged)
 	partSecond.WriteTo(&partMerged)
+	partThird.WriteTo(&partMerged)
 	mp.HtmlGen = partMerged.String()
 	mp.printGenHTML()
 	return nil
@@ -219,7 +232,7 @@ func (mp *MdHtmlProcess) calculatePrevNextLink() error {
 
 func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fname string) error {
 	mp.SourceDir = filepath.Dir(srcMdFullName)
-	log.Println("source dir for PAGE", mp.SourceDir)
+	log.Println("[PageCreateOrUpdateStaticHtml] source dir for PAGE", mp.SourceDir)
 
 	ext := filepath.Ext(fname)
 	dir_for_target := strings.Replace(fname, ext, "", -1)
@@ -227,7 +240,7 @@ func (mp *MdHtmlProcess) PageCreateOrUpdateStaticHtml(srcMdFullName string, fnam
 	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
 		return err
 	}
-	log.Println("target dir for PAGE", mp.TargetDir)
+	log.Println("[PageCreateOrUpdateStaticHtml] target dir for PAGE", mp.TargetDir)
 	if err := mp.createIndexHtml(); err != nil {
 		return err
 	}
