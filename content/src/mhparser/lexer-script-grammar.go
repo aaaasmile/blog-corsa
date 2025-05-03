@@ -42,7 +42,7 @@ type FnStatement struct {
 
 type ScriptGrammar struct {
 	Title      string
-	PostId     string
+	Id         string
 	Datetime   time.Time
 	Tags       []string
 	CustomData map[string]string
@@ -168,7 +168,7 @@ func (sn *ScriptGrammar) EvaluateParams() error {
 				case "title":
 					sn.Title = parItem.Value
 				case "id":
-					sn.PostId = parItem.Value
+					sn.Id = parItem.Value
 				case "datetime":
 					if err := sn.setDateTimeFromString(parItem.Value); err != nil {
 						return err

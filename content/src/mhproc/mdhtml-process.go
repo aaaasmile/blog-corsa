@@ -28,10 +28,10 @@ type MdHtmlProcess struct {
 	CreatedFnHtml     string
 	prevLink          string
 	nextLink          string
-	mapLinks          *idl.MapPostsLinks
+	mapLinks          *idl.MapPagePostsLinks
 }
 
-func NewMdHtmlProcess(debug bool, mpLks *idl.MapPostsLinks) *MdHtmlProcess {
+func NewMdHtmlProcess(debug bool, mpLks *idl.MapPagePostsLinks) *MdHtmlProcess {
 	res := MdHtmlProcess{
 		debug:             debug,
 		validateMandatory: true,
@@ -72,7 +72,7 @@ func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
 		if mp.scrGramm.Title == "" {
 			return fmt.Errorf("[ProcessToHtml] field 'title' in mdhtml is empty")
 		}
-		if mp.scrGramm.PostId == "" {
+		if mp.scrGramm.Id == "" {
 			return fmt.Errorf("[ProcessToHtml] field 'id' in mdhtml is empty")
 		}
 		if mp.scrGramm.Datetime.Year() < 2010 {
@@ -180,7 +180,7 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	}{
 		DateTime:      mp.scrGramm.Datetime.Format("2006-01-02 15:00"),
 		DateFormatted: util.FormatDateIt(mp.scrGramm.Datetime),
-		PostId:        mp.scrGramm.PostId,
+		PostId:        mp.scrGramm.Id,
 		HasGallery:    len(mp.ImgJsonGen) > 0,
 		HasComments:   true,
 		HasPrev:       len(mp.prevLink) > 0,
@@ -210,7 +210,7 @@ func (mp *MdHtmlProcess) calculatePrevNextLink() error {
 		return nil
 	}
 	mapLinks := mp.mapLinks.MapPost
-	if links, ok := mapLinks[mp.scrGramm.PostId]; ok {
+	if links, ok := mapLinks[mp.scrGramm.Id]; ok {
 		mp.nextLink = links.NextLink
 		mp.prevLink = links.PrevLink
 	}

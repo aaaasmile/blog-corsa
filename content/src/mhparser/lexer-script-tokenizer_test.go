@@ -29,8 +29,8 @@ id: 20241108-00`
 		t.Error("Error in evaluate ", err)
 		return
 	}
-	if lex.PostId != "20241108-00" {
-		t.Error("unexpected id", lex.PostId)
+	if lex.Id != "20241108-00" {
+		t.Error("unexpected id", lex.Id)
 	}
 	if lex.Title != "Prossima gara Wien Rundumadum" {
 		t.Error("unexpected Title", lex.Title)

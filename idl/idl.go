@@ -85,7 +85,20 @@ type PostLinks struct {
 	Item       *PostItem
 }
 
-type MapPostsLinks struct {
+type MapPagePostsLinks struct {
 	MapPost  map[string]PostLinks
+	MapPage  map[string]*PageItem
 	ListPost []PostItem
+	ListPage []PageItem
+}
+
+type PageItem struct {
+	Id             int
+	PageId         string
+	Title          string
+	Uri            string
+	Md5            string
+	Path           string
+	DateTime       time.Time
+	DateTimeRfC822 string
 }

@@ -324,6 +324,9 @@ func lexStateAssignRight(l *L) StateFunc {
 		case unicode.IsLetter(r) || unicode.IsDigit(r):
 			l.rewind()
 			return lexStateAssignInValue
+		case r == '/':
+			l.rewind()
+			return lexStateAssignInValue
 		case r == EOFRune || r == '\n' || r == '\r':
 			l.rewind()
 			l.emit(itemVarValue)

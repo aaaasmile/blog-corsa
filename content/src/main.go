@@ -51,6 +51,7 @@ func main() {
 	var buildmain = flag.Bool("buildmain", false, "create main index.html")
 	var buildfeed = flag.Bool("buildfeed", false, "create feed.xml")
 	var force = flag.Bool("force", false, "force flag")
+	var debug = flag.Bool("debug", false, "debug flag")
 	flag.Parse()
 
 	if *ver {
@@ -61,7 +62,7 @@ func main() {
 		log.Fatal("ERROR: ", err)
 	}
 	if *scancontent {
-		if err := watch.ScanContent(*force); err != nil {
+		if err := watch.ScanContent(*force, *debug); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 		return

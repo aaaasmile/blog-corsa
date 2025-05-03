@@ -15,22 +15,30 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-func ScanContent(force bool) error {
+func ScanContent(force bool, debug bool) error {
 	start := time.Now()
 	bb := Builder{
 		force: force,
+		debug: debug,
 	}
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.scanMdHtml("../posts-src"); err != nil {
+	if err := bb.scanPostsMdHtml("../posts-src"); err != nil {
+		return err
+	}
+	if err := bb.scanPageMdHtml("../page-src"); err != nil {
+		return err
+	}
+	var err error
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err
 	}
 	log.Println("[ScanContent] completed, elapsed time ", time.Since(start))
 	return nil
 }
 
-func (bb *Builder) scanMdHtml(srcDir string) error {
+func (bb *Builder) scanPostsMdHtml(srcDir string) error {
 	var err error
 	bb.mdsFn = make([]string, 0)
 	bb.mdsFn, err = getFilesinDir(srcDir, bb.mdsFn)
@@ -58,9 +66,6 @@ func (bb *Builder) scanMdHtml(srcDir string) error {
 	if err != nil {
 		return err
 	}
-	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
-		return err
-	}
 	log.Printf("%d posts processed ", len(bb.mdsFn))
 	return nil
 }
@@ -83,7 +88,7 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	grm := prc.GetScriptGrammar()
 	postItem := idl.PostItem{
 		Title:    grm.Title,
-		PostId:   grm.PostId,
+		PostId:   grm.Id,
 		DateTime: grm.Datetime,
 	}
 
@@ -103,7 +108,7 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	if err != nil {
 		return err
 	}
-	traverse(doc, &postItem)
+	traversePost(doc, &postItem)
 
 	if _, ok := bb.mapLinks.MapPost[postItem.PostId]; !ok {
 		err = bb.liteDB.InsertNewPost(tx, &postItem)
@@ -118,7 +123,8 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 
 	return nil
 }
-func traverse(doc *html.Node, postItem *idl.PostItem) {
+
+func traversePost(doc *html.Node, postItem *idl.PostItem) {
 	// We need here the title, abstract and header image
 	// Information are from parsing the mdhtml file
 	section_first := false
@@ -187,4 +193,85 @@ func traverse(doc *html.Node, postItem *idl.PostItem) {
 			return
 		}
 	}
+}
+
+// pages
+
+func (bb *Builder) scanPageMdHtml(srcDir string) error {
+	var err error
+	bb.mdsFn = make([]string, 0)
+	bb.mdsFn, err = getFilesinDir(srcDir, bb.mdsFn)
+	if err != nil {
+		return err
+	}
+	log.Printf("[scanPageMdHtml] %d mdhtml pages found ", len(bb.mdsFn))
+	if bb.force {
+		bb.liteDB.DeleteAllPageItem()
+	}
+	tx, err := bb.liteDB.GetTransaction()
+	if err != nil {
+		return err
+	}
+	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
+		return err
+	}
+
+	for _, item := range bb.mdsFn {
+		if err := bb.scanPageItem(item, tx); err != nil {
+			return err
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	log.Printf("[scanPageMdHtml] %d page processed ", len(bb.mdsFn))
+	return nil
+}
+
+func (bb *Builder) scanPageItem(mdHtmlFname string, tx *sql.Tx) error {
+	if bb.debug {
+		log.Println("[scanPageItem] file is ", mdHtmlFname)
+	}
+
+	mdhtml, err := os.ReadFile(mdHtmlFname)
+	if err != nil {
+		return err
+	}
+	//log.Println("read: ", mdhtml)
+	prc := mhproc.NewMdHtmlProcess(false, nil)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("[scanPageItem] HTML error: ", err)
+		return err
+	}
+	grm := prc.GetScriptGrammar()
+	pageItem := idl.PageItem{
+		Title:    grm.Title,
+		PageId:   grm.Id,
+		DateTime: grm.Datetime,
+	}
+	if item, ok := grm.CustomData["path"]; ok {
+		pageItem.Uri = fmt.Sprintf("%s#", item)
+	} else {
+		subDir := conf.Current.PageSubDir
+		arr, err := mhproc.GetDirNameArray(mdHtmlFname)
+		if err != nil {
+			return err
+		}
+		last_ix := len(arr) - 1
+		remain := arr[last_ix]
+		pageItem.Uri = fmt.Sprintf("/%s/%s/#", subDir, remain)
+	}
+	if _, ok := bb.mapLinks.MapPage[pageItem.PageId]; !ok {
+		err = bb.liteDB.InsertNewPage(tx, &pageItem)
+		if err != nil {
+			return err
+		}
+	} else {
+		if bb.debug {
+			log.Printf("[scanPageItem] ignore %s because already up to date", pageItem.PageId)
+		}
+	}
+
+	return nil
 }

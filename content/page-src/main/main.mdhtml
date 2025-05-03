@@ -1,0 +1,13 @@
+title: Main
+datetime: 2025-05-03
+id: main-PG
+comments: no
+path: /
+---
+<h1 class="centered title">Igor Run Blog</h1>
+<h2 class="centered subtitle">Per caso, un bredese a Vienna. Di corsa</h2>
+<p class="centered tagline">
+    Ovvero perché mi alleno così raramente con il giro della civetta
+</p>
+
+[latest_posts]

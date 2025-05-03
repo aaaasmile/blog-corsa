@@ -20,7 +20,7 @@ type Post struct {
 	contentDir    string
 	templDir      string
 	postId        string
-	mapLinks      *idl.MapPostsLinks
+	mapLinks      *idl.MapPagePostsLinks
 	liteDB        *db.LiteDB
 }
 

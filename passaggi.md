@@ -62,6 +62,7 @@ un preprocessor che mi genera un codice html. Esso supporta queste macro:
 
 - link
 - figstack
+- youtube
 
 Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
 
@@ -136,9 +137,10 @@ I commenti sono parte integrante dei post. Siccome i songoli post sono creati st
 i commenti vengono mostrati tramite htmx in fase di rendering sul browser.
 
 ### Flow del nuovo commento
-Quando viene postato un commento sul blog, esso viene dapprima esaminato con il
+Quando viene postato un commento sul blog, esso potrebbe venire dapprima esaminato con il
 service [askimet](https://akismet.com/plan/personal/) per vedere se è uno spam.
-Se non lo è viene mandata una notifica via mail e/o telegram per approvare il commento.
+Al momento questo non avviene. Il commento, che non contiene html, viene messo in moderazione.
+Viene mandata una notifica via mail e/o telegram per approvare il commento attraverso la pagina di admin.
 
 ### Rendering dei commenti di un Post
 Uso htmx per avere il fetch delle parti dinamiche, come per esempio i commenti di un post, nella
@@ -154,11 +156,12 @@ Quando avevo un Guestbook gestito attraverso un Form, esso era bersaglio di
 scraping che automaticamente mandavano dei messaggi. 
 La mia protezione è il Form posizionato all'interno del tag html _details_.
 Il form compare quando l'utente apre il tag details attraverso htmx.
+L'altro step è quello della moderazione e dell'impossibilità di inviare html.
 
 ## Dashboard Admin
 La parte che riguarda l'amministrazione del blog è gestita con vue in modalità single page.
 Per contro, la parte testuale dei vari post è generata staticamente in html.
-Al momento la Dashboard non esegue nulle. Mi servirebbe per moderare i commenti. 
+Al momento la Dashboard non gestisce i post, solo i commenti. 
 Successivamente potrebbe essere usata per
 creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione statica di html.
 La URL di riferimento è: http://localhost:5572/blog-admin/
@@ -302,6 +305,7 @@ Per il nuovo post:
     .\src.exe -config ..\..\config.toml  -newpost "Maratona di Linz" -date "2025-04-27" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
+
 Ora devo attualizzare i links:
 
    .\src.exe -config ..\..\config.toml -scancontent

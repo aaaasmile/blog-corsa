@@ -29,10 +29,10 @@ type WatcherMdHtml struct {
 	staticSubDir    string
 	filesToIgnore   []string
 	is_page         bool
-	mapLinks        *idl.MapPostsLinks
+	mapLinks        *idl.MapPagePostsLinks
 }
 
-func RunWatcher(targetDir string, subDir string, is_page bool, maplinks *idl.MapPostsLinks) error {
+func RunWatcher(targetDir string, subDir string, is_page bool, maplinks *idl.MapPagePostsLinks) error {
 	if targetDir == "" {
 		return fmt.Errorf("target dir is empty")
 	}
@@ -260,7 +260,12 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 		log.Println("[processMdHtmlChange] HTML error: ", err)
 		return nil
 	}
-	prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
+	grm := prc.GetScriptGrammar()
+	if item, ok := grm.CustomData["path"]; ok {
+		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s%s", wmh.staticBlogDir, item)
+	} else {
+		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
+	}
 	log.Println("Root dir is ", prc.RootStaticDir)
 	if wmh.is_page {
 		if err = prc.PageCreateOrUpdateStaticHtml(srcMdHtmlFname, fi_src.Name()); err != nil {

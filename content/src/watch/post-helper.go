@@ -6,13 +6,19 @@ import (
 	"log"
 )
 
-func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPostsLinks, error) {
-	mapLinks := &idl.MapPostsLinks{
+func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPagePostsLinks, error) {
+	mapLinks := &idl.MapPagePostsLinks{
 		MapPost:  map[string]idl.PostLinks{},
+		MapPage:  map[string]*idl.PageItem{},
 		ListPost: []idl.PostItem{},
+		ListPage: []idl.PageItem{},
 	}
 	var err error
 	mapLinks.ListPost, err = liteDB.GetPostList()
+	if err != nil {
+		return nil, err
+	}
+	mapLinks.ListPage, err = liteDB.GetPageList()
 	if err != nil {
 		return nil, err
 	}
@@ -46,6 +52,11 @@ func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPostsLinks, error) {
 		mapLinks.MapPost[item.PostId] = postLinks
 	}
 	//fmt.Println("*** map ", mapLinks.MapPost)
-	log.Printf("Built map with %d items", len(mapLinks.MapPost))
+	log.Printf("[CreateMapLinks] Built map with %d posts", len(mapLinks.MapPost))
+
+	for ix, item := range mapLinks.ListPage {
+		mapLinks.MapPage[item.PageId] = &mapLinks.ListPage[ix]
+	}
+	log.Printf("[CreateMapLinks] Built map with %d page", len(mapLinks.MapPage))
 	return mapLinks, nil
 }

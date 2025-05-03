@@ -25,7 +25,7 @@ type Builder struct {
 	pages    []string
 	liteDB   *db.LiteDB
 	tx       *sql.Tx
-	mapLinks *idl.MapPostsLinks
+	mapLinks *idl.MapPagePostsLinks
 	force    bool
 	debug    bool
 }
@@ -38,20 +38,23 @@ func RebuildAll() error {
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.scanMdHtml("../posts-src"); err != nil {
+	if err := bb.scanPostsMdHtml("../posts-src"); err != nil {
+		return err
+	}
+	if err := bb.scanPageMdHtml("../page-src"); err != nil {
 		return err
 	}
 	var err error
 	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err
 	}
-	if err := bb.rebuildPosts("../posts-src"); err != nil {
+	if err := bb.buildPosts("../posts-src"); err != nil {
 		return err
 	}
-	if err := bb.rebuildFeed(); err != nil {
+	if err := bb.buildFeed(); err != nil {
 		return err
 	}
-	if err := bb.rebuildPages("../page-src"); err != nil {
+	if err := bb.buildPages("../page-src"); err != nil {
 		return err
 	}
 	if err := bb.rebuildMainPage(); err != nil {
@@ -70,7 +73,7 @@ func BuildFeed() error {
 		return err
 	}
 
-	if err := bb.rebuildFeed(); err != nil {
+	if err := bb.buildFeed(); err != nil {
 		return err
 	}
 	log.Println("[BuildFeed] completed, elapsed time ", time.Since(start))
@@ -88,10 +91,10 @@ func BuildPosts() error {
 		return err
 	}
 
-	if err := bb.rebuildPosts("../posts-src"); err != nil {
+	if err := bb.buildPosts("../posts-src"); err != nil {
 		return err
 	}
-	if err := bb.rebuildFeed(); err != nil {
+	if err := bb.buildFeed(); err != nil {
 		return err
 	}
 	log.Println("[BuildPosts] completed, elapsed time ", time.Since(start))
@@ -106,7 +109,7 @@ func BuildPages() error {
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.rebuildPages("../page-src"); err != nil {
+	if err := bb.buildPages("../page-src"); err != nil {
 		return err
 	}
 
@@ -116,6 +119,7 @@ func BuildPages() error {
 
 func BuildMain() error {
 	// TODO integrate this in build page
+	log.Println("[BuildMain] WARNING this should be an obsolete function")
 	start := time.Now()
 	log.Println("[BuildMain] started")
 
@@ -189,7 +193,7 @@ func (bb *Builder) rebuildMainPage() error {
 	return err
 }
 
-func (bb *Builder) rebuildFeed() error {
+func (bb *Builder) buildFeed() error {
 	log.Println("[rebuildFeed] start ")
 	templDir := "templates/xml"
 	templName := path.Join(templDir, "feed.xml")
@@ -215,7 +219,7 @@ func (bb *Builder) rebuildFeed() error {
 	return nil
 }
 
-func (bb *Builder) rebuildPosts(srcDir string) error {
+func (bb *Builder) buildPosts(srcDir string) error {
 	bb.mdsFn = make([]string, 0)
 	var err error
 	bb.mdsFn, err = getFilesinDir(srcDir, bb.mdsFn)
@@ -228,7 +232,7 @@ func (bb *Builder) rebuildPosts(srcDir string) error {
 	}
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
 	for _, item := range bb.mdsFn {
-		if err := bb.buildItem(item, false); err != nil {
+		if err := bb.buildPost(item); err != nil {
 			return err
 		}
 	}
@@ -237,21 +241,160 @@ func (bb *Builder) rebuildPosts(srcDir string) error {
 	return nil
 }
 
-func (bb *Builder) rebuildPages(srcDir string) error {
+func (bb *Builder) buildPages(srcDir string) error {
 	bb.pages = make([]string, 0)
 	var err error
 	bb.pages, err = getFilesinDir(srcDir, bb.pages)
 	if err != nil {
 		return err
 	}
+	bb.tx, err = bb.liteDB.GetTransaction()
+	if err != nil {
+		return err
+	}
 	log.Printf("%d mdhtml pages found ", len(bb.pages))
 	for _, item := range bb.pages {
-		if err := bb.buildItem(item, true); err != nil {
+		if err := bb.buildPage(item); err != nil {
 			return err
 		}
 	}
+	bb.tx.Commit()
 	log.Printf("%d pages processed ", len(bb.pages))
 	return nil
+}
+
+func (bb *Builder) buildPost(mdHtmlFname string) error {
+	var err error
+	wmh := WatcherMdHtml{
+		debug:         conf.Current.Debug,
+		staticBlogDir: conf.Current.StaticBlogDir,
+		is_page:       false,
+		mapLinks:      bb.mapLinks,
+	}
+	is_same := true
+	postItem := &idl.PostItem{}
+	postItem, is_same, err = bb.hasSamePostMd5(mdHtmlFname)
+	if err != nil {
+		return err
+	}
+	wmh.staticSubDir = conf.Current.PostSubDir
+	if !bb.force && is_same {
+		if bb.debug {
+			log.Println("[buildPost] ignore because unchanged", mdHtmlFname)
+		}
+		return nil
+	}
+	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
+		return err
+	}
+	if (postItem.PostId != "") && !is_same {
+		if err := bb.liteDB.UpdateMd5Post(bb.tx, postItem); err != nil {
+			return err
+		}
+	}
+	log.Println("[buildPost] created HTML: ", wmh.CreatedHtmlFile)
+	return nil
+}
+
+func (bb *Builder) buildPage(mdHtmlFname string) error {
+	wmh := WatcherMdHtml{
+		debug:         conf.Current.Debug,
+		staticBlogDir: conf.Current.StaticBlogDir,
+		is_page:       true,
+		mapLinks:      bb.mapLinks,
+	}
+	wmh.staticSubDir = conf.Current.PageSubDir
+	pageItem, is_same, err := bb.hasSamePageMd5(mdHtmlFname)
+	if err != nil {
+		return err
+	}
+
+	if !bb.force && is_same {
+		if bb.debug {
+			log.Println("[buildPage] ignore because unchanged", mdHtmlFname)
+		}
+		return nil
+	}
+	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
+		return err
+	}
+	if (pageItem.PageId != "") && !is_same {
+		if err := bb.liteDB.UpdateMd5Page(bb.tx, pageItem); err != nil {
+			return err
+		}
+	}
+	log.Println("[buildPage] created HTML: ", wmh.CreatedHtmlFile)
+	return nil
+}
+
+func (bb *Builder) hasSamePostMd5(mdHtmlFname string) (*idl.PostItem, bool, error) {
+	f, err := os.Open(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	defer f.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return nil, false, err
+	}
+	mMd5 := string(h.Sum(nil))
+
+	mdhtml, err := os.ReadFile(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	prc := mhproc.NewMdHtmlProcess(false, nil)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("[hasSamePostMd5] ProcessToHtml error: ", err)
+		return nil, false, err
+	}
+	gr := prc.GetScriptGrammar()
+	mMd5Db, ok := bb.mapLinks.MapPost[gr.Id]
+	if !ok {
+		return nil, false, fmt.Errorf("[hasSamePostMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.Id)
+	}
+	same := mMd5 == mMd5Db.Item.Md5
+	postItem := idl.PostItem{PostId: gr.Id, Md5: mMd5}
+	return &postItem, same, nil
+}
+
+func (bb *Builder) hasSamePageMd5(mdHtmlFname string) (*idl.PageItem, bool, error) {
+	f, err := os.Open(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	defer f.Close()
+
+	h := md5.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return nil, false, err
+	}
+	mMd5 := string(h.Sum(nil))
+
+	mdhtml, err := os.ReadFile(mdHtmlFname)
+	if err != nil {
+		return nil, false, err
+	}
+	prc := mhproc.NewMdHtmlProcess(false, nil)
+	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
+		log.Println("[hasSamePageMd5] ProcessToHtml error: ", err)
+		return nil, false, err
+	}
+	gr := prc.GetScriptGrammar()
+	mMd5Db, ok := bb.mapLinks.MapPage[gr.Id]
+	if !ok {
+		return nil, false, fmt.Errorf("[hasSamePageMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.Id)
+	}
+	same := mMd5 == mMd5Db.Md5
+	pageItem := idl.PageItem{
+		PageId: gr.Id,
+		Md5:    mMd5,
+	}
+	if item, ok := gr.CustomData["path"]; ok {
+		pageItem.Path = item
+	}
+	return &pageItem, same, nil
 }
 
 func getFilesinDir(dirAbs string, ini []string) ([]string, error) {
@@ -278,74 +421,4 @@ func getFilesinDir(dirAbs string, ini []string) ([]string, error) {
 		}
 	}
 	return r, nil
-}
-
-func (bb *Builder) buildItem(mdHtmlFname string, is_page bool) error {
-	var err error
-	wmh := WatcherMdHtml{
-		debug:         conf.Current.Debug,
-		staticBlogDir: conf.Current.StaticBlogDir,
-		is_page:       is_page,
-		mapLinks:      bb.mapLinks,
-	}
-	is_same := true
-	postItem := &idl.PostItem{}
-	if is_page {
-		wmh.staticSubDir = conf.Current.PageSubDir
-	} else {
-		postItem, is_same, err = bb.hasSameMd5(mdHtmlFname)
-		if err != nil {
-			return err
-		}
-		wmh.staticSubDir = conf.Current.PostSubDir
-		if !bb.force && is_same {
-			if bb.debug {
-				log.Println("[buildItem] ignore because unchanged", mdHtmlFname)
-			}
-			return nil
-		}
-	}
-	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
-		return err
-	}
-	if (postItem.PostId != "") && !is_same {
-		if err := bb.liteDB.UpdateMd5Post(bb.tx, postItem); err != nil {
-			return err
-		}
-	}
-	log.Println("created HTML: ", wmh.CreatedHtmlFile)
-	return nil
-}
-
-func (bb *Builder) hasSameMd5(mdHtmlFname string) (*idl.PostItem, bool, error) {
-	f, err := os.Open(mdHtmlFname)
-	if err != nil {
-		return nil, false, err
-	}
-	defer f.Close()
-
-	h := md5.New()
-	if _, err := io.Copy(h, f); err != nil {
-		return nil, false, err
-	}
-	mMd5 := string(h.Sum(nil))
-
-	mdhtml, err := os.ReadFile(mdHtmlFname)
-	if err != nil {
-		return nil, false, err
-	}
-	prc := mhproc.NewMdHtmlProcess(false, nil)
-	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
-		log.Println("[hasSameMd5] ProcessToHtml error: ", err)
-		return nil, false, err
-	}
-	gr := prc.GetScriptGrammar()
-	mMd5Db, ok := bb.mapLinks.MapPost[gr.PostId]
-	if !ok {
-		return nil, false, fmt.Errorf("[hasSameMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.PostId)
-	}
-	same := mMd5 == mMd5Db.Item.Md5
-	postItem := idl.PostItem{PostId: gr.PostId, Md5: mMd5}
-	return &postItem, same, nil
-
 }
