@@ -63,6 +63,7 @@ un preprocessor che mi genera un codice html. Esso supporta queste macro:
 - link
 - figstack
 - youtube
+- latest_posts
 
 Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
 
@@ -131,6 +132,15 @@ Quondo ho una serie di immagini da inserire nel post, uso il seguente html:
 Per questo ho bisogno delle immagini in formato ridotto _xxx\_320_.
 Qui si vede che le immagini sono nella stessa directory del post in quanto non riutilizzo mai
 la stessa immagine in un altro post.
+
+## latest_posts
+Nella pagina proncipale ho bisogno di un sommario degli ultimi post. Per questo uso la macro:
+
+    [latest_posts 'IgorRun Blog', '7']
+    
+Dove 'IgorRun Blog' rappresenta il titolo e '7' è il numero dei post da mettere.
+Il risultato è un html con la lista degli ultimi 7 post. L'elenco viene creato leggendo il
+database.
 
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,

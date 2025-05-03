@@ -2,6 +2,7 @@ package mhparser
 
 import (
 	"corsa-blog/content/src/mhparser/trans"
+	"corsa-blog/idl"
 	"errors"
 	"fmt"
 	"log"
@@ -185,13 +186,15 @@ type MdHtmlGram struct {
 	isMdHtmlCtx bool
 	debug       bool
 	templDir    string
+	mapLinks    *idl.MapPagePostsLinks
 }
 
-func NewMdHtmlGr(templDir string, debug bool) *MdHtmlGram {
+func NewMdHtmlGr(templDir string, maplinks *idl.MapPagePostsLinks, debug bool) *MdHtmlGram {
 	item := MdHtmlGram{
 		Nodes:    make([]trans.IMdhtmlLineNode, 0),
 		debug:    debug,
 		templDir: templDir,
+		mapLinks: maplinks,
 	}
 	return &item
 }
@@ -221,6 +224,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		mh._curr_Node = trans.NewYouTubeNode(item.Value)
 	case item.Type == itemFigStack:
 		mh._curr_Node = trans.NewFigStackNode(item.Value)
+	case item.Type == itemLatestPosts:
+		mh._curr_Node = trans.NewLatestPostsNode(item.Value, mh.mapLinks)
 	case item.Type == itemText:
 		// ignore
 	case item.Type == itemSeparator:

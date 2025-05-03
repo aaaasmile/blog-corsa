@@ -54,6 +54,8 @@ func (i TokenType) String() string {
 		return "itemLinkCaption"
 	case itemYouTubeEmbed:
 		return "itemYouTubeEmbed"
+	case itemLatestPosts:
+		return "itemLatestPosts"
 	}
 	return fmt.Sprintf("TokenType %d undef", i)
 }

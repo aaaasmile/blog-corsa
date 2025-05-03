@@ -1,6 +1,7 @@
 package mhparser
 
 import (
+	"corsa-blog/idl"
 	"errors"
 	"fmt"
 	"strings"
@@ -50,6 +51,7 @@ type ScriptGrammar struct {
 	st_id      int
 	Debug      bool
 	TemplDir   string
+	MapLinks   *idl.MapPagePostsLinks
 }
 
 func (sn *ScriptGrammar) ParseScript(source string) error {
@@ -63,7 +65,7 @@ func (sn *ScriptGrammar) ParseScript(source string) error {
 	nrmPrg := NewProgNorm("main", false, false)
 	sn.Norm[nrmPrg.Name] = nrmPrg
 	processed := false
-	mdHtmlGr := NewMdHtmlGr(sn.TemplDir, sn.Debug)
+	mdHtmlGr := NewMdHtmlGr(sn.TemplDir, sn.MapLinks, sn.Debug)
 	var err error
 	for {
 		item := ll.nextItem()

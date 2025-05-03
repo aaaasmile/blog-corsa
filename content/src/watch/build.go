@@ -129,13 +129,6 @@ func BuildMain() error {
 	return nil
 }
 
-type PostWithData struct {
-	DateFormatted string
-	DateTime      string
-	Title         string
-	Link          string
-}
-
 func (bb *Builder) InitDBData() error {
 	var err error
 	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
@@ -299,7 +292,7 @@ func (bb *Builder) hasSamePostMd5(mdHtmlFname string) (*idl.PostItem, bool, erro
 	if err != nil {
 		return nil, false, err
 	}
-	prc := mhproc.NewMdHtmlProcess(false, nil)
+	prc := mhproc.NewMdHtmlProcess(false, bb.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[hasSamePostMd5] ProcessToHtml error: ", err)
 		return nil, false, err
@@ -331,7 +324,7 @@ func (bb *Builder) hasSamePageMd5(mdHtmlFname string) (*idl.PageItem, bool, erro
 	if err != nil {
 		return nil, false, err
 	}
-	prc := mhproc.NewMdHtmlProcess(false, nil)
+	prc := mhproc.NewMdHtmlProcess(false, bb.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[hasSamePageMd5] ProcessToHtml error: ", err)
 		return nil, false, err

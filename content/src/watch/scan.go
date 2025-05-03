@@ -80,7 +80,7 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		return err
 	}
 	//log.Println("read: ", mdhtml)
-	prc := mhproc.NewMdHtmlProcess(false, nil)
+	prc := mhproc.NewMdHtmlProcess(false, bb.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[scanPostItem] HTML error: ", err)
 		return err
@@ -239,7 +239,7 @@ func (bb *Builder) scanPageItem(mdHtmlFname string, tx *sql.Tx) error {
 		return err
 	}
 	//log.Println("read: ", mdhtml)
-	prc := mhproc.NewMdHtmlProcess(false, nil)
+	prc := mhproc.NewMdHtmlProcess(false, bb.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
 		log.Println("[scanPageItem] HTML error: ", err)
 		return err

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type MdHtmlProcess struct {
@@ -55,6 +56,7 @@ func (mp *MdHtmlProcess) ProcessToHtml(script string) error {
 	mp.scrGramm = mhparser.ScriptGrammar{
 		Debug:    mp.debug,
 		TemplDir: mp.templDir,
+		MapLinks: mp.mapLinks,
 	}
 	if err := mp.scrGramm.ParseScript(script); err != nil {
 		log.Println("[ProcessToHtml] Parser error")
@@ -198,6 +200,7 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 			return err
 		}
 	} else {
+		CtxSecond.DateFormatted = util.FormatDateTimeIt(time.Now())
 		if err := tmplPage.ExecuteTemplate(&partSecond, "pagefinal", CtxSecond); err != nil {
 			return err
 		}

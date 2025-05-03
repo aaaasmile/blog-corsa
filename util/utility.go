@@ -36,6 +36,11 @@ func FormatDateIt(tt time.Time) string {
 	return res
 }
 
+func FormatDateTimeIt(tt time.Time) string {
+	res := fmt.Sprintf("%d %s %d - %02d:%02d", tt.Day(), MonthToStringIT(tt.Month()), tt.Year(), tt.Local().Hour(), tt.Local().Minute())
+	return res
+}
+
 func MonthToStringIT(month time.Month) string {
 	switch month {
 	case time.January:

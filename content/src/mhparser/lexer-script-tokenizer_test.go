@@ -1,9 +1,23 @@
 package mhparser
 
 import (
+	"corsa-blog/idl"
 	"strings"
 	"testing"
 )
+
+func createFakeLinks() *idl.MapPagePostsLinks {
+	mapLinks := &idl.MapPagePostsLinks{
+		MapPost:  map[string]idl.PostLinks{},
+		MapPage:  map[string]*idl.PageItem{},
+		ListPost: []idl.PostItem{},
+		ListPage: []idl.PageItem{},
+	}
+	mapLinks.ListPost = append(mapLinks.ListPost, idl.PostItem{Title: "A ti", Uri: "A uri"})
+	mapLinks.ListPost = append(mapLinks.ListPost, idl.PostItem{Title: "B ti", Uri: "B uri"})
+	mapLinks.ListPost = append(mapLinks.ListPost, idl.PostItem{Title: "C ti", Uri: "C uri"})
+	return mapLinks
+}
 
 func TestParseData(t *testing.T) {
 	str := `title: Prossima gara Wien Rundumadum
@@ -580,5 +594,53 @@ id: 20241108-00
 	secline := ll.ArrayValue[1]
 	if !strings.Contains(secline, "<p>Video: <iframe allowfullscreen=\"allowfullscreen\" frameborder=\"0\" height=\"266\" mozallowfullscreen=\"mozallowfullscreen\" src=\"https://www.youtube.com/embed/IOP7RhDnLnw") {
 		t.Errorf("expected  <iframe in generated  html, but %s ", secline)
+	}
+}
+
+func TestParseHtmlLastPost(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+---
+<p>Pa</p>
+<p>Tracker: [latest_posts 'IgorRun Blog', '7']</p>`
+
+	lex := ScriptGrammar{
+		Debug:    true,
+		TemplDir: "../templates/htmlgen",
+		MapLinks: createFakeLinks(),
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+	nrm := lex.Norm["main"]
+	lastFns := len(nrm.FnsList) - 1
+	stFns := nrm.FnsList[lastFns]
+	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
+		t.Error("expected one array param with lines")
+		return
+	}
+	ll := &stFns.Params[0]
+	len_exp := 2
+	if len(ll.ArrayValue) != len_exp {
+		t.Errorf("expected %d html lines, but have %d lines", len_exp, len(ll.ArrayValue))
+		return
+	}
+	secline := ll.ArrayValue[1]
+	if !strings.Contains(secline, "Ultimi post") {
+		t.Errorf("expected  Ultimi post, but %s ", secline)
 	}
 }

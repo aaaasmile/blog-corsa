@@ -238,6 +238,7 @@ const (
 	itemLinkSimple
 	itemLinkCaption
 	itemYouTubeEmbed
+	itemLatestPosts
 	itemEOF
 )
 
