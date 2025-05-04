@@ -3,6 +3,7 @@ package watch
 import (
 	"corsa-blog/conf"
 	"corsa-blog/db"
+	"corsa-blog/idl"
 	"fmt"
 	"log"
 	"os"
@@ -20,6 +21,7 @@ type Page struct {
 	templDir     string
 	Id           string
 	liteDB       *db.LiteDB
+	mapLinks     *idl.MapPagePostsLinks
 }
 
 func EditPage(name string) error {

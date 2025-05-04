@@ -2,6 +2,8 @@ package watch
 
 import (
 	"bytes"
+	"corsa-blog/conf"
+	"corsa-blog/db"
 	"corsa-blog/util"
 	"fmt"
 	"html/template"
@@ -17,6 +19,7 @@ func NewPage(name string, datepage string, watch_for_changes bool) error {
 	if name == "" {
 		return fmt.Errorf("title could not be null")
 	}
+
 	name_compr := strings.ReplaceAll(name, " ", "")
 	name_compr = strings.ReplaceAll(name_compr, ":", "-")
 	name_compr = strings.ReplaceAll(name_compr, ";", "-")
@@ -61,6 +64,15 @@ func (pg *Page) setDateTimeFromString(datepost string) error {
 
 func (pg *Page) createNewPage(targetRootDir string) error {
 	log.Printf("[createNewPage] create new page '%s' on '%s'", pg.Name, pg.Datetime)
+	var err error
+	if pg.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if pg.mapLinks, err = CreateMapLinks(pg.liteDB); err != nil {
+		return err
+	}
+
 	contentDir := filepath.Join(targetRootDir, pg.NameCompress)
 	log.Println("source page content dir ", contentDir)
 

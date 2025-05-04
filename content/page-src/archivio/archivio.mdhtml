@@ -1,0 +1,11 @@
+title: archivio
+datetime: 2025-05-04
+id: archivio-PG
+comments: no
+---
+<header>
+    <h1>Post Archivio</h1>
+</header>
+<section>
+  [archive_posts]
+</section>    
