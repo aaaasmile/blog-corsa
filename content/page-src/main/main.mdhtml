@@ -7,7 +7,7 @@ path: /
 <h1 class="centered title">Igor Run Blog</h1>
 <h2 class="centered subtitle">Per caso, un bredese a Vienna. Di corsa</h2>
 <p class="centered tagline">
-    Ovvero perché mi alleno così raramente con il giro della civetta
+    <i>Ovvero perché mi alleno così raramente con il giro della civetta</i>
 </p>
 [latest_posts 'IgorRun Blog', '7']
 <section>
@@ -28,4 +28,8 @@ path: /
         <li><a href="/posts/2019/07/25/19-07-25-BadwaterUltramarathon/#">Badwater Ultramarathon nel team di supporto</a></li>
         <li><a href="/posts/2010/10/10/10-10-10-Maratoneta/#">Maratoneta</a></li>
     </ul>
+</section>
+<section>
+    <h3>Archivio</h3>
+    <p>Tutti i miei post si trovano in questo [linkcap 'archivio', '/pages/archivio']</p>
 </section>
