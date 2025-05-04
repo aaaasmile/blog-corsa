@@ -23,14 +23,14 @@ import (
 // go run .\main.go -config ..\..\config.toml  -editpage -name "autore"
 // Example new page:
 //
-// go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18"
+// go run .\main.go -config ..\..\config.toml  -newpage "statistiche" -date "2025-01-18" -watch
 // Example rebuild all (use it when templates are changed)
 // go run .\main.go -config ..\..\config.toml  -rebuildall
 // Example build only changed posts
 // go run .\main.go -config ..\..\config.toml  -buildposts
 // Example build only pages (all pages)
 // go run .\main.go -config ..\..\config.toml  -buildpages
-// Build the manin index page
+// Build the main index page
 // go run .\main.go -config ..\..\config.toml  -buildmain
 // Scan and update post info in db
 // go run .\main.go -config ..\..\config.toml  -scancontent
@@ -91,7 +91,7 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *newpage != "" {
-		if err := watch.NewPage(*newpage, *date); err != nil {
+		if err := watch.NewPage(*newpage, *date, *watchdir); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *editpage {

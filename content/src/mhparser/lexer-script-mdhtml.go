@@ -49,6 +49,22 @@ func lexStateAfterString(l *L) StateFunc {
 	}
 }
 
+func lexStateSingleBeforeEndSquare(l *L) StateFunc {
+	for {
+		switch r := l.next(); {
+		case r == EOFRune || r == '\r' || r == '\n':
+			return l.errorf("[lexStateSingleBeforeEndSquare] Expected close curl")
+		case r == ']':
+			l.emit(itemEndOfBlock)
+			return lexStateMdHtmlOnLine
+		case unicode.IsSpace(r):
+			l.ignore()
+		default:
+			return l.errorf("[lexStateSingleBeforeEndSquare] Malformed end of parameter: %s", l.source[l.start:l.position])
+		}
+	}
+}
+
 func lexStateMultiAfterString(l *L) StateFunc {
 	for {
 		switch r := l.next(); {
@@ -226,6 +242,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		mh._curr_Node = trans.NewFigStackNode(item.Value)
 	case item.Type == itemLatestPosts:
 		mh._curr_Node = trans.NewLatestPostsNode(item.Value, mh.mapLinks)
+	case item.Type == itemArchivePosts:
+		mh._curr_Node = trans.NewArchivePostsNode(item.Value, mh.mapLinks)
 	case item.Type == itemText:
 		// ignore
 	case item.Type == itemSeparator:
@@ -345,6 +363,9 @@ func lexMatchFnKey(l *L) (StateFunc, bool) {
 			l.emitCustFn(v.ItemTokenType, v.CustomID)
 			if v.IsMultiline {
 				return lexStateMultiBeforeBegStr, true
+			}
+			if v.NumParam == 0 {
+				return lexStateSingleBeforeEndSquare, true
 			}
 			return lexStateSingleBeforeBegStr, true
 		}

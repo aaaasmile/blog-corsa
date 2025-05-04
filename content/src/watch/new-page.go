@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func NewPage(name string, datepage string) error {
+func NewPage(name string, datepage string, watch_for_changes bool) error {
 	if name == "" {
 		return fmt.Errorf("title could not be null")
 	}
@@ -33,6 +33,11 @@ func NewPage(name string, datepage string) error {
 
 	if err := page.createNewPage("../page-src"); err != nil {
 		return err
+	}
+	if watch_for_changes {
+		if err := page.editPage("../page-src"); err != nil {
+			return err
+		}
 	}
 	return nil
 }

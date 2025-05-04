@@ -239,6 +239,7 @@ const (
 	itemLinkCaption
 	itemYouTubeEmbed
 	itemLatestPosts
+	itemArchivePosts
 	itemEOF
 )
 

@@ -64,6 +64,7 @@ un preprocessor che mi genera un codice html. Esso supporta queste macro:
 - figstack
 - youtube
 - latest_posts
+- archive_posts
 
 Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
 
