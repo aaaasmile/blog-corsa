@@ -67,6 +67,10 @@ h3 {
   text-align: center;
 }
 
+h6 {
+  margin: 0.5em;
+}
+
 h4 {
   color: #eee;
 }

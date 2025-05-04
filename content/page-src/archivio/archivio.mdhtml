@@ -4,7 +4,7 @@ id: archivio-PG
 comments: no
 ---
 <header>
-    <h1>Post Archivio</h1>
+    <h1>Archivio dei posts</h1>
 </header>
 <section>
   [archive_posts]

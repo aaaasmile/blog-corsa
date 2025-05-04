@@ -31,7 +31,8 @@
 
 
 {{- define "archiveposts" -}}
-<h3 class="centered subtitle">Archivio anno {{.Year}}</h3>
+<h3 class="centered subtitle">Anno {{.Year}}</h3>
+<h6 class="centered subtitle">{{.NumOfPosts}} posts </h6>
 <ul>
     {{- range .YearPosts}}
     <li>

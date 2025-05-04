@@ -90,11 +90,13 @@ func (ln *mdhtArchivePostsNode) Transform(templDir string) error {
 
 func transformPost(tmplPage *template.Template, current_year int, yearPosts []*PostWithData) (*bytes.Buffer, error) {
 	CtxFirst := struct {
-		Year      int
-		YearPosts []*PostWithData
+		Year       int
+		NumOfPosts int
+		YearPosts  []*PostWithData
 	}{
-		Year:      current_year,
-		YearPosts: yearPosts,
+		Year:       current_year,
+		NumOfPosts: len(yearPosts),
+		YearPosts:  yearPosts,
 	}
 	var partFirst bytes.Buffer
 	if err := tmplPage.ExecuteTemplate(&partFirst, "archiveposts", CtxFirst); err != nil {
