@@ -326,7 +326,7 @@ Creare i posts col feed:
     .\src.exe -config ..\..\config.toml -buildposts
 Creare la main page:
 
-    .\src.exe -config ..\..\config.toml -buildmain
+    .\src.exe -config ..\..\config.toml -buildpages
 
 
 Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
