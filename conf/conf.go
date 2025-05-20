@@ -2,11 +2,8 @@ package conf
 
 import (
 	"corsa-blog/crypto"
-	"fmt"
 	"log"
 	"os"
-	"path"
-	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -65,31 +62,7 @@ func ReadConfig(configfile, baseDirCert string) (*Config, error) {
 	if _, err := toml.DecodeFile(configfile, &Current); err != nil {
 		return nil, err
 	}
-	if err := readCustomOverrideConfig(Current, configfile); err != nil {
-		return nil, err
-	}
-	ac := crypto.NewUserCred(baseDirCert)
-	if err := ac.CredFromFile(); err != nil {
-		return nil, fmt.Errorf("[ReadConfig] Credential error. Please make sure that an account has been initialized. Error is: %v ", err)
-	}
-	Current.AdminCred = ac
-	log.Println("User configured: ", Current.AdminCred.String())
+
 	log.Println("Configuration: ", Current.Relay.MailFrom, Current.Relay.Host, Current.Relay.MailFrom, Current.Telegram.SendTelegram)
 	return Current, nil
-}
-
-func readCustomOverrideConfig(Current *Config, configfile string) error {
-	base := path.Base(configfile)
-	dd := path.Dir(configfile)
-	ext := path.Ext(configfile)
-	cf := strings.Replace(base, ext, "_custom.toml", 1)
-	cf_ful := path.Join(dd, cf)
-	log.Println("Check for custom config ", cf_ful)
-	if _, err := os.Stat(cf_ful); err != nil {
-		log.Println("No custom config file found")
-		return nil
-	}
-	log.Println("Custom config file found", cf_ful)
-	_, err := toml.DecodeFile(cf_ful, Current)
-	return err
 }

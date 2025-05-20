@@ -10,9 +10,11 @@
 
 <body>
   <div id="controlAddIn"></div>
+  <div id="save"></div>
 </body>
 <script>
   let g_TypsEditor = null;
+  let g_TypstText = '';
   let g_JsonEditor = null;
 
   function initializeTextScroll() {
@@ -38,7 +40,9 @@
 
     controlAddIn.appendChild(fildSet);
   }
+
   function SetTextSource(txt) {
+    g_TypstText = txt;
     const mySrcSetter = document.getElementById('mySrcSetter');
     mySrcSetter.value = txt || '';
     if (!g_JsonEditor) {
@@ -46,21 +50,35 @@
         lineNumbers: true
       });
     }
+
     g_TypsEditor.on('change', (args) => {
       //console.log('[change]', args.doc)
-      let finTest = ''
+      g_TypstText = '';
       if (args.doc.children) {
-        if (args.doc.children[0]){
+        if (args.doc.children[0]) {
           const child0 = args.doc.children[0]
-          if (child0.lines){
-            
+          if (child0.lines) {
+            //console.log('lines', child0.lines)
+            const ll = child0.lines.map(a => a.text);
+            g_TypstText = ll.join("\n")
           }
         }
       }
+      //console.log('[content]', g_TypstText)
     })
+  }
+  function CreateSaveButton(){
+    const divSave = document.getElementById('save');
+    const btSave = document.createElement('button');
+    btSave.innerText = "Read"
+    divSave.appendChild(btSave);
+    btSave.addEventListener('click', function () {
+      console.log('[Read] ', g_TypstText)
+    });
   }
   initializeTextScroll();
   SetTextSource('Hello World!')
+  CreateSaveButton();
 </script>
 
 </html>

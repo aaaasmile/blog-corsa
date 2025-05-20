@@ -264,7 +264,3 @@ func (uc *UserCred) ParseJwtToken(tokenString string) (string, error) {
 	}
 	return "", err
 }
-
-func (uc *UserCred) String() string {
-	return fmt.Sprintf("Username: %s, Hash: %s, Salt %s", uc.UserName, uc.PasswordHash, uc.Salt)
-}
