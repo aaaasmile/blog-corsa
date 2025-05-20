@@ -14,8 +14,9 @@
 </body>
 <script>
   let g_TypsEditor = null;
-  let g_TypstText = '';
   let g_JsonEditor = null;
+  let g_TypstText = '';
+  let g_JsonText = '';
 
   function initializeTextScroll() {
     //console.log('[addin] initializeTextScroll ');
@@ -26,16 +27,10 @@
 
     const textSourceElmt = document.createElement('textarea');
     textSourceElmt.setAttribute("id", "mySrcSetter");
-    textSourceElmt.addEventListener('input', function () {
-      console.log('[addin] Text is changed');
-    });
     fildSet.appendChild(textSourceElmt);
 
     const dataJsonElmt = document.createElement('textarea');
     dataJsonElmt.setAttribute("id", "myDataJsonSetter");
-    dataJsonElmt.addEventListener('input', function () {
-      console.log('[addin] json changed...')
-    });
     fildSet.appendChild(dataJsonElmt);
 
     controlAddIn.appendChild(fildSet);
@@ -45,7 +40,7 @@
     g_TypstText = txt;
     const mySrcSetter = document.getElementById('mySrcSetter');
     mySrcSetter.value = txt || '';
-    if (!g_JsonEditor) {
+    if (!g_TypsEditor) {
       g_TypsEditor = CodeMirror.fromTextArea(mySrcSetter, {
         lineNumbers: true
       });
@@ -67,17 +62,47 @@
       //console.log('[content]', g_TypstText)
     })
   }
-  function CreateSaveButton(){
+
+  function SetJsonSource(txt) {
+    g_JsonText = txt;
+    const myJsonSetter = document.getElementById('myDataJsonSetter');
+    myJsonSetter.value = txt || '';
+    if (!g_JsonEditor) {
+      g_JsonEditor = CodeMirror.fromTextArea(myJsonSetter, {
+        lineNumbers: true
+      });
+    }
+
+    g_JsonEditor.on('change', (args) => {
+      //console.log('[change]', args.doc)
+      g_JsonText = '';
+      if (args.doc.children) {
+        if (args.doc.children[0]) {
+          const child0 = args.doc.children[0]
+          if (child0.lines) {
+            //console.log('lines', child0.lines)
+            const ll = child0.lines.map(a => a.text);
+            g_JsonText = ll.join("\n")
+          }
+        }
+      }
+      //console.log('[content]', g_TypstText)
+    })
+  }
+
+  function CreateSaveButton() {
     const divSave = document.getElementById('save');
     const btSave = document.createElement('button');
     btSave.innerText = "Read"
     divSave.appendChild(btSave);
     btSave.addEventListener('click', function () {
-      console.log('[Read] ', g_TypstText)
+      console.log('[src] ', g_TypstText)
+      console.log('[json] ', g_JsonText)
     });
   }
   initializeTextScroll();
   SetTextSource('Hello World!')
+  SetJsonSource('{"data": "hello"}')
   CreateSaveButton();
 </script>
 
