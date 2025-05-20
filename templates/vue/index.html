@@ -5,7 +5,8 @@
   <link href="./static/codemirror/LtxTypstEdit.css?{{.Buildnr}}" rel="stylesheet">
   <link href="./static/codemirror/codemirror.css?{{.Buildnr}}" rel="stylesheet">
   <script src="./static/codemirror/codemirror.js?{{.Buildnr}}"></script>
-
+  <script src="./static/codemirror/javascript.js?{{.Buildnr}}"></script>
+  <script src="./static/codemirror/markdown.js?{{.Buildnr}}"></script>
 </head>
 
 <body>
@@ -42,7 +43,10 @@
     mySrcSetter.value = txt || '';
     if (!g_TypsEditor) {
       g_TypsEditor = CodeMirror.fromTextArea(mySrcSetter, {
-        lineNumbers: true
+        lineNumbers: true,
+        mode: {
+          name: "markdown",
+        },
       });
     }
 
@@ -69,7 +73,12 @@
     myJsonSetter.value = txt || '';
     if (!g_JsonEditor) {
       g_JsonEditor = CodeMirror.fromTextArea(myJsonSetter, {
-        lineNumbers: true
+        lineNumbers: true,
+        mode: {
+          name: "javascript",
+          json: true,
+          statementIndent: 2,
+        },
       });
     }
 
