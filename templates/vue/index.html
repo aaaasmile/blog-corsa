@@ -12,6 +12,9 @@
   <div id="controlAddIn"></div>
 </body>
 <script>
+  let g_TypsEditor = null;
+  let g_JsonEditor = null;
+
   function initializeTextScroll() {
     //console.log('[addin] initializeTextScroll ');
     const controlAddIn = document.getElementById('controlAddIn');
@@ -38,6 +41,23 @@
   function SetTextSource(txt) {
     const mySrcSetter = document.getElementById('mySrcSetter');
     mySrcSetter.value = txt || '';
+    if (!g_JsonEditor) {
+      g_TypsEditor = CodeMirror.fromTextArea(mySrcSetter, {
+        lineNumbers: true
+      });
+    }
+    g_TypsEditor.on('change', (args) => {
+      //console.log('[change]', args.doc)
+      let finTest = ''
+      if (args.doc.children) {
+        if (args.doc.children[0]){
+          const child0 = args.doc.children[0]
+          if (child0.lines){
+            
+          }
+        }
+      }
+    })
   }
   initializeTextScroll();
   SetTextSource('Hello World!')
