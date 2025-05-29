@@ -181,6 +181,7 @@ La URL di riferimento è: http://localhost:5572/blog-admin/
 - Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
 - La pagina admin deve essere protetta da un token di sign-in [DONE] 
 - Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti [DONE]
+- buildmain dovrebbe creare: main, archivio e feed.
 
 ### Stop del service
 Per stoppare il sevice si usa:
@@ -331,14 +332,11 @@ Ora devo attualizzare i links:
 Creare i posts col feed:
 
     .\src.exe -config ..\..\config.toml -buildposts
-Creare la main page:
+Creare la main page (force non mi piace perchè cambia autore e statistiche, vedi todo):
 
     .\src.exe -config ..\..\config.toml -buildpages -force
 
 
-Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
-bisogna far ripartire il service
-
-    sudo systemctl restart igorrun
-Al momeneto il sync del db ha senso solo se ci sono nuovi commenti.
-In futuro, con la funzione "cerca", il sync sarà sempre necessario.
+Siccome ho separato i due db con i commenti, il sync dei commenti non è necessario. 
+Il db blog-corsa.db rimane dove viene creato il post.
+In futuro, con la funzione "cerca", il sync del db con i dati della ricerca sarà necessario.
