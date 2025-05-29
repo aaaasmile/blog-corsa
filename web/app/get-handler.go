@@ -24,9 +24,9 @@ type PageCtx struct {
 }
 
 type GetHandler struct {
-	debug    bool
-	lastPath string
-	liteDB   *db.LiteDB
+	debug         bool
+	lastPath      string
+	liteCommentDB *db.LiteDB
 }
 
 func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status *int) error {
@@ -51,15 +51,15 @@ func (gh *GetHandler) handleGet(w http.ResponseWriter, req *http.Request, status
 		return gh.handleGetValidateEmail(w, req)
 	}
 	if post_id, ok := isComments(gh.lastPath, remPath); ok {
-		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
+		hc := comments.NewGetCommentHandler(gh.liteCommentDB, gh.debug)
 		return hc.HandleCommentsTitle(w, req, post_id)
 	}
 	if post_id, ok := isCommentDetails(gh.lastPath, remPath); ok {
-		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
+		hc := comments.NewGetCommentHandler(gh.liteCommentDB, gh.debug)
 		return hc.HandleCommentsDetails(w, req, post_id)
 	}
 	if id, ok := isFormForReplyComment(gh.lastPath, remPath); ok {
-		hc := comments.NewGetCommentHandler(gh.liteDB, gh.debug)
+		hc := comments.NewGetCommentHandler(gh.liteCommentDB, gh.debug)
 		return hc.HandleFormForReplyComment(w, req, id)
 	}
 

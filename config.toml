@@ -29,4 +29,5 @@ APIString = "<todo in custom>"
 
 [Database]
 DbFileName = "blog-corsa.db"
+DbComments = "blog-comments.db"
 SQLDebug = false

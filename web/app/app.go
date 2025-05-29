@@ -10,8 +10,8 @@ import (
 )
 
 type App struct {
-	liteDB *db.LiteDB
-	newCmt chan *idl.CmtItem
+	liteCmtDB *db.LiteDB
+	newCmt    chan *idl.CmtItem
 }
 
 func NewApp(newCmt chan *idl.CmtItem) (*App, error) {
@@ -19,7 +19,7 @@ func NewApp(newCmt chan *idl.CmtItem) (*App, error) {
 		newCmt: newCmt,
 	}
 	var err error
-	if res.liteDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbFileName,
+	if res.liteCmtDB, err = db.OpenSqliteDatabase(conf.Current.Database.DbComments,
 		conf.Current.Database.SQLDebug); err != nil {
 		return nil, err
 	}
@@ -31,8 +31,8 @@ func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 	case "GET":
 		status := http.StatusOK
 		gh := GetHandler{
-			debug:  conf.Current.Debug,
-			liteDB: ap.liteDB,
+			debug:         conf.Current.Debug,
+			liteCommentDB: ap.liteCmtDB,
 		}
 		if err := gh.handleGet(w, req, &status); err != nil {
 			log.Println("Error on process request: ", err)
@@ -45,7 +45,7 @@ func (ap *App) APiHandler(w http.ResponseWriter, req *http.Request) {
 	case "POST":
 		ph := PostHandler{
 			debug:       conf.Current.Debug,
-			liteDB:      ap.liteDB,
+			liteDB:      ap.liteCmtDB,
 			moderateCmt: conf.Current.Comment.ModerateCmt,
 			newCmt:      ap.newCmt,
 		}

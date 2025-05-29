@@ -20,7 +20,7 @@ import (
 
 type CommentHandler struct {
 	debug       bool
-	liteDB      *db.LiteDB
+	liteCmtDB   *db.LiteDB
 	newCmt      chan *idl.CmtItem
 	start       time.Time
 	moderateCmt bool
@@ -29,7 +29,7 @@ type CommentHandler struct {
 func NewPostCommentHandler(liteDB *db.LiteDB, debug bool, moderateCmt bool, newCmt chan *idl.CmtItem) *CommentHandler {
 	res := &CommentHandler{
 		debug:       debug,
-		liteDB:      liteDB,
+		liteCmtDB:   liteDB,
 		moderateCmt: moderateCmt,
 		start:       time.Now(),
 		newCmt:      newCmt,
@@ -49,7 +49,7 @@ func (ch *CommentHandler) HandleFormDeleteComment(w http.ResponseWriter, req *ht
 		ReqId:  reqId,
 	}
 
-	if err := ch.liteDB.DeleteComment(cmtItem); err != nil {
+	if err := ch.liteCmtDB.DeleteComment(cmtItem); err != nil {
 		return err
 	}
 
@@ -134,7 +134,7 @@ func (ch *CommentHandler) HandleFormNewComment(w http.ResponseWriter, req *http.
 	if err != nil {
 		return err
 	}
-	if err := ch.liteDB.InsertNewComment(cmtItem); err != nil {
+	if err := ch.liteCmtDB.InsertNewComment(cmtItem); err != nil {
 		return err
 	}
 	ch.newCmt <- cmtItem

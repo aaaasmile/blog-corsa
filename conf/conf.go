@@ -37,6 +37,7 @@ type Comment struct {
 
 type Database struct {
 	DbFileName string
+	DbComments string
 	SQLDebug   bool
 }
 

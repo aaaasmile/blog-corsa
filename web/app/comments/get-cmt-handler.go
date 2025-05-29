@@ -12,9 +12,9 @@ import (
 
 func NewGetCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
 	res := &CommentHandler{
-		debug:  debug,
-		liteDB: liteDB,
-		start:  time.Now(),
+		debug:     debug,
+		liteCmtDB: liteDB,
+		start:     time.Now(),
 	}
 	return res
 }
@@ -22,7 +22,7 @@ func NewGetCommentHandler(liteDB *db.LiteDB, debug bool) *CommentHandler {
 func (ch *CommentHandler) HandleFormForReplyComment(w http.ResponseWriter, req *http.Request, id string) error {
 	log.Printf("[HandleFormForReplyComment] get Form for comment id=%s", id)
 
-	cmtNode, err := ch.liteDB.GetCommentForId(id)
+	cmtNode, err := ch.liteCmtDB.GetCommentForId(id)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (ch *CommentHandler) HandleCommentsTitle(w http.ResponseWriter, req *http.R
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleComments] get comments for id=%s, lang=%s", post_id, lang)
 
-	cmtNode, err := ch.liteDB.GetCommentsForPostId(post_id)
+	cmtNode, err := ch.liteCmtDB.GetCommentsForPostId(post_id)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (ch *CommentHandler) HandleCommentsDetails(w http.ResponseWriter, req *http
 	lang := req.URL.Query().Get("lang")
 	log.Printf("[HandleCommentsDetails] get comments for id=%s, lang=%s", post_id, lang)
 
-	cmtNode, err := ch.liteDB.GetCommentsForPostId(post_id)
+	cmtNode, err := ch.liteCmtDB.GetCommentsForPostId(post_id)
 	if err != nil {
 		return err
 	}
