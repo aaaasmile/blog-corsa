@@ -97,11 +97,13 @@ func BuildPosts() error {
 	return nil
 }
 
-func BuildPages() error {
+func BuildPages(force bool) error {
 	start := time.Now()
 	log.Println("[BuildPages] start")
 
-	bb := Builder{}
+	bb := Builder{
+		force: force,
+	}
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}

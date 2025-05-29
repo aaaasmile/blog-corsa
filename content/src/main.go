@@ -71,7 +71,7 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildpages {
-		if err := watch.BuildPages(); err != nil {
+		if err := watch.BuildPages(*force); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildposts {
