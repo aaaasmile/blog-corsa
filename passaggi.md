@@ -313,7 +313,7 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Maratona di Linz" -date "2025-04-27" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Transylvania 100k 2025" -date "2025-05-29" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 
@@ -326,7 +326,7 @@ Creare i posts col feed:
     .\src.exe -config ..\..\config.toml -buildposts
 Creare la main page:
 
-    .\src.exe -config ..\..\config.toml -buildpages
+    .\src.exe -config ..\..\config.toml -buildpages -force
 
 
 Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
