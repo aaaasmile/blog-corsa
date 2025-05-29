@@ -302,6 +302,13 @@ Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere 
 ## Dominio
 Ho riservato il nome: igorrun.invido.it
 
+## Database
+Ho separato due database. Il primo blog-comments.db è solo per i commenti e serve solo sul server remoto.
+In generale non lo devo aggiornare in quanto la gestione dei commenti avviene con l'admin. 
+Il secondo database è blog-corsa.db e mi serve per creare i link. Questo db serve per il programma src.exe
+per creare i post e le pages.
+La ricerca non l'ho ancora implementata, ma dovrebbe rimanere nel db blog-corsa.db.
+
 ## Ricreare il sito da zero
 Se per caso devo ricreare il sito (links, pages e posts)
 
