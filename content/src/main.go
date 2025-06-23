@@ -34,6 +34,8 @@ import (
 // go run .\main.go -config ..\..\config.toml  -buildmain
 // Scan and update post info in db
 // go run .\main.go -config ..\..\config.toml  -scancontent
+// after edit a new post, prepare everything for the upload
+// go run .\main.go -config ..\..\config.toml -forsync
 func main() {
 	var ver = flag.Bool("ver", false, "Prints the current version")
 	var configfile = flag.String("config", "config.toml", "Configuration file path")
@@ -52,6 +54,7 @@ func main() {
 	var buildfeed = flag.Bool("buildfeed", false, "create feed.xml")
 	var force = flag.Bool("force", false, "force flag")
 	var debug = flag.Bool("debug", false, "debug flag")
+	var all4sync = flag.Bool("all4sync", false, "flag to prepare all stuff for the sync")
 	flag.Parse()
 
 	if *ver {
@@ -71,7 +74,7 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildpages {
-		if err := watch.BuildPages(); err != nil {
+		if err := watch.BuildPages(*force); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildposts {
@@ -100,6 +103,10 @@ func main() {
 		}
 	} else if *buildfeed {
 		if err := watch.BuildFeed(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *all4sync {
+		if err := watch.PrepareForRsync(*debug); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	}

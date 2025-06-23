@@ -181,6 +181,7 @@ La URL di riferimento è: http://localhost:5572/blog-admin/
 - Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
 - La pagina admin deve essere protetta da un token di sign-in [DONE] 
 - Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti [DONE]
+- buildmain crea sempre main. all4sync crea tutti i files per rsync [DONE]
 
 ### Stop del service
 Per stoppare il sevice si usa:
@@ -302,36 +303,57 @@ Per riuscire a cambiare la app admin, il commento che arriva dal db deve essere 
 ## Dominio
 Ho riservato il nome: igorrun.invido.it
 
+## Database
+Ho separato due database. Il primo blog-comments.db è solo per i commenti e serve solo sul server remoto.
+In generale non lo devo aggiornare in quanto la gestione dei commenti avviene con l'admin. 
+Il secondo database è blog-corsa.db e mi serve per creare i link. Questo db serve per il programma src.exe
+per creare i post e le pages.
+La ricerca non l'ho ancora implementata, ma dovrebbe rimanere nel db blog-corsa.db.
+
 ## Ricreare il sito da zero
 Se per caso devo ricreare il sito (links, pages e posts)
 
     .\src.exe -config ..\..\config.toml -rebuildall
 
-## Creare un nuovo Post
+## Creare un nuovo Post (New)
 Al momento il processo funziona con Visual Code (profilo Edit Post).
 Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Transylvania 100k 2025" -date "2025-05-29" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Prossima Backyard: Frankenmarkt" -date "2025-06-22" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 
-Ora devo attualizzare i links:
+A questo punto, se voglio preparare tutti i files per il comando rsync, uso il seguente comando:
+
+    .\src.exe -config ..\..\config.toml -all4sync
+Ora apro WSL e lancio rsync (vedi sync_blog.sh)
+
+
+Questo è quello che esegue il flag -all4sync
+
+1) Attualizzare i links
 
     .\src.exe -config ..\..\config.toml -scancontent
 
-Creare i posts col feed:
+2) Creare i posts col feed xml
 
     .\src.exe -config ..\..\config.toml -buildposts
-Creare la main page:
 
-    .\src.exe -config ..\..\config.toml -buildpages -force
+3) Creare le pages che sono cambiate 
 
+    .\src.exe -config ..\..\config.toml -buildpages
 
-Ora è il momento di fare il sync del sito e del db. Dopo il sync del db
-bisogna far ripartire il service
+4) Creare la main page sempre
 
-    sudo systemctl restart igorrun
-Al momeneto il sync del db ha senso solo se ci sono nuovi commenti.
-In futuro, con la funzione "cerca", il sync sarà sempre necessario.
+    .\src.exe -config ..\..\config.toml -buildmain
+
+Siccome ho separato i due db con i commenti, il sync dei commenti non è necessario. 
+Il db blog-corsa.db rimane dove viene creato il post.
+In futuro, con la funzione "cerca", il sync del db con i dati della ricerca probabilmente sarà necessario.
+
+### Cambiare un post già pubblicato (Edit)
+Uso il flag -editpost. Per esempio:
+
+    .\src.exe -config ..\..\config.toml -editpost -date "2025-06-22"
