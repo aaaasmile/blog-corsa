@@ -181,7 +181,7 @@ La URL di riferimento è: http://localhost:5572/blog-admin/
 - Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
 - La pagina admin deve essere protetta da un token di sign-in [DONE] 
 - Nella pagina admin, manca la gestione Edit/delete/approve/decline dei commenti [DONE]
-- buildmain dovrebbe creare: main, archivio e feed.
+- buildmain crea sempre main. all4sync crea tutti i files per rsync [DONE]
 
 ### Stop del service
 Per stoppare il sevice si usa:
@@ -315,7 +315,7 @@ Se per caso devo ricreare il sito (links, pages e posts)
 
     .\src.exe -config ..\..\config.toml -rebuildall
 
-## Creare un nuovo Post
+## Creare un nuovo Post (New)
 Al momento il processo funziona con Visual Code (profilo Edit Post).
 Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
@@ -325,18 +325,35 @@ Per il nuovo post:
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 
-Ora devo attualizzare i links:
+A questo punto, se voglio preparare tutti i files per il comando rsync, uso il seguente comando:
+
+    .\src.exe -config ..\..\config.toml -all4sync
+Ora apro WSL e lancio rsync (vedi sync_blog.sh)
+
+
+Questo è quello che esegue il flag -all4sync
+
+1) Attualizzare i links
 
     .\src.exe -config ..\..\config.toml -scancontent
 
-Creare i posts col feed:
+2) Creare i posts col feed xml
 
     .\src.exe -config ..\..\config.toml -buildposts
-Creare la main page (force non mi piace perchè cambia autore e statistiche, vedi todo):
 
-    .\src.exe -config ..\..\config.toml -buildpages -force
+3) Creare le pages che sono cambiate 
 
+    .\src.exe -config ..\..\config.toml -buildpages
+
+4) Creare la main page sempre
+
+    .\src.exe -config ..\..\config.toml -buildmain
 
 Siccome ho separato i due db con i commenti, il sync dei commenti non è necessario. 
 Il db blog-corsa.db rimane dove viene creato il post.
-In futuro, con la funzione "cerca", il sync del db con i dati della ricerca sarà necessario.
+In futuro, con la funzione "cerca", il sync del db con i dati della ricerca probabilmente sarà necessario.
+
+### Cambiare un post già pubblicato (Edit)
+Uso il flag -editpost. Per esempio:
+
+    .\src.exe -config ..\..\config.toml -editpost -date "2025-06-22"

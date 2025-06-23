@@ -60,6 +60,25 @@ func RebuildAll() error {
 	return nil
 }
 
+func PrepareForRsync(debug bool) error {
+	start := time.Now()
+	log.Println("[PrepareForRsync] start")
+	if err := ScanContent(false, debug); err != nil {
+		return err
+	}
+	if err := BuildPosts(); err != nil {
+		return err
+	}
+	if err := BuildPages(false); err != nil {
+		return err
+	}
+	if err := BuildMain(); err != nil {
+		return err
+	}
+	log.Println("[PrepareForRsync] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
 func BuildFeed() error {
 	start := time.Now()
 	log.Println("[BuildFeed] start")
@@ -119,11 +138,11 @@ func BuildMain() error {
 	start := time.Now()
 	log.Println("[BuildMain] started")
 
-	bb := Builder{}
+	bb := Builder{force: true}
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.buildPages("../page-src/main"); err != nil {
+	if err := bb.buildMain("../page-src/main"); err != nil {
 		return err
 	}
 
@@ -195,6 +214,28 @@ func (bb *Builder) buildPages(srcDir string) error {
 	bb.pages = make([]string, 0)
 	var err error
 	bb.pages, err = getFilesinDir(srcDir, bb.pages)
+	if err != nil {
+		return err
+	}
+	bb.tx, err = bb.liteDB.GetTransaction()
+	if err != nil {
+		return err
+	}
+	log.Printf("%d mdhtml pages found ", len(bb.pages))
+	for _, item := range bb.pages {
+		if err := bb.buildPage(item); err != nil {
+			return err
+		}
+	}
+	bb.tx.Commit()
+	log.Printf("%d pages processed ", len(bb.pages))
+	return nil
+}
+
+func (bb *Builder) buildMain(srcDir string) error {
+	bb.pages = make([]string, 0)
+	var err error
+	bb.pages, err = getMaininDir(srcDir, bb.pages)
 	if err != nil {
 		return err
 	}
@@ -367,6 +408,34 @@ func getFilesinDir(dirAbs string, ini []string) ([]string, error) {
 			ext := filepath.Ext(itemAbs)
 			if strings.HasPrefix(ext, ".mdhtml") {
 				r = append(r, path.Join(dirAbs, f.Name()))
+			}
+		}
+	}
+	return r, nil
+}
+
+func getMaininDir(dirAbs string, ini []string) ([]string, error) {
+	r := ini
+	//log.Println("Scan dir ", dirAbs)
+	files, err := os.ReadDir(dirAbs)
+	if err != nil {
+		return nil, err
+	}
+	for _, f := range files {
+		itemAbs := path.Join(dirAbs, f.Name())
+		if info, err := os.Stat(itemAbs); err == nil && info.IsDir() {
+			//fmt.Println("** Sub dir found ", f.Name())
+			r, err = getMaininDir(itemAbs, r)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			//fmt.Println("** file is ", f.Name())
+			ext := filepath.Ext(itemAbs)
+			if strings.HasPrefix(ext, ".mdhtml") {
+				if strings.HasPrefix(f.Name(), "main") {
+					r = append(r, path.Join(dirAbs, f.Name()))
+				}
 			}
 		}
 	}
