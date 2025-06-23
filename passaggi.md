@@ -288,6 +288,12 @@ Comando:
 
     go run .\main.go -initaccount
 
+Nota che il file cred.json non può essere lo stesso di k7 e invido.it.
+Questo anche se i file pem sono gli stessi. 
+Nella directory Build uso -initaccount  e prima cancello il file cred.json
+Qui setto la password. Il nuovo file cred.json così creato lo sposto poi in current/cert.
+Oppure posso modificare in Build il file login.go per vedere il valore di hash e lo copio in cred.json.
+
 ## Key.pem
 È la chiave privata che viene usata per generare il token JWT e l'hash dell'utente.
 
