@@ -142,7 +142,10 @@ func BuildMain() error {
 	if err := bb.InitDBData(); err != nil {
 		return err
 	}
-	if err := bb.buildMain("../page-src/main"); err != nil {
+	if err := bb.builMdHtmlInDir("../page-src/main"); err != nil {
+		return err
+	}
+	if err := bb.builMdHtmlInDir("../page-src/archivio"); err != nil {
 		return err
 	}
 
@@ -232,10 +235,10 @@ func (bb *Builder) buildPages(srcDir string) error {
 	return nil
 }
 
-func (bb *Builder) buildMain(srcDir string) error {
+func (bb *Builder) builMdHtmlInDir(srcDir string) error {
 	bb.pages = make([]string, 0)
 	var err error
-	bb.pages, err = getMaininDir(srcDir, bb.pages)
+	bb.pages, err = getMdHtmlInDir(srcDir, bb.pages)
 	if err != nil {
 		return err
 	}
@@ -414,7 +417,7 @@ func getFilesinDir(dirAbs string, ini []string) ([]string, error) {
 	return r, nil
 }
 
-func getMaininDir(dirAbs string, ini []string) ([]string, error) {
+func getMdHtmlInDir(dirAbs string, ini []string) ([]string, error) {
 	r := ini
 	//log.Println("Scan dir ", dirAbs)
 	files, err := os.ReadDir(dirAbs)
@@ -425,7 +428,7 @@ func getMaininDir(dirAbs string, ini []string) ([]string, error) {
 		itemAbs := path.Join(dirAbs, f.Name())
 		if info, err := os.Stat(itemAbs); err == nil && info.IsDir() {
 			//fmt.Println("** Sub dir found ", f.Name())
-			r, err = getMaininDir(itemAbs, r)
+			r, err = getMdHtmlInDir(itemAbs, r)
 			if err != nil {
 				return nil, err
 			}
@@ -433,9 +436,7 @@ func getMaininDir(dirAbs string, ini []string) ([]string, error) {
 			//fmt.Println("** file is ", f.Name())
 			ext := filepath.Ext(itemAbs)
 			if strings.HasPrefix(ext, ".mdhtml") {
-				if strings.HasPrefix(f.Name(), "main") {
-					r = append(r, path.Join(dirAbs, f.Name()))
-				}
+				r = append(r, path.Join(dirAbs, f.Name()))
 			}
 		}
 	}
