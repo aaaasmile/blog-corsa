@@ -362,4 +362,4 @@ In futuro, con la funzione "cerca", il sync del db con i dati della ricerca prob
 ### Cambiare un post già pubblicato (Edit)
 Uso il flag -editpost. Per esempio:
 
-    .\src.exe -config ..\..\config.toml -editpost -date "2025-06-22"
+    .\src.exe -config ..\..\config.toml -editpost -date "2025-07-02"
