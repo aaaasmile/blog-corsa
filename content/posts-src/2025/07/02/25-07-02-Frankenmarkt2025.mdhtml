@@ -61,4 +61,7 @@ tags: Backyard
     [youtube 'qRYacewmuog']
     <figcaption>Lo Short</figcaption>
   </figure>
+  <p>[figstack 
+    'stand_serie.jpg', 'Classifica parziale della Backyard Serie 2025'
+  ]</p>
 </section>    

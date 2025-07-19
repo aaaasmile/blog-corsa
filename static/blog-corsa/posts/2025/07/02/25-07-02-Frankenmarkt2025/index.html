@@ -80,6 +80,7 @@
           <iframe allowfullscreen="allowfullscreen" frameborder="0" height="266" mozallowfullscreen="mozallowfullscreen" src="https://www.youtube.com/embed/qRYacewmuog?feature=player_embedded\" webkitallowfullscreen="webkitallowfullscreen" width="320"></iframe>
           <figcaption>Lo Short</figcaption>
         </figure>
+        <p><section class="vertstack">    <figure>        <a href="#" id="stand_serie_00" onclick="appGallery.displayImage(`${id}`)"><img src="stand_serie_320.jpg" alt="Classifica parziale della Backyard Serie 2025" /></a>        <figcaption>Classifica parziale della Backyard Serie 2025</figcaption>    </figure></section></p>
       </section>    
       <nav class="postnav">
           <span>&lt; Post successivo</span>
@@ -137,5 +138,18 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  <div id="image-wrapper" class="gone">
+    <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
+    <div id="image-panel">
+      <div id="previous-btn" class="btn slider-button" onclick="appGallery.prevImage()">&lt;</div>
+      <img id="the-image" class="hidden">
+      <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
+    </div>
+  </div>
   </body>
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  window.appGallery = appGallery()
+  window.appGallery.loadData()
+</script>
 </html>
