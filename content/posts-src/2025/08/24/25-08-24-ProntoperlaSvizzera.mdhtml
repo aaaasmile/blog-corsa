@@ -3,15 +3,16 @@ datetime: 2025-08-24
 id: 25-08-24-ProntoperlaSvizzera-PS
 tags:
 ---
-<header>
+<header class="withimg">
   <div>
     <h1>Pronto per la Svizzera</h1>
     <time>24 Agosto 2025</time>
   </div>
+  <img src="stemma.jpg" /> 
 </header>
 <section>
   <p>Anche quest'anno sarò al via dello Swiss Peaks, che nel 2025 diventa Swiss Peaks 380
-    anzichè Swiss Peaks 360 come gli scorsi anni.</p>
+    anziché Swiss Peaks 360 come gli scorsi anni.</p>
   <p>Sono alla mia quinta partecipazione e questa volta sarà uno sparti acque tra 
     edizioni che sono riuscito a terminare ed annate nelle quali non sono riuscito a completare la gara.
     Al momento sono 2 a 2, dove le ultime due sono stati due DNF. Riuscirò ad invertire il trend?
@@ -35,7 +36,15 @@ tags:
       <td>Pettorale</td><td>88</td>
     </tr>
     <tr>
-      <td>Live della gara</td><td>[link 'https://swisspeaks.ch/']</td>
+      <td>Live della gara</td><td>[link 'https://swisspeaks.ch/livetiming/#2_97D6B3']</td>
     </tr>
   </table>
+  <p>Segue un paio d'impressioni di come sarà il live della gara. Direi più che completo, con
+    classifica attuale, stato della mia gara e mappa sulla carta di tutti i partecipanti.
+  </p>
+  <p>[figstack 
+    'foto02.jpg', 'Pettorale',
+    'foto03.jpg', 'Stato della mia corsa',
+    'foto04.jpg', 'Mappa Live'
+  ]</p> 
 </section>    

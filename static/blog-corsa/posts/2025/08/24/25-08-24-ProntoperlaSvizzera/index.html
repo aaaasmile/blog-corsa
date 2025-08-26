@@ -22,15 +22,16 @@
   </nav>
   <main>
     <article class="post">
-      <header>
+      <header class="withimg">
         <div>
           <h1>Pronto per la Svizzera</h1>
           <time>24 Agosto 2025</time>
         </div>
+        <img src="stemma.jpg" /> 
       </header>
       <section>
         <p>Anche quest'anno sarò al via dello Swiss Peaks, che nel 2025 diventa Swiss Peaks 380
-          anzichè Swiss Peaks 360 come gli scorsi anni.</p>
+          anziché Swiss Peaks 360 come gli scorsi anni.</p>
         <p>Sono alla mia quinta partecipazione e questa volta sarà uno sparti acque tra 
           edizioni che sono riuscito a terminare ed annate nelle quali non sono riuscito a completare la gara.
           Al momento sono 2 a 2, dove le ultime due sono stati due DNF. Riuscirò ad invertire il trend?
@@ -54,9 +55,13 @@
             <td>Pettorale</td><td>88</td>
           </tr>
           <tr>
-            <td>Live della gara</td><td><a href="https://swisspeaks.ch/" target="_blank">https://swisspeaks.ch/</a></td>
+            <td>Live della gara</td><td><a href="https://swisspeaks.ch/livetiming/#2_97D6B3" target="_blank">https://swisspeaks.ch/livetiming/#2_97D6B3</a></td>
           </tr>
         </table>
+        <p>Segue un paio d'impressioni di come sarà il live della gara. Direi più che completo, con
+          classifica attuale, stato della mia gara e mappa sulla carta di tutti i partecipanti.
+        </p>
+        <p><section class="vertstack">    <figure>        <a href="#" id="foto02_00" onclick="appGallery.displayImage(`${id}`)"><img src="foto02_320.jpg" alt="Pettorale" /></a>        <figcaption>Pettorale</figcaption>    </figure>    <figure>        <a href="#" id="foto03_02" onclick="appGallery.displayImage(`${id}`)"><img src="foto03_320.jpg" alt="Stato della mia corsa" /></a>        <figcaption>Stato della mia corsa</figcaption>    </figure>    <figure>        <a href="#" id="foto04_04" onclick="appGallery.displayImage(`${id}`)"><img src="foto04_320.jpg" alt="Mappa Live" /></a>        <figcaption>Mappa Live</figcaption>    </figure></section></p> 
       </section>    
       <nav class="postnav">
           <span>&lt; Post successivo</span>
@@ -114,5 +119,18 @@
     </nav>
     <p class="copyright">© 2025 - Igor Run for <em>invido.it</em>. All rights reserved.</p>
   </footer>
+  <div id="image-wrapper" class="gone">
+    <div id="close-btn" class="btn" onclick="appGallery.hideGalleryImage()">X</div>
+    <div id="image-panel">
+      <div id="previous-btn" class="btn slider-button" onclick="appGallery.prevImage()">&lt;</div>
+      <img id="the-image" class="hidden">
+      <div id="next-btn" class="btn slider-button" onclick="appGallery.nextImage()">&gt;</div>
+    </div>
+  </div>
   </body>
+<script type="module">
+  import appGallery from '/js/gallery.js?001'
+  window.appGallery = appGallery()
+  window.appGallery.loadData()
+</script>
 </html>
