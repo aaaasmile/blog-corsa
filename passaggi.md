@@ -363,3 +363,7 @@ In futuro, con la funzione "cerca", il sync del db con i dati della ricerca prob
 Uso il flag -editpost. Per esempio:
 
     .\src.exe -config ..\..\config.toml -editpost -date "2025-08-24"
+
+### Cambiare solo il main (per esempio per il live)
+
+    .\src.exe -config ..\..\config.toml -buildmain
