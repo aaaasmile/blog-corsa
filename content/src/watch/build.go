@@ -79,6 +79,22 @@ func PrepareForRsync(debug bool) error {
 	return nil
 }
 
+func BuildTags() error {
+	start := time.Now()
+	log.Println("[BuildTags] start")
+
+	bb := Builder{}
+	if err := bb.InitDBData(); err != nil {
+		return err
+	}
+
+	if err := bb.buildTags(); err != nil {
+		return err
+	}
+	log.Println("[BuildFeed] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
 func BuildFeed() error {
 	start := time.Now()
 	log.Println("[BuildFeed] start")
@@ -163,6 +179,11 @@ func (bb *Builder) InitDBData() error {
 		return err
 	}
 	return nil
+}
+
+func (bb *Builder) buildTags() error {
+	// TODO
+	return fmt.Errorf("NOT IMPLEMENTED")
 }
 
 func (bb *Builder) buildFeed() error {

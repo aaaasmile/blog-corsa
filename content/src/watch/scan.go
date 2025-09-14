@@ -48,6 +48,8 @@ func (bb *Builder) scanPostsMdHtml(srcDir string) error {
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
 	if bb.force {
 		bb.liteDB.DeleteAllPostItem()
+		bb.liteDB.DeleteAllTagsToPost()
+		bb.liteDB.DeleteAllTags()
 	}
 	tx, err := bb.liteDB.GetTransaction()
 	if err != nil {
@@ -118,6 +120,12 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 	} else {
 		if bb.debug {
 			log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
+		}
+	}
+	for _, single_tag := range grm.Tags {
+		err = bb.liteDB.InsertOrUpdateTag(tx, single_tag, &postItem)
+		if err != nil {
+			return err
 		}
 	}
 

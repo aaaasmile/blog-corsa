@@ -52,6 +52,7 @@ func main() {
 	var buildpages = flag.Bool("buildpages", false, "create pages (all)")
 	var buildmain = flag.Bool("buildmain", false, "create main index.html")
 	var buildfeed = flag.Bool("buildfeed", false, "create feed.xml")
+	var buildtags = flag.Bool("buildtags", false, "create tags html")
 	var force = flag.Bool("force", false, "force flag")
 	var debug = flag.Bool("debug", false, "debug flag")
 	var all4sync = flag.Bool("all4sync", false, "flag to prepare all stuff for the sync")
@@ -103,6 +104,10 @@ func main() {
 		}
 	} else if *buildfeed {
 		if err := watch.BuildFeed(); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+	} else if *buildtags {
+		if err := watch.BuildTags(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *all4sync {

@@ -12,6 +12,7 @@ func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPagePostsLinks, error) {
 		MapPage:  map[string]*idl.PageItem{},
 		ListPost: []idl.PostItem{},
 		ListPage: []idl.PageItem{},
+		Tags:     []idl.TagItem{},
 	}
 	var err error
 	mapLinks.ListPost, err = liteDB.GetPostList()
@@ -19,6 +20,10 @@ func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPagePostsLinks, error) {
 		return nil, err
 	}
 	mapLinks.ListPage, err = liteDB.GetPageList()
+	if err != nil {
+		return nil, err
+	}
+	mapLinks.Tags, err = liteDB.GetTagList()
 	if err != nil {
 		return nil, err
 	}
@@ -33,14 +38,15 @@ func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPagePostsLinks, error) {
 		}
 		if last_ix > 0 {
 			// at least 2 or more elements
-			if ix == 0 {
+			switch ix {
+			case 0:
 				next_item = &mapLinks.ListPost[ix+1]
 				postLinks.NextLink = next_item.Uri
 				postLinks.NextPostID = next_item.PostId
-			} else if ix == last_ix {
+			case last_ix:
 				postLinks.PrevLink = prev_item.Uri
 				postLinks.PrevPostID = prev_item.PostId
-			} else {
+			default:
 				next_item = &mapLinks.ListPost[ix+1]
 				postLinks.NextLink = next_item.Uri
 				postLinks.NextPostID = next_item.PostId

@@ -66,7 +66,7 @@ func (fg *ImgDataItem) CalcReduced() error {
 }
 
 type PostItem struct {
-	Id             int
+	Id             int64
 	PostId         string
 	Title          string
 	TitleImgUri    string
@@ -105,7 +105,12 @@ type PageItem struct {
 }
 
 type TagItem struct {
-	Title      string
-	Link       string
-	NumOfPosts int
+	Id             int64
+	Title          string
+	Link           string
+	NumOfPosts     int
+	DateTime       time.Time
+	DateTimeRfC822 string
+	Uri            string
+	Md5            string
 }
