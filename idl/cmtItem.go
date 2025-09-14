@@ -22,7 +22,8 @@ func GetStaticLocation(id string) (res string, ok bool) {
 		return
 	}
 	last := arr[len(arr)-1]
-	if last == "PS" {
+	switch last {
+	case "PS":
 		// Example of result "/posts/2024/11/08/24-11-08-ProssimaGara/" from PostId 24-11-08-ProssimaGara-PS
 		if len(arr) < 5 {
 			log.Println("[GetStaticLocation] WARN id for Post not recognized", id)
@@ -41,7 +42,7 @@ func GetStaticLocation(id string) (res string, ok bool) {
 			title,
 		)
 		ok = true
-	} else if last == "PG" {
+	case "PG":
 		if len(arr) != 2 {
 			log.Println("[GetStaticLocation] WARN id for Page not recognized", id)
 			return

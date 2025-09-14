@@ -65,6 +65,7 @@ un preprocessor che mi genera un codice html. Esso supporta queste macro:
 - youtube
 - latest_posts
 - archive_posts
+- tag_posts
 
 Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
 
@@ -142,6 +143,12 @@ Nella pagina proncipale ho bisogno di un sommario degli ultimi post. Per questo 
 Dove 'IgorRun Blog' rappresenta il titolo e '7' è il numero dei post da mettere.
 Il risultato è un html con la lista degli ultimi 7 post. L'elenco viene creato leggendo il
 database.
+
+## archive_posts
+Mi genera una pagina d'archivio con un link a tutti i posts.
+
+## tag_posts
+Mi genera un tratto di html con un link a tutti tags che ho utilizzato nei vari post.
 
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,

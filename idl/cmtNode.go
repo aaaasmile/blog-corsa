@@ -6,9 +6,10 @@ import (
 )
 
 func (cn *CmtNode) GetTextNumComments() string {
-	if cn.PublishedCount == 1 {
+	switch cn.PublishedCount {
+	case 1:
 		return "1 commento"
-	} else if cn.PublishedCount == 0 {
+	case 0:
 		return "Nessun commento (espandi per commentare)"
 	}
 	return fmt.Sprintf("%d commenti", cn.PublishedCount)

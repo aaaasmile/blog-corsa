@@ -43,3 +43,13 @@
 </ul>
 {{- end -}}
 
+{{- define "tagposts" -}}
+<h3 class="centered subtitle">Tags</h3>
+<ul>
+    {{- range .Tags}}
+    <li>
+        <a href="{{.Link}}">{{.Title}} ({{.NumOfPosts}})</a>
+    </li>
+    {{- end}}
+</ul>
+{{- end -}}

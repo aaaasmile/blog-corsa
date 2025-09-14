@@ -64,7 +64,7 @@ func (ln *mdhtArchivePostsNode) Transform(templDir string) error {
 			continue
 		}
 		if current_year != post_year {
-			partFirst, err := transformPost(tmplPage, current_year, yearPosts)
+			partFirst, err := ln.transformPost(tmplPage, current_year, yearPosts)
 			if err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (ln *mdhtArchivePostsNode) Transform(templDir string) error {
 		yearPosts = append(yearPosts, &pwd)
 	}
 	if len(yearPosts) > 0 {
-		partFirst, err := transformPost(tmplPage, current_year, yearPosts)
+		partFirst, err := ln.transformPost(tmplPage, current_year, yearPosts)
 		if err != nil {
 			return err
 		}
@@ -88,7 +88,7 @@ func (ln *mdhtArchivePostsNode) Transform(templDir string) error {
 	return nil
 }
 
-func transformPost(tmplPage *template.Template, current_year int, yearPosts []*PostWithData) (*bytes.Buffer, error) {
+func (ln *mdhtArchivePostsNode) transformPost(tmplPage *template.Template, current_year int, yearPosts []*PostWithData) (*bytes.Buffer, error) {
 	CtxFirst := struct {
 		Year       int
 		NumOfPosts int

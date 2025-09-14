@@ -244,6 +244,8 @@ func (mh *MdHtmlGram) processItem(item Token) (bool, error) {
 		mh._curr_Node = trans.NewLatestPostsNode(item.Value, mh.mapLinks)
 	case item.Type == itemArchivePosts:
 		mh._curr_Node = trans.NewArchivePostsNode(item.Value, mh.mapLinks)
+	case item.Type == itemTagPosts:
+		mh._curr_Node = trans.NewTagPostsNode(item.Value, mh.mapLinks)
 	case item.Type == itemText:
 		// ignore
 	case item.Type == itemSeparator:

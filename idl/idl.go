@@ -9,7 +9,7 @@ import (
 
 var (
 	Appname = "blog-corsa"
-	Buildnr = "00.003.20250529-00"
+	Buildnr = "00.004.20250914-00"
 )
 
 type StatusType int
@@ -90,6 +90,7 @@ type MapPagePostsLinks struct {
 	MapPage  map[string]*PageItem
 	ListPost []PostItem
 	ListPage []PageItem
+	Tags     []TagItem
 }
 
 type PageItem struct {
@@ -101,4 +102,10 @@ type PageItem struct {
 	Path           string
 	DateTime       time.Time
 	DateTimeRfC822 string
+}
+
+type TagItem struct {
+	Title      string
+	Link       string
+	NumOfPosts int
 }

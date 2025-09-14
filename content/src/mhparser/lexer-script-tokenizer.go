@@ -240,6 +240,7 @@ const (
 	itemYouTubeEmbed
 	itemLatestPosts
 	itemArchivePosts
+	itemTagPosts
 	itemEOF
 )
 
