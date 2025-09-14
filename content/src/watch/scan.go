@@ -30,6 +30,9 @@ func ScanContent(force bool, debug bool) error {
 	if err := bb.scanPageMdHtml("../page-src"); err != nil {
 		return err
 	}
+	if err := bb.liteDB.UpdateNumOfPostInTags(); err != nil {
+		return err
+	}
 	var err error
 	if bb.mapLinks, err = CreateMapLinks(bb.liteDB); err != nil {
 		return err

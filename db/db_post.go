@@ -62,7 +62,7 @@ func (ld *LiteDB) UpdateMd5Post(tx *sql.Tx, postItem *idl.PostItem) error {
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
-	stm, err := ld.connDb.Prepare(q)
+	stm, err := tx.Prepare(q)
 	if err != nil {
 		return err
 	}

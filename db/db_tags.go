@@ -239,3 +239,62 @@ func (ld *LiteDB) DeleteAllTagsToPost() error {
 	}
 	return err
 }
+
+func (ld *LiteDB) UpdateNumOfPostInTags() error {
+	lst, err := ld.GetTagList()
+	if err != nil {
+		return err
+	}
+	for _, tag := range lst {
+		tag.NumOfPosts, err = ld.getNumOfPostInTag(&tag)
+		if err != nil {
+			return err
+		}
+		if err := ld.updateNumOfPostsInTag(&tag); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (ld *LiteDB) getNumOfPostInTag(tagItem *idl.TagItem) (int, error) {
+	log.Println("[LiteDB - getNumOfPostInTag] get num of posts ", tagItem.Title)
+	q := `SELECT COUNT(*) FROM tags_to_post WHERE tag_title = ?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return 0, err
+	}
+	var count int
+	err = stm.QueryRow(tagItem.Title).Scan(&count)
+
+	return count, err
+}
+
+func (ld *LiteDB) updateNumOfPostsInTag(tagItem *idl.TagItem) error {
+	log.Println("[LiteDB - updateNumOfPostsInTag] update num of posts ", tagItem.NumOfPosts)
+	if tagItem.NumOfPosts == 0 {
+		return fmt.Errorf("[updateNumOfPostsInTag] num of posts is zero")
+	}
+	q := `UPDATE tags SET numofposts=? WHERE id=?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+
+	res, err := stm.Exec(tagItem.NumOfPosts, tagItem.Id)
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
+	}
+
+	return err
+}
