@@ -107,7 +107,6 @@ type PageItem struct {
 type TagItem struct {
 	Id             int64
 	Title          string
-	Link           string
 	NumOfPosts     int
 	DateTime       time.Time
 	DateTimeRfC822 string
