@@ -66,6 +66,7 @@ un preprocessor che mi genera un codice html. Esso supporta queste macro:
 - latest_posts
 - archive_posts
 - tag_posts
+- single_taggedposts
 
 Tutti i comandi sono compresi tra parantesi quadre. La lista la trovo nel file _lexer-builtin-func.go_.
 

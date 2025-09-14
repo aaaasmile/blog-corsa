@@ -53,6 +53,9 @@ func RebuildAll() error {
 	if err := bb.buildFeed(); err != nil {
 		return err
 	}
+	if err := bb.buildTags(); err != nil {
+		return err
+	}
 	if err := bb.buildPages("../page-src"); err != nil {
 		return err
 	}
@@ -164,6 +167,9 @@ func BuildMain() error {
 	if err := bb.builMdHtmlInDir("../page-src/archivio"); err != nil {
 		return err
 	}
+	if err := bb.builMdHtmlInDir("../page-src/tags"); err != nil {
+		return err
+	}
 
 	log.Println("[BuildMain] completed, elapsed time ", time.Since(start))
 	return nil
@@ -182,8 +188,11 @@ func (bb *Builder) InitDBData() error {
 }
 
 func (bb *Builder) buildTags() error {
-	// TODO
-	return fmt.Errorf("NOT IMPLEMENTED")
+	// TODO:
+	//  create a mdhtml page pro tag
+	//  create a page entry into the database
+	//  process pages (automaticaly after buildTags)
+	panic("not implemented")
 }
 
 func (bb *Builder) buildFeed() error {
@@ -288,7 +297,7 @@ func (bb *Builder) buildPost(mdHtmlFname string) error {
 	}
 	is_same := true
 	postItem := &idl.PostItem{}
-	postItem, is_same, err = bb.hasSamePostMd5(mdHtmlFname)
+	postItem, is_same, err = bb.getPostItemAndCheckMd5(mdHtmlFname)
 	if err != nil {
 		return err
 	}
@@ -319,7 +328,7 @@ func (bb *Builder) buildPage(mdHtmlFname string) error {
 		mapLinks:      bb.mapLinks,
 	}
 	wmh.staticSubDir = conf.Current.PageSubDir
-	pageItem, is_same, err := bb.hasSamePageMd5(mdHtmlFname)
+	pageItem, is_same, err := bb.getPageItemAndCheckMd5(mdHtmlFname)
 	if err != nil {
 		return err
 	}
@@ -342,7 +351,7 @@ func (bb *Builder) buildPage(mdHtmlFname string) error {
 	return nil
 }
 
-func (bb *Builder) hasSamePostMd5(mdHtmlFname string) (*idl.PostItem, bool, error) {
+func (bb *Builder) getPostItemAndCheckMd5(mdHtmlFname string) (*idl.PostItem, bool, error) {
 	f, err := os.Open(mdHtmlFname)
 	if err != nil {
 		return nil, false, err
@@ -374,7 +383,7 @@ func (bb *Builder) hasSamePostMd5(mdHtmlFname string) (*idl.PostItem, bool, erro
 	return &postItem, same, nil
 }
 
-func (bb *Builder) hasSamePageMd5(mdHtmlFname string) (*idl.PageItem, bool, error) {
+func (bb *Builder) getPageItemAndCheckMd5(mdHtmlFname string) (*idl.PageItem, bool, error) {
 	f, err := os.Open(mdHtmlFname)
 	if err != nil {
 		return nil, false, err
@@ -393,13 +402,13 @@ func (bb *Builder) hasSamePageMd5(mdHtmlFname string) (*idl.PageItem, bool, erro
 	}
 	prc := mhproc.NewMdHtmlProcess(false, bb.mapLinks)
 	if err := prc.ProcessToHtml(string(mdhtml)); err != nil {
-		log.Println("[hasSamePageMd5] ProcessToHtml error: ", err)
+		log.Println("[getPageItemAndCheckMd5] ProcessToHtml error: ", err)
 		return nil, false, err
 	}
 	gr := prc.GetScriptGrammar()
 	mMd5Db, ok := bb.mapLinks.MapPage[gr.Id]
 	if !ok {
-		return nil, false, fmt.Errorf("[hasSamePageMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.Id)
+		return nil, false, fmt.Errorf("[getPageItemAndCheckMd5] post id %s not found in MapLinks. Is the post table in db syncronized?", gr.Id)
 	}
 	same := mMd5 == mMd5Db.Md5
 	pageItem := idl.PageItem{
