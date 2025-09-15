@@ -95,7 +95,7 @@ type MapPagePostsLinks struct {
 }
 
 type PageItem struct {
-	Id             int
+	Id             int64
 	PageId         string
 	Title          string
 	Uri            string

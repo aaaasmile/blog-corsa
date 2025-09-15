@@ -84,6 +84,32 @@ func (ld *LiteDB) DeleteAllPageItem() error {
 	return err
 }
 
+func (ld *LiteDB) InsertNewPageIfNotExist(tx *sql.Tx, postItem *idl.PageItem) error {
+	q := `SELECT EXISTS( 
+	         SELECT 1 FROM page
+			 WHERE page_id = ?
+		  );`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stmt, err := tx.Prepare(q)
+	if err != nil {
+		return err
+	}
+	var exists bool
+	err = stmt.QueryRow(postItem.PageId).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		if err := ld.InsertNewPage(tx, postItem); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (ld *LiteDB) InsertNewPage(tx *sql.Tx, postItem *idl.PageItem) error {
 	if ld.debugSQL {
 		log.Println("[LiteDB - InsertNewPage] insert new Post on post id ", postItem.PageId)
@@ -94,12 +120,12 @@ func (ld *LiteDB) InsertNewPage(tx *sql.Tx, postItem *idl.PageItem) error {
 		log.Println("Query is", q)
 	}
 
-	stmt, err := ld.connDb.Prepare(q)
+	stmt, err := tx.Prepare(q)
 	if err != nil {
 		return err
 	}
 
-	_, err = tx.Stmt(stmt).Exec(postItem.Title,
+	result, err := tx.Stmt(stmt).Exec(postItem.Title,
 		postItem.PageId,
 		postItem.DateTime.Local().Unix(),
 		postItem.Uri,
@@ -107,12 +133,8 @@ func (ld *LiteDB) InsertNewPage(tx *sql.Tx, postItem *idl.PageItem) error {
 	if err != nil {
 		return err
 	}
-	q = `SELECT last_insert_rowid()`
-	if ld.debugSQL {
-		log.Println("Query is", q)
-	}
-	var id int
-	err = ld.connDb.QueryRow(q).Scan(&id)
+	var id int64
+	id, err = result.LastInsertId()
 	if err != nil {
 		return err
 	}

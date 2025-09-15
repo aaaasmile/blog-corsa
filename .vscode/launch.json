@@ -44,5 +44,21 @@
             "program": "${workspaceFolder}/content/src/main.go",
             "args": ["-config", "${workspaceFolder}/config.toml", "-buildmain"]
         },
+        {
+            "name": "buildtags",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/content/src/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml", "-buildtags"]
+        },
+        {
+            "name": "buildpages",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/content/src/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml", "-buildpages"]
+        }
     ]
 }

@@ -167,10 +167,6 @@ func BuildMain() error {
 	if err := bb.builMdHtmlInDir("../page-src/archivio"); err != nil {
 		return err
 	}
-	if err := bb.builMdHtmlInDir("../page-src/tags"); err != nil {
-		return err
-	}
-
 	log.Println("[BuildMain] completed, elapsed time ", time.Since(start))
 	return nil
 }
@@ -188,11 +184,74 @@ func (bb *Builder) InitDBData() error {
 }
 
 func (bb *Builder) buildTags() error {
-	// TODO:
 	//  create a mdhtml page pro tag
 	//  create a page entry into the database
-	//  process pages (automaticaly after buildTags)
-	panic("not implemented")
+	var err error
+	tx, err := bb.liteDB.GetTransaction()
+	if err != nil {
+		return err
+	}
+	pageItem := idl.PageItem{}
+	for _, tag_item := range bb.mapLinks.Tags {
+		if err := bb.createTagMdhtml(&tag_item, &pageItem); err != nil {
+			return err
+		}
+		err = bb.liteDB.InsertNewPageIfNotExist(tx, &pageItem)
+		if err != nil {
+			return err
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (bb *Builder) createTagMdhtml(tag_item *idl.TagItem, pageItem *idl.PageItem) error {
+	mdhtmlName := fmt.Sprintf("%s.mdhtml", tag_item.Title)
+	contentDir := "../page-src/tags"
+
+	templDir := "templates/mdhtml"
+	templName := path.Join(templDir, "newtag.html")
+	var partFirst bytes.Buffer
+	tmplPage := template.Must(template.New("TagSrc").ParseFiles(templName))
+	CtxFirst := struct {
+		Title    string
+		DateTime string
+		PageId   string
+		Path     string
+	}{
+		Title:    tag_item.Title,
+		DateTime: tag_item.DateTime.Format("2006-01-02 15:00"),
+		PageId:   fmt.Sprintf("tags-%s-PG", tag_item.Title),
+		Path:     fmt.Sprintf("/tags/%s/", tag_item.Title),
+	}
+	pageItem.Title = CtxFirst.Title
+	pageItem.PageId = CtxFirst.PageId
+	pageItem.Uri = fmt.Sprintf("/tags/%s/#", CtxFirst.Title)
+	pageItem.DateTime = tag_item.DateTime
+	fname := path.Join(contentDir, mdhtmlName)
+	if _, err := os.Stat(fname); err == nil {
+		fmt.Printf("Tag File already %s exists\n", fname)
+		return nil
+	}
+
+	if err := tmplPage.ExecuteTemplate(&partFirst, "tagnew", CtxFirst); err != nil {
+		return err
+	}
+
+	f, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.Write(partFirst.Bytes()); err != nil {
+		return err
+	}
+	log.Println("file created ", fname)
+	return nil
 }
 
 func (bb *Builder) buildFeed() error {

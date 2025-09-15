@@ -9,6 +9,59 @@ import (
 	"time"
 )
 
+func (ld *LiteDB) GetTagPostMap(tags []idl.TagItem) (map[string][]*idl.PostItem, error) {
+	log.Println("[LiteDB - GetTagPostMap] map all tags")
+	res := map[string][]*idl.PostItem{}
+	for _, tag_key := range tags {
+		lst, err := ld.getPostlistWithTag(tag_key.Title)
+		if err != nil {
+			return nil, err
+		}
+		res[tag_key.Title] = lst
+	}
+	return res, nil
+}
+
+func (ld *LiteDB) getPostlistWithTag(tag_title string) ([]*idl.PostItem, error) {
+	res := []*idl.PostItem{}
+	q := `SELECT p.*
+			FROM post p
+			INNER JOIN tags_to_post ttp ON p.id = ttp.post_id
+			INNER JOIN tags t ON ttp.tag_id = t.id
+			WHERE t.title = ?;`
+	if ld.debugSQL {
+		log.Println("Query is", q)
+	}
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := stm.Query(tag_title)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var ts int64
+		//  var md5 sql.NullString
+		item := idl.PostItem{}
+		if err := rows.Scan(&item.Id,
+			&item.Title,
+			&item.PostId,
+			&ts,
+			&item.Abstract,
+			&item.Uri,
+			&item.TitleImgUri,
+			&item.Md5); err != nil {
+			return nil, err
+		}
+		item.DateTime = time.Unix(ts, 0)
+		item.DateTimeRfC822 = item.DateTime.Format(time.RFC822Z)
+		res = append(res, &item)
+	}
+	log.Printf("[LiteDB - getPostlistWithTag] posts read %d with tag %s", len(res), tag_title)
+	return res, nil
+}
+
 func (ld *LiteDB) GetTagList() ([]idl.TagItem, error) {
 	log.Println("[LiteDB - GetTagList] select all tags")
 

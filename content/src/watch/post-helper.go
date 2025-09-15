@@ -27,6 +27,11 @@ func CreateMapLinks(liteDB *db.LiteDB) (*idl.MapPagePostsLinks, error) {
 	if err != nil {
 		return nil, err
 	}
+	mapLinks.MapTag, err = liteDB.GetTagPostMap(mapLinks.Tags)
+	if err != nil {
+		return nil, err
+	}
+
 	//fmt.Println("*** Posts ", mapLinks.ListPost)
 	last_ix := len(mapLinks.ListPost) - 1
 	prev_item := &idl.PostItem{}

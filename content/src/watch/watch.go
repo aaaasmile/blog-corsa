@@ -265,6 +265,8 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 	if item, ok := grm.CustomData["path"]; ok {
 		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s%s", wmh.staticBlogDir, item)
 		src_path_name = item
+	} else if rrpath, ok := grm.CustomData["rootpath"]; ok {
+		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s%s", wmh.staticBlogDir, rrpath)
 	} else {
 		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
 	}
