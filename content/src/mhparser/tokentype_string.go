@@ -58,6 +58,10 @@ func (i TokenType) String() string {
 		return "itemLatestPosts"
 	case itemArchivePosts:
 		return "itemArchivePosts"
+	case itemTagPosts:
+		return "itemTagPosts"
+	case itemSingleTaggedPosts:
+		return "itemSingleTaggedPosts"
 	}
 	return fmt.Sprintf("TokenType %d undef", i)
 }

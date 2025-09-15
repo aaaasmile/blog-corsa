@@ -151,6 +151,12 @@ Mi genera una pagina d'archivio con un link a tutti i posts.
 ## tag_posts
 Mi genera un tratto di html con un link a tutti tags che ho utilizzato nei vari post.
 
+## single_taggedposts
+Esempio
+
+    [single_taggedposts 'MaratonaGara']
+genera una list di post che hanno il tag 'MaratonaGara'
+
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,
 i commenti vengono mostrati tramite htmx in fase di rendering sul browser.

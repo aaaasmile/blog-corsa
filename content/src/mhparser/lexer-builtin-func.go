@@ -68,6 +68,15 @@ func buildDescrInLex(l *L) {
 	fn.NumParam = len(fn.Labels)
 	arr = append(arr, fn)
 
+	fn = DescrFnItem{
+		KeyName:       "single_taggedposts",
+		Labels:        []string{"Title"},
+		ItemTokenType: itemSingleTaggedPosts,
+		IsMultiline:   false,
+	}
+	fn.NumParam = len(fn.Labels)
+	arr = append(arr, fn)
+
 	//
 	// use arr2 for id calculation
 	arr2 := make([]DescrFnItem, 0, len(arr))

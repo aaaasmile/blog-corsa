@@ -241,6 +241,7 @@ const (
 	itemLatestPosts
 	itemArchivePosts
 	itemTagPosts
+	itemSingleTaggedPosts
 	itemEOF
 )
 

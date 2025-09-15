@@ -12,6 +12,7 @@ func createFakeLinks() *idl.MapPagePostsLinks {
 	mapLinks := &idl.MapPagePostsLinks{
 		MapPost:  map[string]idl.PostLinks{},
 		MapPage:  map[string]*idl.PageItem{},
+		MapTag:   map[string][]*idl.PostItem{},
 		ListPost: []idl.PostItem{},
 		ListPage: []idl.PageItem{},
 		Tags:     []idl.TagItem{},
@@ -20,6 +21,10 @@ func createFakeLinks() *idl.MapPagePostsLinks {
 	mapLinks.ListPost = append(mapLinks.ListPost, idl.PostItem{Title: "B ti", Uri: "B uri", DateTime: time.Date(2010, 3, 31, 0, 0, 0, 0, loc)})
 	mapLinks.ListPost = append(mapLinks.ListPost, idl.PostItem{Title: "C ti", Uri: "C uri", DateTime: time.Date(2011, 6, 10, 0, 0, 0, 0, loc)})
 	mapLinks.Tags = append(mapLinks.Tags, idl.TagItem{Title: "Gedanken", NumOfPosts: 6}, idl.TagItem{Title: "Ultra", NumOfPosts: 7})
+	lstPostTags := []*idl.PostItem{}
+	lstPostTags = append(lstPostTags, &idl.PostItem{Title: "C ci", Uri: "C uri"})
+	lstPostTags = append(lstPostTags, &idl.PostItem{Title: "D di", Uri: "D uri"})
+	mapLinks.MapTag["MaratonaGara"] = lstPostTags
 	return mapLinks
 }
 
@@ -692,10 +697,10 @@ s<p>[archive_posts]</p>e`
 		return
 	}
 	secline := ll.ArrayValue[1]
-	if !strings.Contains(secline, "Archivio anno 2010") {
+	if !strings.Contains(secline, "Anno 2010") {
 		t.Errorf("expected  Archivio anno 2010, but %s ", secline)
 	}
-	if !strings.Contains(secline, "Archivio anno 2011") {
+	if !strings.Contains(secline, "Anno 2011") {
 		t.Errorf("expected  Archivio anno 2011, but %s ", secline)
 	}
 }
@@ -748,5 +753,56 @@ s<p>[tag_posts]</p>e`
 	}
 	if !strings.Contains(secline, "Ultra") {
 		t.Errorf("expected  Ultra, but %s ", secline)
+	}
+}
+
+func TestParseHtmlTaggedPosts(t *testing.T) {
+	str := `title: Un altro post entusiasmante
+datetime: 2024-12-23
+id: 20241108-00
+---
+<p>first line</p>
+s<p>[single_taggedposts 'MaratonaGara']</p>e`
+
+	lex := ScriptGrammar{
+		Debug:    true,
+		TemplDir: "../templates/htmlgen",
+		MapLinks: createFakeLinks(),
+	}
+	err := lex.ParseScript(str)
+	if err != nil {
+		t.Error("Error is: ", err)
+		return
+	}
+
+	err = lex.CheckNorm()
+	if err != nil {
+		t.Error("Error in parser norm ", err)
+		return
+	}
+	err = lex.EvaluateParams()
+	if err != nil {
+		t.Error("Error in evaluate ", err)
+		return
+	}
+	nrm := lex.Norm["main"]
+	lastFns := len(nrm.FnsList) - 1
+	stFns := nrm.FnsList[lastFns]
+	if len(stFns.Params) != 1 && !stFns.Params[0].IsArray {
+		t.Error("expected one array param with lines")
+		return
+	}
+	ll := &stFns.Params[0]
+	len_exp := 2
+	if len(ll.ArrayValue) != len_exp {
+		t.Errorf("expected %d html lines, but have %d lines", len_exp, len(ll.ArrayValue))
+		return
+	}
+	secline := ll.ArrayValue[1]
+	if !strings.Contains(secline, "C ci") {
+		t.Errorf("expected  C ci, but %s ", secline)
+	}
+	if !strings.Contains(secline, "D di") {
+		t.Errorf("expected  D di, but %s ", secline)
 	}
 }

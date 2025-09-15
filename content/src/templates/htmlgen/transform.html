@@ -30,6 +30,20 @@
 {{- end -}}
 
 
+{{- define "singletaggedposts" -}}
+<h3 class="centered subtitle">{{.Title}}</h3>
+<h6 class="centered subtitle">{{.NumOfPosts}} posts </h6>
+<ul>
+    {{- range .TagPosts}}
+    <li>
+        <a href="{{.Link}}">{{.Title}}</a>
+        <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+    </li>
+    {{- end}}
+</ul>
+{{- end -}}
+
+
 {{- define "archiveposts" -}}
 <h3 class="centered subtitle">Anno {{.Year}}</h3>
 <h6 class="centered subtitle">{{.NumOfPosts}} posts </h6>

@@ -91,6 +91,7 @@ type MapPagePostsLinks struct {
 	ListPost []PostItem
 	ListPage []PageItem
 	Tags     []TagItem
+	MapTag   map[string][]*PostItem
 }
 
 type PageItem struct {
