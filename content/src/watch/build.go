@@ -69,6 +69,9 @@ func PrepareForRsync(debug bool) error {
 	if err := ScanContent(false, debug); err != nil {
 		return err
 	}
+	if err := BuildTags(); err != nil {
+		return err
+	}
 	if err := BuildPosts(); err != nil {
 		return err
 	}

@@ -59,6 +59,15 @@
             "mode": "auto",
             "program": "${workspaceFolder}/content/src/main.go",
             "args": ["-config", "${workspaceFolder}/config.toml", "-buildpages"]
+        },
+        {
+            "name": "all4sync",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/content/src/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml", "-all4sync"]
         }
+
     ]
 }

@@ -114,13 +114,14 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		return err
 	}
 	traversePost(doc, &postItem)
-
-	if _, ok := bb.mapLinks.MapPost[postItem.PostId]; !ok {
+	plink, ok := bb.mapLinks.MapPost[postItem.PostId]
+	if !ok {
 		err = bb.liteDB.InsertNewPost(tx, &postItem)
 		if err != nil {
 			return err
 		}
 	} else {
+		postItem.Id = plink.Item.Id
 		if bb.debug {
 			log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
 		}
