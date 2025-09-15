@@ -94,7 +94,7 @@ func (ld *LiteDB) GetTagList() ([]idl.TagItem, error) {
 	return res, nil
 }
 
-func (ld *LiteDB) InsertOrUpdateTag(tx *sql.Tx, tag string, postItem *idl.PostItem) error {
+func (ld *LiteDB) InsertOrUpdateTag(tx *sql.Tx, tag string, postItem *idl.PostItem) (bool, error) {
 	tag = strings.Trim(tag, " ")
 	if ld.debugSQL {
 		log.Println("[LiteDB - InsertOrUpdateTag] insert or update tag on post id ", tag, postItem.PostId)
@@ -110,21 +110,21 @@ func (ld *LiteDB) InsertOrUpdateTag(tx *sql.Tx, tag string, postItem *idl.PostIt
 
 	stmt, err := tx.Prepare(q)
 	if err != nil {
-		return err
+		return false, err
 	}
 	var exists bool
 	err = stmt.QueryRow(tag).Scan(&exists)
 	if err != nil {
-		return err
+		return false, err
 	}
 	tagItem := idl.TagItem{Title: tag}
 	if !exists {
 		if err := ld.insertTagInTags(tx, &tagItem); err != nil {
-			return err
+			return false, err
 		}
 	} else {
 		if err := ld.selectTag(tx, &tagItem); err != nil {
-			return err
+			return false, err
 		}
 	}
 
@@ -150,7 +150,7 @@ func (ld *LiteDB) selectTag(tx *sql.Tx, tagItem *idl.TagItem) error {
 	return nil
 }
 
-func (ld *LiteDB) insertOrUpdateTagsToPostId(tx *sql.Tx, tagItem *idl.TagItem, postItem *idl.PostItem) error {
+func (ld *LiteDB) insertOrUpdateTagsToPostId(tx *sql.Tx, tagItem *idl.TagItem, postItem *idl.PostItem) (bool, error) {
 	q2 := `SELECT EXISTS( 
 	         SELECT 1 FROM tags_to_post
 			 WHERE tag_title = ? AND post_id_txt = ? 
@@ -161,19 +161,21 @@ func (ld *LiteDB) insertOrUpdateTagsToPostId(tx *sql.Tx, tagItem *idl.TagItem, p
 
 	stmt2, err := tx.Prepare(q2)
 	if err != nil {
-		return err
+		return false, err
 	}
 	var exists2 bool
 	err = stmt2.QueryRow(tagItem.Title, postItem.PostId).Scan(&exists2)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if !exists2 {
 		if err := ld.insertTagInTagsToPost(tx, tagItem, postItem); err != nil {
-			return err
+			return false, err
 		}
+		return true, nil
+	} else {
+		return false, nil
 	}
-	return nil
 }
 
 func (ld *LiteDB) insertTagInTagsToPost(tx *sql.Tx, tagItem *idl.TagItem, postItem *idl.PostItem) error {

@@ -127,9 +127,17 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 		}
 	}
 	for _, single_tag := range grm.Tags {
-		err = bb.liteDB.InsertOrUpdateTag(tx, single_tag, &postItem)
+		inserted, err := bb.liteDB.InsertOrUpdateTag(tx, single_tag, &postItem)
 		if err != nil {
 			return err
+		}
+		if inserted {
+			pgid := fmt.Sprintf("tags-%s-PG", single_tag)
+			pageItem := idl.PageItem{PageId: pgid, Md5: ""}
+			err = bb.liteDB.UpdateMd5Page(tx, &pageItem)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
