@@ -2,9 +2,11 @@ package trans
 
 import (
 	"bytes"
+	"cmp"
 	"corsa-blog/idl"
 	"fmt"
 	"path"
+	"slices"
 	"strings"
 	"text/template"
 )
@@ -69,6 +71,13 @@ func (ln *mdhtTagPostsNode) transformTags(tmplPage *template.Template) (*bytes.B
 	}{
 		Tags: ln.mapLinks.Tags,
 	}
+	// Sort by DateTime (ascending)
+	slices.SortFunc(CtxFirst.Tags, func(a, b idl.TagItem) int {
+		return cmp.Compare(
+			strings.ToLower(a.Title),
+			strings.ToLower(b.Title),
+		)
+	})
 	var partFirst bytes.Buffer
 	if err := tmplPage.ExecuteTemplate(&partFirst, "tagposts", CtxFirst); err != nil {
 		return nil, err

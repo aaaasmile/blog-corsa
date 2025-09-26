@@ -53,7 +53,8 @@ func (ln *mdhtArchivePostsNode) Transform(templDir string) error {
 	for _, item := range ln.mapLinks.ListPost {
 		pwd := PostWithData{
 			DateFormatted: util.FormatDateIt(item.DateTime),
-			DateTime:      item.DateTime.Format("2006-01-02 15:00"),
+			DateTimeTxt:   item.DateTime.Format("2006-01-02 15:00"),
+			DateTime:      item.DateTime,
 			Title:         item.Title,
 			Link:          item.Uri,
 		}

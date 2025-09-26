@@ -23,7 +23,7 @@
     {{- range .LatestPosts}}
     <li>
         <a href="{{.Link}}">{{.Title}}</a>
-        <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+        <time datetime="{{.DateTimeTxt}}">{{.DateFormatted}}</time>
     </li>
     {{- end}}
 </ul>
@@ -37,7 +37,7 @@
     {{- range .TagPosts}}
     <li>
         <a href="{{.Link}}">{{.Title}}</a>
-        <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+        <time datetime="{{.DateTimeTxt}}">{{.DateFormatted}}</time>
     </li>
     {{- end}}
 </ul>
@@ -51,7 +51,7 @@
     {{- range .YearPosts}}
     <li>
         <a href="{{.Link}}">{{.Title}}</a>
-        <time datetime="{{.DateTime}}">{{.DateFormatted}}</time>
+        <time datetime="{{.DateTimeTxt}}">{{.DateFormatted}}</time>
     </li>
     {{- end}}
 </ul>

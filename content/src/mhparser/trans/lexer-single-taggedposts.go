@@ -6,6 +6,7 @@ import (
 	"corsa-blog/util"
 	"fmt"
 	"path"
+	"slices"
 	"strings"
 	"text/template"
 )
@@ -60,7 +61,8 @@ func (ln *mdhtSingleTaggedPostsNode) Transform(templDir string) error {
 	for _, item := range ln.mapLinks.MapTag[ln._title] {
 		pwd := PostWithData{
 			DateFormatted: util.FormatDateIt(item.DateTime),
-			DateTime:      item.DateTime.Format("2006-01-02 15:00"),
+			DateTimeTxt:   item.DateTime.Format("2006-01-02 15:00"),
+			DateTime:      item.DateTime,
 			Title:         item.Title,
 			Link:          item.Uri,
 		}
@@ -89,6 +91,16 @@ func (ln *mdhtSingleTaggedPostsNode) transformPost(tmplPage *template.Template, 
 		NumOfPosts: len(tagPosts),
 		TagPosts:   tagPosts,
 	}
+	// Sort by DateTime (ascending)
+	slices.SortFunc(CtxFirst.TagPosts, func(a, b *PostWithData) int {
+		if a.DateTime.Before(b.DateTime) {
+			return -1
+		}
+		if a.DateTime.After(b.DateTime) {
+			return 1
+		}
+		return 0
+	})
 	var partFirst bytes.Buffer
 	if err := tmplPage.ExecuteTemplate(&partFirst, "singletaggedposts", CtxFirst); err != nil {
 		return nil, err

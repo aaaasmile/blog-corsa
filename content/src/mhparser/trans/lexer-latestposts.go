@@ -9,11 +9,13 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type PostWithData struct {
 	DateFormatted string
-	DateTime      string
+	DateTimeTxt   string
+	DateTime      time.Time
 	Title         string
 	Link          string
 }
@@ -73,7 +75,8 @@ func (ln *mdhtLatestPostsNode) Transform(templDir string) error {
 	for ix, item := range ln.mapLinks.ListPost {
 		pwd := PostWithData{
 			DateFormatted: util.FormatDateIt(item.DateTime),
-			DateTime:      item.DateTime.Format("2006-01-02 15:00"),
+			DateTimeTxt:   item.DateTime.Format("2006-01-02 15:00"),
+			DateTime:      item.DateTime,
 			Title:         item.Title,
 			Link:          item.Uri,
 		}

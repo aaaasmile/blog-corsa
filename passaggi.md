@@ -381,3 +381,13 @@ Uso il flag -editpost. Per esempio:
 ### Cambiare solo il main (per esempio per il live)
 
     .\src.exe -config ..\..\config.toml -buildmain
+
+### Tags
+Se cambi un tag in una pagina mdhmtl bisogna ricreare la pagina del tag.
+Il modo più semplice è quello di ricreare tutte le pagine con 
+
+    .\src.exe -config ..\..\config.toml -buildpages -force
+
+Nota che il comando _-buildtags_ serve per creare il nuovo tag nel db e generare il file
+mdhtml (è una nuova page) che raccoglie tutti i posts che contengono il tag.
+Se il tag esiste già, nulla viene creato o modificato, tranne se la pagina ha un md5 obsoleto.
