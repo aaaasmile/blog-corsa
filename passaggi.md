@@ -384,8 +384,10 @@ Uso il flag -editpost. Per esempio:
 
 ### Tags
 Se cambi un tag in una pagina mdhmtl bisogna ricreare la pagina del tag.
-Il modo più semplice è quello di ricreare tutte le pagine con 
+Il modo più semplice è quello di ricreare tutte le pagine dopo avere fatto uno scan
+per aggiornare il db con il nuovo post nel tag 
 
+    .\src.exe -config ..\..\config.toml -scancontent
     .\src.exe -config ..\..\config.toml -buildpages -force
 
 Nota che il comando _-buildtags_ serve per creare il nuovo tag nel db e generare il file
