@@ -150,12 +150,19 @@ Mi genera una pagina d'archivio con un link a tutti i posts.
 
 ## tag_posts
 Mi genera un tratto di html con un link a tutti tags che ho utilizzato nei vari post.
+Questo lo metto di solito nella pagina main.
 
 ## single_taggedposts
 Esempio
 
     [single_taggedposts 'MaratonaGara']
-genera una list di post che hanno il tag 'MaratonaGara'
+genera una list di post che hanno il tag 'MaratonaGara'.
+Questo di solito lo metto in una pagina dedicata apposta al tag in questione (esempio page-src/tags/WRU.mdhtml). 
+Nota che queste pagine di Tag servono poi per creare la pagina del singolo tag che si crea con buildpages.
+La pagina mdhtml del Tag (mdhtml source) singolo viene creata automaticamente con il flag buildtags.
+Riassunto:
+- buildtags crea i sorgenti ed aggiorna il db
+- buildpages crea le pagine html di tutti i tags
 
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,
