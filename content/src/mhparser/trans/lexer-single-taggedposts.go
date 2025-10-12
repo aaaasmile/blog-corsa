@@ -5,6 +5,7 @@ import (
 	"corsa-blog/idl"
 	"corsa-blog/util"
 	"fmt"
+	"log"
 	"path"
 	"slices"
 	"strings"
@@ -69,6 +70,7 @@ func (ln *mdhtSingleTaggedPostsNode) Transform(templDir string) error {
 		tagPosts = append(tagPosts, &pwd)
 	}
 	if len(tagPosts) > 0 {
+		log.Println("[Transform - SingleTaggedPosts] working on tags", ln._title, len(tagPosts))
 		partFirst, err := ln.transformPost(tmplPage, ln._title, tagPosts)
 		if err != nil {
 			return err

@@ -161,8 +161,13 @@ Questo di solito lo metto in una pagina dedicata apposta al tag in questione (es
 Nota che queste pagine di Tag servono poi per creare la pagina del singolo tag che si crea con buildpages.
 La pagina mdhtml del Tag (mdhtml source) singolo viene creata automaticamente con il flag buildtags.
 Riassunto:
-- buildtags crea i sorgenti ed aggiorna il db
-- buildpages crea le pagine html di tutti i tags
+- scancontent aggiorna il db
+- buildtags crea i sorgenti mshtml, ma non aggiorna il db
+- buildpages crea le pagine html di tutti i tags partendo dai sorgenti e il db (tabelle tags e tags_to_post)
+
+Se la tabella tags_to_post contiene dei dati invalidi per quanto riguarda post_id, allora i single_taggedposts 
+generati per lo specifico tag non coincidono. Quindi quando si cancella un post, va cancellato prima 
+il record in tags_to_post. L'integrità refernziale in sqlite funziona?
 
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,

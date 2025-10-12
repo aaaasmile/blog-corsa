@@ -50,8 +50,8 @@ func (bb *Builder) scanPostsMdHtml(srcDir string) error {
 	}
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
 	if bb.force {
-		bb.liteDB.DeleteAllPostItem()
 		bb.liteDB.DeleteAllTagsToPost()
+		bb.liteDB.DeleteAllPostItem()
 		bb.liteDB.DeleteAllTags()
 	}
 	tx, err := bb.liteDB.GetTransaction()

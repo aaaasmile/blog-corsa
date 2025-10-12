@@ -273,6 +273,28 @@ func (ld *LiteDB) DeleteAllTags() error {
 	return err
 }
 
+func (ld *LiteDB) DeleteTagOnPostId(postId string) error {
+	log.Println("[LiteDB - DeleteAllTagsToPost] start")
+	q := `DELETE FROM tags_to_post WHERE post_id=?;`
+	if ld.debugSQL {
+		log.Println("SQL is:", q)
+	}
+
+	stm, err := ld.connDb.Prepare(q)
+	if err != nil {
+		return err
+	}
+	res, err := stm.Exec(postId)
+	if ld.debugSQL {
+		ra, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+		log.Println("Row affected: ", ra)
+	}
+	return err
+}
+
 func (ld *LiteDB) DeleteAllTagsToPost() error {
 	log.Println("[LiteDB - DeleteAllTagsToPost] start")
 	q := `DELETE FROM tags_to_post;`
