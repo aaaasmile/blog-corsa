@@ -91,13 +91,13 @@ func (ln *mdhtSingleTaggedPostsNode) transformPost(tmplPage *template.Template, 
 		NumOfPosts: len(tagPosts),
 		TagPosts:   tagPosts,
 	}
-	// Sort by DateTime (ascending)
+	// Sort by DateTime (descending)
 	slices.SortFunc(CtxFirst.TagPosts, func(a, b *PostWithData) int {
 		if a.DateTime.Before(b.DateTime) {
-			return -1
+			return 1
 		}
 		if a.DateTime.After(b.DateTime) {
-			return 1
+			return -1
 		}
 		return 0
 	})
