@@ -167,7 +167,17 @@ Riassunto:
 
 Se la tabella tags_to_post contiene dei dati invalidi per quanto riguarda post_id, allora i single_taggedposts 
 generati per lo specifico tag non coincidono. Quindi quando si cancella un post, va cancellato prima 
-il record in tags_to_post. L'integrità refernziale in sqlite funziona?
+il record in tags_to_post. L'integrità refernziale in sqlite funziona? Si, ma non è abilitata di default.
+Il comando in golang:
+
+    sql.Open("sqlite3", fmt.Sprintf("%s?_foreign_keys=1", dbname))
+apre il db con il check dell'integrità referenziale.
+
+    -- Find tags_to_post records pointing to non-existent posts
+    SELECT ttp.* 
+    FROM tags_to_post ttp 
+    LEFT JOIN post p ON ttp.post_id = p.id 
+    WHERE p.id IS NULL;
 
 ## Commenti
 I commenti sono parte integrante dei post. Siccome i songoli post sono creati staticamente,

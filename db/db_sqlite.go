@@ -3,6 +3,7 @@ package db
 import (
 	"corsa-blog/util"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -35,7 +36,8 @@ func (ld *LiteDB) openSqliteDatabase() error {
 	var err error
 	dbname := util.GetFullPath(ld.dBPath)
 	log.Println("Using the sqlite file: ", dbname)
-	ld.connDb, err = sql.Open("sqlite3", dbname)
+	// Open database with foreign keys enabled
+	ld.connDb, err = sql.Open("sqlite3", fmt.Sprintf("%s?_foreign_keys=1", dbname))
 	if err != nil {
 		return err
 	}
