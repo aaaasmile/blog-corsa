@@ -363,7 +363,7 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Fine ed inizio stagione, verso WRU" -date "2025-10-26" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "WRU numero 12" -date "2025-11-30" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 

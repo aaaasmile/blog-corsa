@@ -138,6 +138,8 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 			if err != nil {
 				return err
 			}
+		} else {
+			log.Printf("[scanPostItem] ignore changes for Tag %s on post id %s", single_tag, postItem.PostId)
 		}
 	}
 
