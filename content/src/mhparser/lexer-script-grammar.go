@@ -194,7 +194,10 @@ func (sn *ScriptGrammar) setTagsFromString(strVal string) error {
 		sn.Tags = []string{}
 	} else {
 		arr := strings.Split(strVal, ",")
-		sn.Tags = append(sn.Tags, arr...)
+		for _, item := range arr {
+			item_pure := strings.Trim(item, " ")
+			sn.Tags = append(sn.Tags, item_pure)
+		}
 	}
 	return nil
 }
