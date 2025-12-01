@@ -8,7 +8,7 @@ import (
 )
 
 func (ld *LiteDB) UpdateMd5Page(tx *sql.Tx, pageItem *idl.PageItem) error {
-	log.Println("[LiteDB - UpdateMd5Page] update md5 on page id ", pageItem.PageId)
+	log.Printf("[LiteDB - UpdateMd5Page] update md5_len = %d on page id %s \n", len(pageItem.Md5), pageItem.PageId)
 	q := `UPDATE page SET md5=? WHERE page_id=?;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
