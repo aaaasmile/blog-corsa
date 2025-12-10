@@ -201,6 +201,7 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 		}
 	} else {
 		CtxSecond.DateFormatted = util.FormatDateTimeIt(time.Now())
+		CtxSecond.DateTime = time.Now().Format("2006-01-02 15:00")
 		if err := tmplPage.ExecuteTemplate(&partSecond, "pagefinal", CtxSecond); err != nil {
 			return err
 		}
