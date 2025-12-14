@@ -9,7 +9,7 @@ import (
 
 var (
 	Appname = "blog-corsa"
-	Buildnr = "00.004.20250914-00"
+	Buildnr = "00.005.20251214-00"
 )
 
 type StatusType int
