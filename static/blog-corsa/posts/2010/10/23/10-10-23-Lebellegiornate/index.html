@@ -30,7 +30,7 @@
       </header>
       <section>
         <p>Oggi una bella giornata: mountain bike rubata e l'altra bici segata nel telaio. Dura la vita del ciclista cittadino.</p>
-        <section class="vertstack">    <figure>        <a href="#" id="foto_00" onclick="appGallery.displayImage(`${id}`)"><img src="foto_320.jpg" alt="Telaio tagliato" /></a>        <figcaption>Telaio tagliato</figcaption>    </figure></section>
+        <section class="vertstack">    <figure>        <a href="#" id="foto_00" data-id="00" onclick="appGallery.displayImage(`${id}`, `${this.getAttribute('data-id')}`)"><img src="foto_320.jpg" alt="Telaio tagliato" /></a>        <figcaption>Telaio tagliato</figcaption>    </figure></section>
       </section>    
       <nav class="postnav">
           <a href="/posts/2010/10/24/10-10-24-MezzamaratonaalPrater/#">&lt; Post successivo</a><a href="/">Home</a>

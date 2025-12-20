@@ -1,1 +1,1 @@
-{"images":[{"id":"foto2_00","name":"foto2.png","redux":"foto2_320.png","caption":" "},{"id":"foto3_02","name":"foto3.png","redux":"foto3_320.png","caption":" "},{"id":"foto4_04","name":"foto4.jpg","redux":"foto4_320.jpg","caption":"Mappa del percorso"}]}
+{"images":[{"id":"00","val":[{"id":"foto2_00","name":"foto2.png","redux":"foto2_320.png","caption":" ","sectid":"00"},{"id":"foto3_02","name":"foto3.png","redux":"foto3_320.png","caption":" ","sectid":"00"},{"id":"foto4_04","name":"foto4.jpg","redux":"foto4_320.jpg","caption":"Mappa del percorso","sectid":"00"}]}]}
