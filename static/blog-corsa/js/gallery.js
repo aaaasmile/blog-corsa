@@ -2,15 +2,18 @@
 export default () => {
     let _dataImages = {}
     let _mapImg = new Map()
+    let _mapStcks = new Map()
     let _idArray = []
     let _currentImg = {}
     let _image = null
     let _imageOverlay = null
     let _nextBtn = null
     let _prevBtn = null
+    let _savedScrollPosition = 0
 
     function resetStrc() {
         _dataImages = {}
+        _mapStcks = new Map()
         _mapImg = new Map()
         _idArray = []
         _currentImg = {}
@@ -18,6 +21,7 @@ export default () => {
         _imageOverlay = null
         _nextBtn = null
         _prevBtn = null
+        _savedScrollPosition = 0
     }
     return {
         loadData() {
@@ -27,14 +31,23 @@ export default () => {
                 .then(response => response.json())
                 .then((data) => {
                     //console.log('data from fetch: ', data)
-                    _dataImages = data;
-                    _dataImages = data.images.sort((a, b) => a.id.localeCompare(b.id))
-                    let index = 0
-                    _dataImages.forEach(item => {
-                        _mapImg.set(item.id, { name: item.name, redux: item.redux, caption: item.caption, ix: index })
-                        _idArray.push(item.id)
-                        index += 1
+                    const data_imgs = data.images
+                    data_imgs.forEach(stack_item => {
+                        const key = stack_item.id
+                        const data_imgs_val = stack_item.val
+                        _dataImages = data_imgs_val.sort((a, b) => a.id.localeCompare(b.id))
+                        let index = 0
+                        _mapImg = new Map()
+                        _idArray = []
+                        _dataImages.forEach(item => {
+                            _mapImg.set(item.id, { name: item.name, redux: item.redux, caption: item.caption, ix: index })
+                            _idArray.push({ id: item.id, dataid: key })
+                            index += 1
+                        })
+                        _mapStcks.set(key, { idarray: _idArray, mapimg: _mapImg })
+
                     })
+
                     //console.log('dataimages: ', _dataImages)
                     //console.log('mapImg: ', _mapImg)
                     _image = document.querySelector('#the-image');
@@ -47,8 +60,15 @@ export default () => {
                     console.error('error on fetch: ', err)
                 });
         },
-        displayImage(id) {
-            console.log('display image id ', id)
+        displayImage(id, dataid, fromNav) {
+            console.log('display image dataid, id ', dataid, id)
+            let stackItem = _mapStcks.get(dataid)
+            if (!stackItem) {
+                return
+            }
+            _mapImg = stackItem.mapimg
+            _idArray = stackItem.idarray
+
             _currentImg = _mapImg.get(id)
             _image.classList.add('hidden')
             _image.onload = () => { _image.classList.remove('hidden'); };
@@ -66,24 +86,35 @@ export default () => {
             } else {
                 _prevBtn.classList.add('hidden')
             }
-            _imageOverlay.classList.remove('gone');
+            if (!fromNav) {
+                _savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                console.log('save scroll to ', _savedScrollPosition)
+                _imageOverlay.classList.remove('gone');
+                document.body.style.overflow = 'hidden';
+            }
         },
         hideGalleryImage() {
             console.log('hide gallery image')
             _imageOverlay.classList.add('gone');
+            // Restore scroll position
+            document.body.style.overflow = '';
+            window.scrollTo(0, _savedScrollPosition);
+            console.log('scroll to ', _savedScrollPosition)
         },
         nextImage() {
             const index = _currentImg.ix
             console.log('next image of', index)
             if (index < _idArray.length - 1) {
-                this.displayImage(_idArray[index + 1])
+                const ele = _idArray[index + 1]
+                this.displayImage(ele.id, ele.dataid, true)
             }
         },
         prevImage() {
             const index = _currentImg.ix
             console.log('prev image of', index)
             if (index > 0) {
-                this.displayImage(_idArray[index - 1])
+                const ele = _idArray[index - 1]
+                this.displayImage(ele.id, ele.dataid, true)
             }
         }
     }

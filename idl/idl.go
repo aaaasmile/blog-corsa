@@ -48,10 +48,16 @@ type ImgDataItem struct {
 	Name    string `json:"name"`
 	Redux   string `json:"redux"`
 	Caption string `json:"caption"`
+	SectId  string `json:"sectid"`
 }
 
-type ImgDataItems struct {
-	Images []ImgDataItem `json:"images"`
+type ImgDataSection struct {
+	SectId string        `json:"id"`
+	Val    []ImgDataItem `json:"val"`
+}
+
+type ImgDataSections struct {
+	Images []ImgDataSection `json:"images"`
 }
 
 func (fg *ImgDataItem) CalcReduced() error {
