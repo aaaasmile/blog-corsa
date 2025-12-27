@@ -1,7 +1,8 @@
-title: statistiche
+title: Statistiche delle corse
 datetime: 2025-01-18
 id: statistiche-PG
 comments: no
+description: Le statistiche di tutte le gare
 ---
 <header>
     <h1>Statistiche</h1>

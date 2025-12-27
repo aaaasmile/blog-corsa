@@ -8,10 +8,17 @@
     <copyright>All rights reserved</copyright>
     <pubDate>23 Apr 25 02:00 +0200</pubDate>
 
-    {{- range .}}
+    {{- range .ListPost}}
     <item>
         <title>{{.Title}}</title>
         <description>{{.Abstract}}</description>
+        <link>https://igorrun.invido.it{{.Uri}}</link>
+        <pubDate>{{.DateTimeRfC822}}</pubDate>
+    </item>
+    {{- end}}
+    {{- range .ListPage}}
+    <item>
+        <title>{{.Title}}</title>
         <link>https://igorrun.invido.it{{.Uri}}</link>
         <pubDate>{{.DateTimeRfC822}}</pubDate>
     </item>
