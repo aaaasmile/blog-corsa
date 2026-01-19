@@ -104,14 +104,15 @@ func (pp *Post) createNewPost(targetRootDir string) error {
 	}
 	for ix, item := range pp.mapLinks.ListPost {
 		if item.DateTime.Before(pp.Datetime) {
-			prev_ix := ix - 1
-			if prev_ix >= 0 {
-				prev_Item := pp.mapLinks.ListPost[prev_ix]
-				log.Println("[createNewPost] previous post_id is also invalid", prev_Item.PostId)
-				pp.liteDB.DeleteTagOnPostId(prev_Item.PostId)
-				pp.liteDB.DeletePostId(prev_Item.PostId)
+			next_ix := ix - 1
+			if next_ix >= 0 {
+				// case: the new post is between a previous and the next
+				next_Item := pp.mapLinks.ListPost[next_ix]
+				log.Println("[createNewPost] next post_id is also invalid", next_Item.PostId)
+				pp.liteDB.DeleteTagOnPostId(next_Item.PostId)
+				pp.liteDB.DeletePostId(next_Item.PostId)
 			}
-			log.Println("[createNewPost] post_id is before, now is invalid", item.PostId)
+			log.Println("[createNewPost] previous post_id is before, now is invalid", item.PostId)
 			pp.liteDB.DeleteTagOnPostId(item.PostId)
 			pp.liteDB.DeletePostId(item.PostId)
 			break
