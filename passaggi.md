@@ -99,6 +99,17 @@ Esempio:
 Ogni coppia è rappresentata dal nome del file dell'immagine integrale e dal titolo.
 Il codice html generato lo trovo di seguito. Col file dell'immagine integrale 
 cosidero per dato il file d'immagine in formato ridotto di larghezza 320 pixel.
+C'è una particolarità per le immagini più larghe di 1280. Nel momento in cui le 
+copio nella directory, esse vengono ridotte automaticamene a 1280 e ricevono il suffisso _1280.
+Nel figstack si mette:
+
+    [figstack 
+        'foto02_1280.jpg', 'Appena partiti',
+        'foto03_1280.jpg', 'Arrivo',
+        'foto04_1280.jpg', 'La medaglia'
+    ]
+dove poi il _1280 viene sostituito con _320. Questo vale solo per la stringa _1280.
+Quindi 320 e 1280 sono numeri magici e non andrebbero usati nel nome dei files per non avere sorprese.
 
 ### youtube
 Genera l'iframe che serve per contenere il video player di youtube.  
@@ -395,10 +406,10 @@ Siccome ho separato i due db con i commenti, il sync dei commenti non è necessa
 Il db blog-corsa.db rimane dove viene creato il post.
 In futuro, con la funzione "cerca", il sync del db con i dati della ricerca probabilmente sarà necessario.
 
-### Cambiare un post già pubblicato (Edit)
+### Edit di un post già pubblicato
 Uso il flag -editpost. Per esempio:
 
-    .\src.exe -config ..\..\config.toml -editpost -date "2010-09-07"
+    .\src.exe -config ..\..\config.toml -editpost -date "2025-11-30"
 
 ### Cambiare solo il main (per esempio per il live)
 

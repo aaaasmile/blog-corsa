@@ -36,10 +36,11 @@ description: Resoconto del mio Wien Rundumadum numero 12
   <p>Il tracker della gara: [linkcap 'legendstracking 2025', 'https://wien-rundumadum-2025-130k.legendstracking.com/'] </p>
   <p>La classifica finale si trova  [linkcap 'qui', 'https://my.raceresult.com/320297/results#1_C7DAA5']</p>
   <p>[figstack 
-    'foto02.jpg', 'Appena partiti',
-    'foto03.jpg', 'Arrivo',
-    'foto04.jpg', 'La medaglia'
+    'foto02_1280.jpg', 'Appena partiti',
+    'foto03_1280.jpg', 'Arrivo',
+    'foto04_1280.jpg', 'La medaglia'
   ]</p>
+  
   <figure>
     [youtube 'm6BOte3GSaQ']
     <figcaption>Lo short della mia gara</figcaption>

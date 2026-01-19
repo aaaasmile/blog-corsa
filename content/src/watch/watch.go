@@ -171,62 +171,97 @@ func (wmh *WatcherMdHtml) processNewImage(newFname string) error {
 		return err
 	}
 	newWidth := 320
+	ignore_reduced := false
+	ff_full_reduced, err := wmh.checkAndReduce(newWidth, newFname, imageBytes, isPng, isJpeg, ext, ignore_reduced)
+	if err != nil {
+		return err
+	}
+	wmh.filesToIgnore = append(wmh.filesToIgnore, ff_full_reduced)
+	log.Println("[processNewImage] image small created: ", ff_full_reduced)
+
+	// for very big images, reduce it to fast download
+	newWidth = 1280
+	ignore_reduced = true
+	ff_bigger_reduced, err := wmh.checkAndReduce(newWidth, newFname, imageBytes, isPng, isJpeg, ext, ignore_reduced)
+	if err != nil {
+		return err
+	}
+	if ff_bigger_reduced != "" {
+		log.Println("[processNewImage] image big resized created: ", ff_bigger_reduced)
+		wmh.filesToIgnore = append(wmh.filesToIgnore, ff_bigger_reduced)
+		err = os.Remove(newFname)
+		if err != nil {
+			return err
+		}
+		log.Println("[processNewImage] remove the big original and use only the reduced")
+	}
+
+	return nil
+}
+
+func (wmh *WatcherMdHtml) checkAndReduce(newWidth int, newFname string, imageBytes []byte, isPng bool, isJpeg bool, ext string, ignore_red bool) (string, error) {
+	if newWidth <= 0 {
+		return "", fmt.Errorf("[checkAndReduce] invalid image size")
+	}
 	base_ff := filepath.Base(newFname)
+	var err error
 	ff := strings.Replace(base_ff, ext, "", 1)
 	if isJpeg {
 		ff = fmt.Sprintf("%s_%d.jpg", ff, newWidth)
 	} else if isPng {
 		ff = fmt.Sprintf("%s_%d.png", ff, newWidth)
 	} else {
-		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
+		return "", fmt.Errorf("[checkAndReduce] image format %s not supported", ext)
 	}
 	ff_full_reduced := filepath.Join(wmh.dirContent, ff)
 
 	var original_image image.Image
 	if isJpeg {
 		if original_image, err = jpeg.Decode(bytes.NewReader(imageBytes)); err != nil {
-			return err
+			return "", err
 		}
 	} else if isPng {
 		if original_image, err = png.Decode(bytes.NewReader(imageBytes)); err != nil {
-			return err
+			return "", err
 		}
 	} else {
-		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
+		return "", fmt.Errorf("[checkAndReduce] image format %s not supported", ext)
 	}
 	if original_image.Bounds().Max.X <= newWidth {
-		log.Println("[processNewImage] image is already on resize width or smaller", newWidth)
+		log.Println("[checkAndReduce] image is already on resize width or smaller", newWidth)
 		newWidth = original_image.Bounds().Max.X
+		if ignore_red {
+			log.Println("[checkAndReduce] Ignore smaller, do nothing")
+			return "", nil
+		}
 	}
 
 	output, _ := os.Create(ff_full_reduced)
 	defer output.Close()
-	log.Println("[processNewImage] current image size ", original_image.Bounds().Max)
+	log.Println("[checkAndReduce] current image size ", original_image.Bounds().Max)
 	ratiof := float32(original_image.Bounds().Max.X) / float32(newWidth)
 	if ratiof == 0.0 {
-		return fmt.Errorf("[processNewImage] invalid source image, attempt division by zero")
+		return "", fmt.Errorf("[checkAndReduce] invalid source image, attempt division by zero")
 	}
 	newHeightf := float32(original_image.Bounds().Max.Y) / ratiof
 	newHeight := int(newHeightf)
-	log.Printf("[processNewImage] new rect width %d height %d ratio %f ", newWidth, newHeight, ratiof)
+	log.Printf("[checkAndReduce] new rect width %d height %d ratio %f ", newWidth, newHeight, ratiof)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Rect, original_image, original_image.Bounds(), draw.Over, nil)
 	if isJpeg {
 		jpOpt := jpeg.Options{Quality: 100}
 		if err = jpeg.Encode(output, dst, &jpOpt); err != nil {
-			return err
+			return "", err
 		}
 	} else if isPng {
 		if err = png.Encode(output, dst); err != nil {
-			return err
+			return "", err
 		}
 	} else {
-		return fmt.Errorf("[processNewImage] image format %s not supported", ext)
+		return "", fmt.Errorf("[checkAndReduce] image format %s not supported", ext)
 	}
-	wmh.filesToIgnore = append(wmh.filesToIgnore, ff_full_reduced)
-	log.Println("[processNewImage] image created: ", ff_full_reduced)
 
-	return nil
+	return ff_full_reduced, nil
 }
 
 func (wmh *WatcherMdHtml) BuildFromMdHtml(mdHtmlFilename string) error {

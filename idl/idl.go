@@ -65,8 +65,11 @@ func (fg *ImgDataItem) CalcReduced() error {
 	if ext == "" {
 		return fmt.Errorf("[calcReduced] extension on %s is empty, this is not supported", fg.Name)
 	}
+	// pay attention to the fix size coded: 320 for the small and 1280 for the bigger reduced
+	// the 1280 occurs only if the source image was bigger then 1280
 	bare_name := strings.Replace(fg.Name, ext, "", -1)
-	fg.Redux = fmt.Sprintf("%s_320%s", bare_name, ext)
+	bare_name_reduced := strings.Replace(bare_name, "_1280", "", -1)
+	fg.Redux = fmt.Sprintf("%s_320%s", bare_name_reduced, ext)
 	fg.Id = fmt.Sprintf("%s_%s", bare_name, fg.Id)
 	return nil
 }
