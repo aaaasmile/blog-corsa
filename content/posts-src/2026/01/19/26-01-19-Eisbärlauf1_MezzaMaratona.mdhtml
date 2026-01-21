@@ -32,6 +32,8 @@ tags:
     <figcaption>L'immancabile Short'</figcaption>
   </figure>
   <p>[figstack 
-    'foto02.jpg', 'Al traguardo'
+    'foto02.jpg', 'Al traguardo',
+    'foto03.jpg', ' ',
+    'foto04.jpg', ' '
   ]</p>
 </section>    
