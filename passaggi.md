@@ -374,7 +374,7 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Eisbärlauf 1 - Mezza Maratona" -date "2026-01-19" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Nuova stagione" -date "2026-01-30" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 
