@@ -6,6 +6,9 @@ description: Igorrun è il blog personale sulla corsa di Igor Sarzi Sartori
 path: /
 ---
 <h1 class="centered title">Igor Run Blog</h1>
+<figure class="person">
+    <img src="/pages/autore/autore.jpg" />
+</figure>
 <h2 class="centered subtitle">Per caso, un bredese a Vienna. Di corsa.</h2>
 <p class="centered tagline">
     <i>Ovvero perché mi alleno così raramente con il giro della civetta</i>

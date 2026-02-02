@@ -6,9 +6,9 @@ description: Note sull'autore del blog
 ---
 <h1>Autore</h1>
 <figure class="person">
-    <img src="autore.jpg" />
+    <img src="me.jpg" />
 </figure>
-<section> 
+<section>
     <p>Mi chiamo Igor Sarzi Sartori e mi occupo di software.
         Da qualche lustro vivo e lavoro nella capitale 
         austriaca in pianta stabile. Le mie origini sono da ricercare nella bassa mantovana, dove a la Breda (Breda
