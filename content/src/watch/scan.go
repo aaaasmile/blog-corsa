@@ -3,11 +3,13 @@ package watch
 import (
 	"corsa-blog/conf"
 	"corsa-blog/content/src/mhproc"
+	"corsa-blog/db"
 	"corsa-blog/idl"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -39,6 +41,47 @@ func ScanContent(force bool, debug bool) error {
 	}
 	log.Println("[ScanContent] completed, elapsed time ", time.Since(start))
 	return nil
+}
+
+func ScanSinglePost(datepost string, debug bool) error {
+	bb := Builder{
+		debug:          debug,
+		rebuild_single: true,
+		// do not use force on a single post
+	}
+	post := Post{
+		DatetimeOrig: datepost,
+	}
+	if err := post.setDateTimeFromString(datepost); err != nil {
+		return err
+	}
+	var err error
+	if bb.liteDB, err = db.OpenSqliteDatabase(fmt.Sprintf("..\\..\\%s", conf.Current.Database.DbFileName),
+		conf.Current.Database.SQLDebug); err != nil {
+		return err
+	}
+	if err := bb.scanSinglePost("../posts-src", &post); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (bb *Builder) scanSinglePost(contentRootDir string, pp *Post) error {
+	log.Printf("[scanPost] on '%s'", pp.Datetime)
+	yy := fmt.Sprintf("%d", pp.Datetime.Year())
+	mm := fmt.Sprintf("%02d", pp.Datetime.Month())
+	dd := fmt.Sprintf("%02d", pp.Datetime.Day())
+	contentDir := filepath.Join(contentRootDir, yy, mm, dd)
+	log.Println("[scanPost] source post content dir ", contentDir)
+	info, err := os.Stat(contentDir)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("[scanPost] expected dir on %s", contentDir)
+	}
+
+	return bb.scanPostsMdHtml(contentDir)
 }
 
 func (bb *Builder) scanPostsMdHtml(srcDir string) error {
@@ -121,6 +164,12 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 			return err
 		}
 	} else {
+		if bb.rebuild_single {
+			err = bb.liteDB.UpdatePost(tx, &postItem)
+			if err != nil {
+				return err
+			}
+		}
 		postItem.Id = plink.Item.Id
 		if bb.debug {
 			log.Printf("[scanPostItem] ignore %s because already up to date", postItem.PostId)
@@ -190,13 +239,29 @@ func traversePost(doc *html.Node, postItem *idl.PostItem) {
 			has_title_img = false
 		}
 		if section_first && n.Type == html.ElementNode && n.DataAtom == atom.P {
-			if n.FirstChild != nil {
+			if searchForAbstract(n, postItem) {
+				return
+			}
+			searchForAbstract(n.NextSibling, postItem)
+			return
+		}
+	}
+}
+
+func searchForAbstract(n *html.Node, postItem *idl.PostItem) bool {
+	if n == nil {
+		return false
+	}
+	if n.Type == html.ElementNode && n.DataAtom == atom.P {
+		if n.FirstChild != nil {
+			if n.FirstChild.DataAtom == 0x0 {
 				abstract := n.FirstChild.Data
+				abstract = strings.ReplaceAll(abstract, "\n", "")
 				abstract = strings.Trim(abstract, " ")
 				abstract = strings.Trim(abstract, "\n")
 				abstract = strings.Trim(abstract, " ")
 
-				maxlen := 40
+				maxlen := 120
 				cutPos := maxlen - 3
 				if len(abstract) > cutPos {
 					cutted := abstract[0:cutPos]
@@ -205,16 +270,22 @@ func traversePost(doc *html.Node, postItem *idl.PostItem) {
 					if next_space_ix > 0 {
 						cutted = fmt.Sprintf("%s%s", cutted, rest[0:next_space_ix])
 					}
+					cutted = strings.Trim(cutted, " ")
+					cutted = strings.ReplaceAll(cutted, "   ", " ")
 					abstract = fmt.Sprintf("%s...", cutted)
 				}
 				//fmt.Println("** abstract ", abstract)
 				if len(abstract) > 4 {
 					postItem.Abstract = abstract
+					return true
 				}
 			}
-			return
 		}
 	}
+	if n.NextSibling != nil {
+		return searchForAbstract(n.NextSibling, postItem)
+	}
+	return false
 }
 
 // pages

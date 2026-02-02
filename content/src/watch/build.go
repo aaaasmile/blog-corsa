@@ -21,13 +21,14 @@ import (
 )
 
 type Builder struct {
-	mdsFn    []string
-	pages    []string
-	liteDB   *db.LiteDB
-	tx       *sql.Tx
-	mapLinks *idl.MapPagePostsLinks
-	force    bool
-	debug    bool
+	mdsFn          []string
+	pages          []string
+	liteDB         *db.LiteDB
+	tx             *sql.Tx
+	mapLinks       *idl.MapPagePostsLinks
+	force          bool
+	debug          bool
+	rebuild_single bool
 }
 
 func RebuildAll() error {

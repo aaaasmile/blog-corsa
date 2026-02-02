@@ -20,10 +20,13 @@
 {{- define "latestposts" -}}
 <h3 class="centered subtitle">Ultimi post</h3>
 <ul>
-    {{- range .LatestPosts}}
+    {{- range $index, $post := .LatestPosts}}
     <li>
-        <a href="{{.Link}}">{{.Title}}</a>
-        <time datetime="{{.DateTimeTxt}}">{{.DateFormatted}}</time>
+        <a href="{{$post.Link}}">{{.Title}}</a>
+        <time datetime="{{$post.DateTimeTxt}}">{{.DateFormatted}}</time>
+        {{- if eq $index 0}}
+        <ul><li><i>{{$.Abstract}}</i><p><a href="{{$post.Link}}"> <i>Leggi tutto</i></a></p></li></ul>
+        {{- end}}
     </li>
     {{- end}}
 </ul>

@@ -72,6 +72,7 @@ func (ln *mdhtLatestPostsNode) Transform(templDir string) error {
 	templName := path.Join(templDir, "transform.html")
 	tmplPage := template.Must(template.New("Trf").ParseFiles(templName))
 	latestPosts := []*PostWithData{}
+	abstract := ""
 	for ix, item := range ln.mapLinks.ListPost {
 		pwd := PostWithData{
 			DateFormatted: util.FormatDateIt(item.DateTime),
@@ -79,6 +80,9 @@ func (ln *mdhtLatestPostsNode) Transform(templDir string) error {
 			DateTime:      item.DateTime,
 			Title:         item.Title,
 			Link:          item.Uri,
+		}
+		if ix == 0 {
+			abstract = item.Abstract
 		}
 		latestPosts = append(latestPosts, &pwd)
 		if ix >= ln.num_of_posts {
@@ -88,9 +92,11 @@ func (ln *mdhtLatestPostsNode) Transform(templDir string) error {
 	CtxFirst := struct {
 		Title       string
 		LatestPosts []*PostWithData
+		Abstract    string
 	}{
 		Title:       ln.title_arg,
 		LatestPosts: latestPosts,
+		Abstract:    abstract,
 	}
 	var partFirst bytes.Buffer
 	if err := tmplPage.ExecuteTemplate(&partFirst, "latestposts", CtxFirst); err != nil {

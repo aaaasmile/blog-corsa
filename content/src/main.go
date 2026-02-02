@@ -56,6 +56,7 @@ func main() {
 	var force = flag.Bool("force", false, "force flag")
 	var debug = flag.Bool("debug", false, "debug flag")
 	var all4sync = flag.Bool("all4sync", false, "flag to prepare all stuff for the sync")
+	var scansinglepost = flag.Bool("scansinglepost", false, "scan a single post using date to recognize it. Similar to editspot.")
 	flag.Parse()
 
 	if *ver {
@@ -65,7 +66,12 @@ func main() {
 	if _, err := conf.ReadConfig(*configfile, `../../cert`); err != nil {
 		log.Fatal("ERROR: ", err)
 	}
-	if *scancontent {
+	if *scansinglepost {
+		if err := watch.ScanSinglePost(*date, *debug); err != nil {
+			log.Fatal("ERROR: ", err)
+		}
+		return
+	} else if *scancontent {
 		if err := watch.ScanContent(*force, *debug); err != nil {
 			log.Fatal("ERROR: ", err)
 		}

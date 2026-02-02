@@ -53,6 +53,14 @@
             "args": ["-config", "${workspaceFolder}/config.toml", "-buildtags"]
         },
         {
+            "name": "scansinglepost",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/content/src/main.go",
+            "args": ["-config", "${workspaceFolder}/config.toml", "-scansinglepost", "-date", "2026-01-19"]
+        },
+        {
             "name": "buildpages",
             "type": "go",
             "request": "launch",

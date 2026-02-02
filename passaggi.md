@@ -411,6 +411,10 @@ Uso il flag -editpost. Per esempio:
 
     .\src.exe -config ..\..\config.toml -editpost -date "2023-01-04"
 
+### Scan di un post già pubblicato (build abstract and post-tags)
+
+    .\src.exe -config ..\..\config.toml -scansinglepost -date "2026-01-30"
+
 ### Cambiare solo il main (per esempio per il live)
 
     .\src.exe -config ..\..\config.toml -buildmain
