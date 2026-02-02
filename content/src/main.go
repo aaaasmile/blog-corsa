@@ -103,7 +103,7 @@ func main() {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildfeed {
-		if err := watch.BuildFeed(); err != nil {
+		if err := watch.BuildFeedAndSitemap(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *buildtags {

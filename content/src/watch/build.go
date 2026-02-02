@@ -8,6 +8,7 @@ import (
 	"corsa-blog/idl"
 	"crypto/md5"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -53,6 +54,9 @@ func RebuildAll() error {
 	if err := bb.buildFeed(); err != nil {
 		return err
 	}
+	if err := bb.buildSiteMap(); err != nil {
+		return err
+	}
 	if err := bb.buildTags(); err != nil {
 		return err
 	}
@@ -78,10 +82,32 @@ func PrepareForRsync(debug bool) error {
 	if err := BuildPages(false); err != nil {
 		return err
 	}
+	if err := BuildFeedAndSitemap(); err != nil {
+		return err
+	}
 	if err := BuildMain(); err != nil {
 		return err
 	}
 	log.Println("[PrepareForRsync] completed, elapsed time ", time.Since(start))
+	return nil
+}
+
+func BuildFeedAndSitemap() error {
+	start := time.Now()
+	log.Println("[BuildFeed] start")
+
+	bb := Builder{}
+	if err := bb.InitDBData(); err != nil {
+		return err
+	}
+
+	if err := bb.buildFeed(); err != nil {
+		return err
+	}
+	if err := bb.buildSiteMap(); err != nil {
+		return err
+	}
+	log.Println("[BuildFeed] completed, elapsed time ", time.Since(start))
 	return nil
 }
 
@@ -129,9 +155,6 @@ func BuildPosts() error {
 	}
 
 	if err := bb.buildPosts("../posts-src"); err != nil {
-		return err
-	}
-	if err := bb.buildFeed(); err != nil {
 		return err
 	}
 	log.Println("[BuildPosts] completed, elapsed time ", time.Since(start))
@@ -254,6 +277,64 @@ func (bb *Builder) createTagMdhtml(tag_item *idl.TagItem, pageItem *idl.PageItem
 		return err
 	}
 	log.Println("file created ", fname)
+	return nil
+}
+
+func (bb *Builder) buildSiteMap() error {
+	log.Println("[buildSiteMap] start ")
+	templDir := "templates/xml"
+	templName := path.Join(templDir, "sitemap.xml")
+	var partFirst bytes.Buffer
+	tmplPage := template.Must(template.New("FeedSrc").ParseFiles(templName))
+
+	ctx := struct {
+		IgorRunDateTimeRfC822 string
+		ListPost              []idl.PostItem
+		ListPage              []idl.PageItem
+	}{
+		IgorRunDateTimeRfC822: time.Now().UTC().Format("2006-01-02"),
+	}
+
+	log.Println("[buildSiteMap] include verbatin pages")
+	if body, err := os.ReadFile("verbatin_pages.json"); err == nil {
+		log.Println("[buildSiteMap] include also verbatin")
+		extraPages := struct {
+			ExtraPages []idl.PageItem
+		}{}
+		if err := json.Unmarshal(body, &extraPages); err != nil {
+			return err
+		}
+		log.Println("[buildSiteMap] verbatin pages size: ", len(extraPages.ExtraPages))
+		ctx.ListPage = append(ctx.ListPage, extraPages.ExtraPages...)
+	}
+
+	for _, v := range bb.mapLinks.ListPage {
+		v.Uri = strings.ReplaceAll(v.Uri, "/#", "/")
+		v.DateTimeRfC822 = v.DateTime.Format("2006-01-02")
+		ctx.ListPage = append(ctx.ListPage, v)
+	}
+	for _, v := range bb.mapLinks.ListPost {
+		v.Uri = strings.ReplaceAll(v.Uri, "/#", "/")
+		v.DateTimeRfC822 = v.DateTime.Format("2006-01-02")
+		ctx.ListPost = append(ctx.ListPost, v)
+	}
+
+	if err := tmplPage.ExecuteTemplate(&partFirst, "sitebeg", ctx); err != nil {
+		return err
+	}
+	rootStaticDir := fmt.Sprintf("..\\..\\static\\%s\\", conf.Current.StaticBlogDir)
+	fname := path.Join(rootStaticDir, "sitemap.xml")
+	f, err := os.Create(fname)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.Write(partFirst.Bytes()); err != nil {
+		return err
+	}
+	log.Println("[buildSiteMap] file created ", fname)
+
 	return nil
 }
 
