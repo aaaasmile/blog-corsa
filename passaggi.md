@@ -409,7 +409,7 @@ In futuro, con la funzione "cerca", il sync del db con i dati della ricerca prob
 ### Edit di un post già pubblicato
 Uso il flag -editpost. Per esempio:
 
-    .\src.exe -config ..\..\config.toml -editpost -date "2023-01-04"
+    .\src.exe -config ..\..\config.toml -editpost -date "2024-06-08"
 
 ### Scan di un post già pubblicato (build abstract and post-tags)
 
