@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://igorrun.invido.it/</loc>
-        <lastmod>2026-02-02</lastmod>
+        <lastmod>2026-02-22</lastmod>
     </url>
     <url>
         <loc>https://igorrun.invido.it/tags/WRU/</loc>
@@ -47,6 +47,10 @@
     <url>
         <loc>https://igorrun.invido.it/pages/archivio/</loc>
         <lastmod>2025-05-04</lastmod>
+    </url>
+    <url>
+        <loc>https://igorrun.invido.it/posts/2026/02/22/26-02-22-Eisbärlauf2_MezzaMaratona/</loc>
+        <lastmod>2026-02-22</lastmod>
     </url>
     <url>
         <loc>https://igorrun.invido.it/posts/2026/01/30/26-01-30-Nuovastagione/</loc>
