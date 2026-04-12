@@ -430,3 +430,12 @@ per aggiornare il db con il nuovo post nel tag
 Nota che il comando _-buildtags_ serve per creare il nuovo tag nel db e generare il file
 mdhtml (è una nuova page) che raccoglie tutti i posts che contengono il tag.
 Se il tag esiste già, nulla viene creato o modificato, tranne se la pagina ha un md5 obsoleto.
+
+## Gare
+Fino al 12.04.2026 ho inserito le mie gare nel sito https://www.membersclub.at/ccmc_chiptacho.php
+e poi le ho scaricate nel database pg in ubuntu. Per questo task ho usato lo script race_picker.rb
+che si trova su github nella repository ruby_scratch\corsa. 
+È arrivato il momento di usare blog-corsa per immettere tutte le mie gare e gestire la loro
+visualizzazione.
+Ho aggiornato il database blog-corsa.db aggiungendo le tabelle: race, race_subtype, racelap_detail e 
+sport_type. I dati li ho presi da pg dopo un export in csv.
