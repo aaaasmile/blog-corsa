@@ -10,8 +10,26 @@ export default {
     }
   },
   computed: {
+    isLoggedIn() {
+      return !!this.$store.state.admin.token
+    },
     links() {
-      return routes.map(r => ({ path: r.path, icon: r.icon, title: r.title }))
+      return routes
+        .filter(r => r.path !== '/login')
+        .map(r => ({ path: r.path, icon: r.icon, title: r.title }))
+    },
+    loginLink() {
+      return this.isLoggedIn
+        ? { path: '/login', icon: 'mdi-logout', title: 'Logout' }
+        : { path: '/login', icon: 'folder', title: 'Login' }
+    },
+  },
+  methods: {
+    handleLoginLogout() {
+      if (this.isLoggedIn) {
+        this.$store.commit('clearToken')
+      }
+      this.$router.push('/login')
     },
   },
   template: `
@@ -43,6 +61,14 @@ export default {
 
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item :key="loginLink.title" @click="handleLoginLogout" link>
+          <v-list-item-icon>
+            <v-icon>{{ loginLink.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ loginLink.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>

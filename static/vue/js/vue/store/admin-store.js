@@ -27,6 +27,10 @@ export default {
         },
         setCmtSelected(state, selected){
             state.cmtSelected = selected
+        },
+        clearToken(state){
+            state.token = ''
+            sessionStorage.removeItem("token")
         }
     }
 }
