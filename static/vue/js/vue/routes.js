@@ -4,6 +4,6 @@ import Races from './views/Races.js?version=100'
 
 export default [
   { path: '/', icon: 'dashboard', title: 'Dashboard', component: Dashboard },
-  { path: '/login', icon: 'folder', title: 'Dashboard', component: Login },
+  { path: '/login', icon: 'folder', title: 'Login', component: Login },
   { path: '/races', icon: 'mdi-flag-checkered', title: 'Races', component: Races },
 ]

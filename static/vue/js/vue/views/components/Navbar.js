@@ -1,4 +1,5 @@
 import Toast from './toast.js?version=106'
+import routes from '../../routes.js?version=110'
 
 export default {
   components: { Toast },
@@ -6,9 +7,12 @@ export default {
     return {
       drawer: false,
       AppTitle: "Blog Admin",
-      links: [{ path: '/', icon: 'dashboard', title: 'Dashboard'},
-      ],
     }
+  },
+  computed: {
+    links() {
+      return routes.map(r => ({ path: r.path, icon: r.icon, title: r.title }))
+    },
   },
   template: `
   <nav>

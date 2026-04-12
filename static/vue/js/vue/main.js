@@ -2,7 +2,7 @@
 
 import Navbar from './views/components/Navbar.js?version=53'
 import store from './store/index.js?version=112'
-import routes from './routes.js?version=109'
+import routes from './routes.js?version=110'
 
 
 export const app = new Vue({
