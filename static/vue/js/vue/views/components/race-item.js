@@ -46,6 +46,10 @@ export default {
       }, this.value),
       dateMenu: false,
       timeMenu: false,
+      raceSubtypes: [
+        { text: 'run', value: 0 },
+        { text: 'duathlon', value: 1 },
+      ],
     }
   },
   watch: {
@@ -289,13 +293,15 @@ export default {
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-text-field
+            <v-select
               v-model.number="item.race_subtype_id"
-              label="Race Subtype ID"
-              type="number"
+              :items="raceSubtypes"
+              item-text="text"
+              item-value="value"
+              label="Race Subtype"
               outlined
               dense
-            ></v-text-field>
+            ></v-select>
           </v-col>
         </v-row>
 
