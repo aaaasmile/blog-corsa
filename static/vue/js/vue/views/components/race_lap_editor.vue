@@ -1,32 +1,5 @@
-export default {
-  props: {
-    race: {
-      type: Object,
-      required: true
-    }
-  },
-  data() {
-    return {
-      search: '',
-      headers: [
-        { text: 'ID', value: 'id' },
-        { text: 'Lap Number', value: 'lap_number' },
-        { text: 'Lap Time', value: 'lap_time' },
-        { text: 'Lap Meter', value: 'lap_meter' },
-        { text: 'Tot Race (min/km)', value: 'tot_race_minkm' },
-        { text: 'Tot Race Time', value: 'tot_race_time' },
-        { text: 'Tot KM Race', value: 'tot_km_race' },
-      ],
-      laps: []
-    }
-  },
-  methods: {
-    close() {
-      this.$emit('close')
-    }
-  },
-  template: `
-  <v-card class="mt-4">
+<template>
+    <v-card class="mt-4">
     <v-card-title>
       Laps for Race: {{ race.Name || race.Title }}
       <v-spacer></v-spacer>
@@ -63,5 +36,5 @@ export default {
       </v-data-table>
     </v-card-text>
   </v-card>
-  `
-}
+</template>
+
