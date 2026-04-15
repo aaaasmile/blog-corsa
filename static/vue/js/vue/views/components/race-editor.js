@@ -8,9 +8,9 @@ export default {
       headers: [
         { text: 'ID', value: 'Id' },
         { text: 'Name', value: 'Name' },
-        { text: 'Date', value: 'Date' },
-        { text: 'Location', value: 'Location' },
+        { text: 'Title', value: 'Title' },
         { text: 'Distance', value: 'Distance' },
+        { text: 'Date', value: 'Date' },
       ],
       races: [],
     }
