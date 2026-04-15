@@ -45,11 +45,36 @@ export default {
         km_length: 0,
       }, this.value),
       dateMenu: false,
+      timeMenu: false,
     }
   },
   watch: {
     value(newVal) {
       this.item = Object.assign({}, newVal)
+    }
+  },
+  computed: {
+    dateObj: {
+      get() {
+        return this.item.Date ? this.item.Date.split(' ')[0] : ''
+      },
+      set(val) {
+        let time = this.timeObj || '00:00:00'
+        this.item.Date = val ? `${val} ${time}` : ''
+      }
+    },
+    timeObj: {
+      get() {
+        if (!this.item.Date) return '00:00:00'
+        let parts = this.item.Date.split(' ')
+        return parts.length > 1 ? parts[1] : '00:00:00'
+      },
+      set(val) {
+        let date = this.dateObj || new Date().toISOString().substr(0, 10)
+        let parts = val.split(':')
+        if (parts.length === 2) val += ':00'
+        this.item.Date = `${date} ${val}`
+      }
     }
   },
   methods: {
@@ -85,7 +110,7 @@ export default {
         </v-row>
 
         <v-row>
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="4">
             <v-text-field
               v-model="item.Distance"
               label="Distance (in meter)"
@@ -93,7 +118,7 @@ export default {
               dense
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="4">
             <v-menu
               v-model="dateMenu"
               :close-on-content-click="false"
@@ -104,7 +129,7 @@ export default {
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  v-model="item.Date"
+                  v-model="dateObj"
                   label="Date"
                   prepend-icon="mdi-calendar"
                   readonly
@@ -115,9 +140,37 @@ export default {
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="item.Date"
+                v-model="dateObj"
                 @input="dateMenu = false"
               ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" sm="4">
+            <v-menu
+              v-model="timeMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="timeObj"
+                  label="Time"
+                  prepend-icon="mdi-clock-outline"
+                  readonly
+                  outlined
+                  dense
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-time-picker
+                v-model="timeObj"
+                use-seconds
+                format="24hr"
+              ></v-time-picker>
             </v-menu>
           </v-col>
         </v-row>
@@ -131,6 +184,7 @@ export default {
               label="KM Length"
               type="number"
               step="0.1"
+              readonly
               outlined
               dense
             ></v-text-field>
@@ -170,6 +224,7 @@ export default {
               label="Pace (km/h)"
               type="number"
               step="0.1"
+              readonly
               outlined
               dense
             ></v-text-field>
@@ -178,6 +233,7 @@ export default {
             <v-text-field
               v-model="item.pace_minkm"
               label="Pace (min/km)"
+              readonly
               outlined
               dense
             ></v-text-field>
