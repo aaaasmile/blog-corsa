@@ -61,6 +61,9 @@ export default {
         { text: 'Road other distance', value: 7 },
         { text: 'Backyard', value: 8 },
       ],
+      timeRules: [
+        v => !v || /^\d+:[0-5]\d:[0-5]\d$/.test(v) || 'Format must be hh:mm:ss'
+      ],
     }
   },
   watch: {
@@ -80,6 +83,10 @@ export default {
       } else {
         this.item.km_length = 0
       }
+      this.calculatePaces()
+    },
+    'item.result_time'(newVal) {
+      this.calculatePaces()
     }
   },
   computed: {
@@ -107,6 +114,33 @@ export default {
     }
   },
   methods: {
+    calculatePaces() {
+      const distanceStr = this.item.Distance;
+      const timeStr = this.item.result_time;
+
+      if (!distanceStr || isNaN(distanceStr)) return;
+      if (!timeStr || !/^\d+:[0-5]\d:[0-5]\d$/.test(timeStr)) return;
+
+      const distanceKm = parseFloat(distanceStr) / 1000;
+      if (distanceKm <= 0) return;
+
+      const timeParts = timeStr.split(':');
+      const hours = parseInt(timeParts[0], 10);
+      const minutes = parseInt(timeParts[1], 10);
+      const seconds = parseInt(timeParts[2], 10);
+
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+      if (totalSeconds <= 0) return;
+
+      const totalHours = totalSeconds / 3600;
+      const paceKmh = distanceKm / totalHours;
+      this.item.pace_kmh = parseFloat(paceKmh.toFixed(2));
+
+      const secondsPerKm = totalSeconds / distanceKm;
+      const paceMin = Math.floor(secondsPerKm / 60);
+      const paceSec = Math.floor(secondsPerKm % 60);
+      this.item.pace_minkm = `${paceMin}:${paceSec.toString().padStart(2, '0')}`;
+    },
     save() {
       this.$emit('save', Object.assign({}, this.item))
     },
@@ -243,6 +277,7 @@ export default {
             <v-text-field
               v-model="item.result_time"
               label="Result Time (hh:mm:ss)"
+              :rules="timeRules"
               outlined
               dense
             ></v-text-field>
