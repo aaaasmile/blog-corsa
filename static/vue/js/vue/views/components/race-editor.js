@@ -10,7 +10,8 @@ export default {
       loadingData: false,
       search: '',
       showRaceItem: false,
-      newRace: {
+      editedIndex: -1,
+      editedRace: {
         Name: '',
         Title: '',
         Distance: '',
@@ -36,17 +37,30 @@ export default {
   },
   methods: {
     addRace() {
-      this.newRace = { Name: '', Title: '', Distance: '', Date: '' }
+      this.editedIndex = -1
+      this.editedRace = { Name: '', Title: '', Distance: '', Date: '' }
+      this.showRaceItem = true
+    },
+    editRace(item) {
+      this.editedIndex = this.races.indexOf(item)
+      this.editedRace = Object.assign({}, item)
       this.showRaceItem = true
     },
     onSaveRace(race) {
-      race.Id = this.races.length + 1
-      this.races.push(race)
+      if (this.editedIndex > -1) {
+        Object.assign(this.races[this.editedIndex], race)
+        console.log('Race updated', race)
+      } else {
+        race.Id = this.races.length + 1
+        this.races.push(race)
+        console.log('Race saved', race)
+      }
       this.showRaceItem = false
-      console.log('Race saved', race)
+      this.editedIndex = -1
     },
     onCancelRace() {
       this.showRaceItem = false
+      this.editedIndex = -1
     },
     deleteRace(item) {
       this.raceToDelete = item
@@ -92,13 +106,14 @@ export default {
         }"
       >
         <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" @click="editRace(item)">mdi-pencil</v-icon>
           <v-icon small color="red" @click="deleteRace(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </v-card>
     <RaceItem
       v-if="showRaceItem"
-      :value="newRace"
+      :value="editedRace"
       @save="onSaveRace"
       @cancel="onCancelRace"
     />
