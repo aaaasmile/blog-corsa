@@ -88,7 +88,7 @@ export default {
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="item.Distance"
-              label="Distance"
+              label="Distance (in meter)"
               outlined
               dense
             ></v-text-field>
@@ -159,7 +159,7 @@ export default {
           <v-col cols="12" sm="4">
             <v-text-field
               v-model="item.result_time"
-              label="Result Time"
+              label="Result Time (hh:mm:ss)"
               outlined
               dense
             ></v-text-field>
@@ -206,7 +206,7 @@ export default {
           <v-col cols="12" sm="4">
             <v-text-field
               v-model.number="item.rank_class"
-              label="Rank Class"
+              label="Rank Age Group"
               type="number"
               outlined
               dense
@@ -218,7 +218,7 @@ export default {
           <v-col cols="12" sm="4">
             <v-text-field
               v-model="item.class_name"
-              label="Class Name"
+              label="Age Group"
               outlined
               dense
             ></v-text-field>
