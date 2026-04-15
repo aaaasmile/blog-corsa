@@ -1,15 +1,19 @@
 import API from '../../apicaller.js?version=101'
 import RaceItem from './race-item.js?version=100'
+import RaceLapEditor from './race_lap_editor.js?version=100'
 
 export default {
   components: {
     RaceItem,
+    RaceLapEditor
   },
   data() {
     return {
       loadingData: false,
       search: '',
       showRaceItem: false,
+      showLapEditor: false,
+      selectedRaceForLaps: null,
       editedIndex: -1,
       editedRace: {
         Name: '',
@@ -55,11 +59,22 @@ export default {
       this.editedIndex = -1
       this.editedRace = { Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
       this.showRaceItem = true
+      this.showLapEditor = false
+    },
+    editLaps(item) {
+      this.selectedRaceForLaps = item
+      this.showLapEditor = true
+      this.showRaceItem = false
+    },
+    closeLapEditor() {
+      this.showLapEditor = false
+      this.selectedRaceForLaps = null
     },
     editRace(item) {
       this.editedIndex = this.races.indexOf(item)
       this.editedRace = Object.assign({}, item)
       this.showRaceItem = true
+      this.showLapEditor = false
     },
     onSaveRace(race) {
       if (this.editedIndex > -1) {
@@ -121,6 +136,7 @@ export default {
         }"
       >
         <template v-slot:item.actions="{ item }">
+          <v-icon small class="mr-2" color="blue" @click="editLaps(item)">mdi-format-list-numbered</v-icon>
           <v-icon small class="mr-2" @click="editRace(item)">mdi-pencil</v-icon>
           <v-icon small color="red" @click="deleteRace(item)">mdi-delete</v-icon>
         </template>
@@ -131,6 +147,12 @@ export default {
         :value="editedRace"
         @save="onSaveRace"
         @cancel="onCancelRace"
+      />
+    </div>
+    <div v-if="showLapEditor" class="mb-12">
+      <RaceLapEditor
+        :race="selectedRaceForLaps"
+        @close="closeLapEditor"
       />
     </div>
     <v-dialog v-model="dialogDelete" persistent max-width="350">
