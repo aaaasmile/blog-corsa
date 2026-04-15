@@ -66,6 +66,20 @@ export default {
   watch: {
     value(newVal) {
       this.item = Object.assign({}, newVal)
+    },
+    'item.race_subtype_id'(newVal) {
+      if (newVal === 3) {
+        this.item.Distance = '42195'
+      } else if (newVal === 2) {
+        this.item.Distance = '21097'
+      }
+    },
+    'item.Distance'(newVal) {
+      if (newVal && !isNaN(newVal)) {
+        this.item.km_length = parseFloat(newVal) / 1000
+      } else {
+        this.item.km_length = 0
+      }
     }
   },
   computed: {
