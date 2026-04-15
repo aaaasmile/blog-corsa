@@ -20,6 +20,8 @@ export default {
         comment: '',
         race_subtype_id: 0,
         km_length: 0,
+        loop_number: 0,
+        loop_length: 0,
       })
     }
   },
@@ -43,6 +45,8 @@ export default {
         comment: '',
         race_subtype_id: 0,
         km_length: 0,
+        loop_number: 0,
+        loop_length: 0,
       }, this.value),
       dateMenu: false,
       timeMenu: false,
@@ -75,6 +79,16 @@ export default {
         this.item.Distance = '42195'
       } else if (newVal === 2) {
         this.item.Distance = '21097'
+      } else if (newVal === 8) {
+        this.item.loop_length = 6.706
+      }
+    },
+    'item.loop_number'(newVal) {
+      if (this.item.race_subtype_id === 8) {
+        const length = parseFloat(this.item.loop_length) || 0
+        const loops = parseInt(newVal, 10) || 0
+        this.item.Distance = Math.round(length * loops * 1000).toString()
+        this.item.result_time = `${loops}:00:00`
       }
     },
     'item.Distance'(newVal) {
@@ -364,6 +378,28 @@ export default {
               outlined
               dense
             ></v-select>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model.number="item.loop_number"
+              label="Loops"
+              type="number"
+              outlined
+              dense
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field
+              v-model.number="item.loop_length"
+              label="Loop Length"
+              type="number"
+              step="0.001"
+              outlined
+              dense
+            ></v-text-field>
           </v-col>
         </v-row>
 

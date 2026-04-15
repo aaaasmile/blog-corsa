@@ -29,6 +29,8 @@ export default {
         comment: '',
         race_subtype_id: 0,
         km_length: 0,
+        loop_number: 0,
+        loop_length: 0,
       },
       headers: [
         { text: 'ID', value: 'Id' },
@@ -51,7 +53,7 @@ export default {
   methods: {
     addRace() {
       this.editedIndex = -1
-      this.editedRace = { Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0 }
+      this.editedRace = { Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
       this.showRaceItem = true
     },
     editRace(item) {
