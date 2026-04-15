@@ -46,9 +46,20 @@ export default {
       }, this.value),
       dateMenu: false,
       timeMenu: false,
-      raceSubtypes: [
+      sportTypes: [
         { text: 'run', value: 0 },
         { text: 'duathlon', value: 1 },
+      ],
+      raceSubtypes: [
+        { text: 'Montagna', value: 0 },
+        { text: 'Fino ai 10 KM', value: 1 },
+        { text: 'Mezza Maratona', value: 2 },
+        { text: 'Maratona', value: 3 },
+        { text: 'Ultra Strada', value: 4 },
+        { text: 'Ultra Trail', value: 5 },
+        { text: 'Trail Corto', value: 6 },
+        { text: 'Strada altra distanza', value: 7 },
+        { text: 'Backyard', value: 8 },
       ],
     }
   },
@@ -284,13 +295,15 @@ export default {
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="4">
-            <v-text-field
+            <v-select
               v-model.number="item.sport_type_id"
-              label="Sport Type ID"
-              type="number"
+              :items="sportTypes"
+              item-text="text"
+              item-value="value"
+              label="Sport Type"
               outlined
               dense
-            ></v-text-field>
+            ></v-select>
           </v-col>
           <v-col cols="12" sm="4">
             <v-select
