@@ -15,16 +15,26 @@ export default {
       search: '',
       showLapItem: false,
       editedIndex: -1,
-      editedLap: {
-        id: 0,
-        lap_number: 0,
-        lap_time: '',
-        lap_meter: 0,
-        tot_race_minkm: '',
-        tot_race_time: '',
-        tot_km_race: 0,
-      },
-      headers: [
+      editedLap: {},
+      laps: [],
+      dialogDelete: false,
+      lapToDelete: null,
+    }
+  },
+  computed: {
+    isBackyard() {
+      return this.race && this.race.race_subtype_id === 8
+    },
+    headers() {
+      if (this.isBackyard) {
+        return [
+          { text: 'Lap Number', value: 'lap_number' },
+          { text: 'Start Time', value: 'start_time' },
+          { text: 'Backyard Time (mm:ss)', value: 'backyard_time' },
+          { text: 'Actions', value: 'actions', sortable: false },
+        ]
+      }
+      return [
         { text: 'ID', value: 'id' },
         { text: 'Lap Number', value: 'lap_number' },
         { text: 'Lap Time', value: 'lap_time' },
@@ -33,19 +43,18 @@ export default {
         { text: 'Tot Race Time', value: 'tot_race_time' },
         { text: 'Tot KM Race', value: 'tot_km_race' },
         { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      laps: [],
-      dialogDelete: false,
-      lapToDelete: null,
-    }
-  },
-  methods: {
-    close() {
-      this.$emit('close')
+      ]
     },
-    addLap() {
-      this.editedIndex = -1
-      this.editedLap = {
+    defaultLap() {
+      if (this.isBackyard) {
+        return {
+          id: 0,
+          lap_number: 0,
+          start_time: '',
+          backyard_time: '',
+        }
+      }
+      return {
         id: 0,
         lap_number: 0,
         lap_time: '',
@@ -54,6 +63,15 @@ export default {
         tot_race_time: '',
         tot_km_race: 0,
       }
+    },
+  },
+  methods: {
+    close() {
+      this.$emit('close')
+    },
+    addLap() {
+      this.editedIndex = -1
+      this.editedLap = Object.assign({}, this.defaultLap)
       this.showLapItem = true
     },
     editLap(item) {
@@ -141,6 +159,7 @@ export default {
     <div v-if="showLapItem" class="pa-4">
       <RaceLapItem
         :value="editedLap"
+        :race-subtype-id="race.race_subtype_id"
         @save="onSaveLap"
         @cancel="onCancelLap"
       />
