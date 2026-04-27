@@ -74,6 +74,8 @@ export default {
     addLap() {
       this.editedIndex = -1
       this.editedLap = Object.assign({}, this.defaultLap)
+      const maxLap = this.laps.reduce((max, l) => Math.max(max, l.lap_number || 0), 0)
+      this.editedLap.lap_number = maxLap + 1
       this.showLapItem = true
     },
     editLap(item) {
