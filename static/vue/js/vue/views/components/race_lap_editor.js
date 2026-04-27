@@ -42,17 +42,60 @@ export default {
   methods: {
     close() {
       this.$emit('close')
-    }
+    },
+    addLap() {
+      this.editedIndex = -1
+      this.editedLap = {
+        id: 0,
+        lap_number: 0,
+        lap_time: '',
+        lap_meter: 0,
+        tot_race_minkm: '',
+        tot_race_time: '',
+        tot_km_race: 0,
+      }
+      this.showLapItem = true
+    },
+    editLap(item) {
+      this.editedIndex = this.laps.indexOf(item)
+      this.editedLap = Object.assign({}, item)
+      this.showLapItem = true
+    },
+    onSaveLap(lap) {
+      if (this.editedIndex > -1) {
+        Object.assign(this.laps[this.editedIndex], lap)
+        console.log('Lap updated', lap)
+      } else {
+        lap.id = this.laps.length + 1
+        this.laps.push(lap)
+        console.log('Lap saved', lap)
+      }
+      this.showLapItem = false
+      this.editedIndex = -1
+    },
+    onCancelLap() {
+      this.showLapItem = false
+      this.editedIndex = -1
+    },
+    deleteLap(item) {
+      this.lapToDelete = item
+      this.dialogDelete = true
+    },
+    confirmDelete() {
+      const index = this.laps.indexOf(this.lapToDelete)
+      if (index > -1) {
+        this.laps.splice(index, 1)
+        console.log('Lap deleted', this.lapToDelete)
+      }
+      this.dialogDelete = false
+      this.lapToDelete = null
+    },
   },
   template: `
   <v-card class="mt-4">
     <v-card-title>
       Laps for Race: {{ race.Name || race.Title }}
       <v-spacer></v-spacer>
-      <v-btn color="primary" @click="addLap">
-        <v-icon left>mdi-plus</v-icon>
-        Add Lap
-      </v-btn>
       <v-btn icon @click="close">
         <v-icon>mdi-close</v-icon>
       </v-btn>
