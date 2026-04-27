@@ -23,6 +23,18 @@ export default {
   methods: {
     close() {
       this.$emit('close')
+    },
+    addLap() {
+      const newLap = {
+        id: this.laps.length + 1,
+        lap_number: this.laps.length + 1,
+        lap_time: '',
+        lap_meter: 0,
+        tot_race_minkm: 0,
+        tot_race_time: '',
+        tot_km_race: 0
+      }
+      this.laps.push(newLap)
     }
   },
   template: `
@@ -30,6 +42,10 @@ export default {
     <v-card-title>
       Laps for Race: {{ race.Name || race.Title }}
       <v-spacer></v-spacer>
+      <v-btn color="primary" @click="addLap">
+        <v-icon left>mdi-plus</v-icon>
+        Add Lap
+      </v-btn>
       <v-btn icon @click="close">
         <v-icon>mdi-close</v-icon>
       </v-btn>
