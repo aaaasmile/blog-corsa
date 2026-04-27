@@ -30,6 +30,7 @@ export default {
         return [
           { text: 'Lap Number', value: 'lap_number' },
           { text: 'Start Time', value: 'start_time' },
+          { text: 'Checkpoint', value: 'checkpoint' },
           { text: 'Backyard Time (mm:ss)', value: 'backyard_time' },
           { text: 'Actions', value: 'actions', sortable: false },
         ]
@@ -52,6 +53,7 @@ export default {
           lap_number: 0,
           start_time: '',
           backyard_time: '',
+          checkpoint: '',
         }
       }
       return {

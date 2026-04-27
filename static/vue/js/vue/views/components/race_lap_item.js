@@ -81,6 +81,17 @@ export default {
             </v-col>
             <v-col cols="12" sm="4">
               <v-text-field
+                v-model="item.checkpoint"
+                label="Checkpoint (hh:mm:ss)"
+                :rules="timeRules"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="4">
+              <v-text-field
                 v-model="item.backyard_time"
                 label="Backyard Time (mm:ss)"
                 :rules="backyardTimeRules"
