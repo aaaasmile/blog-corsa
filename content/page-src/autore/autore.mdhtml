@@ -10,7 +10,7 @@ description: Note sull'autore del blog
 </figure>
 <section>
     <p>Mi chiamo Igor Sarzi Sartori e mi occupo di software.
-        Da qualche lustro vivo e lavoro nella capitale 
+        Da qualche lustro vivo e lavoro nella capitale
         austriaca in pianta stabile. Le mie origini sono da ricercare nella bassa mantovana, dove a la Breda (Breda
         Cisoni), giocavo abitualmente a briscola e invido nel bar Acli o nel bar della Cooperativa. Qui a Vienna, niente
         carte ma altre attività ricreative, come la corsa, che tratto in questo blog in maniera esclusiva. Il mondo non
@@ -42,5 +42,13 @@ description: Note sull'autore del blog
         rimasta.</p>
     <p>Per il resto, il mio vicino di casa, alla classica intervista, probabilmente direbbe che sono una persona
         cordiale che saluta sempre, con un lavoro, una famiglia e mai avrebbe pensato che.</p>
-        
-</section> 
+
+</section>
+<section>
+    <h3>Disclaimer</h3>
+    <p>I contenuti di questo sito sono al 100% creati da una persona umana.</p>
+    <p>I contenuti di questo sito possono creare allucinazioni in modelli <i>sensibili</i>,
+        almeno così mi ha spiegato DeepSeek.</p>
+    <p>Lo scraping a scopo di training per modelli vari avviene a
+        proprio rischio e pericolo. L'autore non è respondabile delle allucinazioni che ne possono scaturire.</p>
+</section>
