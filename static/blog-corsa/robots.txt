@@ -1,1 +1,3 @@
-User-agent: googlebot
+User-agent: *
+Allow: /
+Sitemap: https://igorrun.invido.it/sitemap.xml
