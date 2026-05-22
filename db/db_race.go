@@ -9,10 +9,10 @@ import (
 func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 	log.Println("[LiteDB - GetRaces] select all races")
 
-	q := `SELECT id, name, title, meter_length, ascending_meter, descending_meter, 
-		rank_global, rank_gender, rank_class, class_name, 
-		race_start_datetime, sport_type_id, result_time, 
-		pace_kmh, pace_minkm, comment, race_subtype_id, km_length, loop_number, loop_length 
+	q := `SELECT id, name, title, meter_length, ascending_meter, descending_meter,
+		rank_global, rank_gender, rank_class, class_name,
+		race_start_datetime, sport_type_id, result_time,
+		pace_kmh, pace_minkm, comment, race_subtype_id, km_length, loop_number, loop_length
 		FROM race ORDER BY race_start_datetime DESC;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
@@ -25,7 +25,7 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 	res := []idl.RaceItem{}
 	for rows.Next() {
 		item := idl.RaceItem{}
-		var ts int64
+		var tsText string
 		if err := rows.Scan(&item.Id,
 			&item.Name,
 			&item.Title,
@@ -36,7 +36,7 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 			&item.RankGender,
 			&item.RankClass,
 			&item.ClassName,
-			&ts,
+			&tsText,
 			&item.SportTypeId,
 			&item.ResultTime,
 			&item.PaceKmh,
@@ -48,7 +48,14 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 			&item.LoopLength); err != nil {
 			return nil, err
 		}
-		item.RaceStartDateTime = time.Unix(ts, 0)
+		if tsText != "" {
+			parsedTime, err := time.Parse("2006-01-02 15:04:05", tsText)
+			if err != nil {
+				log.Printf("[LiteDB - GetRaces] WARN: cannot parse datetime '%s': %v", tsText, err)
+			} else {
+				item.RaceStartDateTime = parsedTime
+			}
+		}
 		res = append(res, item)
 	}
 	log.Printf("[LiteDB - GetRaces] races read %d", len(res))
@@ -58,9 +65,9 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 func (ld *LiteDB) InsertRace(item *idl.RaceItem) error {
 	log.Println("[LiteDB - INSERT] insert new race", item.Name)
 
-	q := `INSERT INTO race(name, title, distance, date, ascending_meter, descending_meter, 
-		rank_global, rank_gender, rank_class, class_name, sport_type_id, result_time, 
-		pace_kmh, pace_minkm, comment, race_subtype_id, km_length, loop_number, loop_length) 
+	q := `INSERT INTO race(name, title, meter_length, ascending_meter, descending_meter,
+		rank_global, rank_gender, rank_class, class_name, race_start_datetime, sport_type_id, result_time,
+		pace_kmh, pace_minkm, comment, race_subtype_id, km_length, loop_number, loop_length)
 		VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`
 	if ld.debugSQL {
 		log.Println("Query is", q)
@@ -81,7 +88,7 @@ func (ld *LiteDB) InsertRace(item *idl.RaceItem) error {
 		item.RankGender,
 		item.RankClass,
 		item.ClassName,
-		item.RaceStartDateTime.Local().Unix(),
+		item.RaceStartDateTime.Format("2006-01-02 15:04:05"),
 		item.SportTypeId,
 		item.ResultTime,
 		item.PaceKmh,
@@ -107,9 +114,9 @@ func (ld *LiteDB) InsertRace(item *idl.RaceItem) error {
 func (ld *LiteDB) UpdateRace(item *idl.RaceItem) error {
 	log.Println("[LiteDB - UPDATE] update race id", item.Id)
 
-	q := `UPDATE race SET name=?, title=?, distance=?, date=?, ascending_meter=?, descending_meter=?, 
-		rank_global=?, rank_gender=?, rank_class=?, class_name=?, sport_type_id=?, result_time=?, 
-		pace_kmh=?, pace_minkm=?, comment=?, race_subtype_id=?, km_length=?, loop_number=?, loop_length=? 
+	q := `UPDATE race SET name=?, title=?, meter_length=?, ascending_meter=?, descending_meter=?,
+		rank_global=?, rank_gender=?, rank_class=?, class_name=?, race_start_datetime=?, sport_type_id=?, result_time=?,
+		pace_kmh=?, pace_minkm=?, comment=?, race_subtype_id=?, km_length=?, loop_number=?, loop_length=?
 		WHERE id=?;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
@@ -130,7 +137,7 @@ func (ld *LiteDB) UpdateRace(item *idl.RaceItem) error {
 		item.RankGender,
 		item.RankClass,
 		item.ClassName,
-		item.RaceStartDateTime.Local().Unix(),
+		item.RaceStartDateTime.Format("2006-01-02 15:04:05"),
 		item.SportTypeId,
 		item.ResultTime,
 		item.PaceKmh,
