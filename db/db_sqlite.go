@@ -1,7 +1,7 @@
 package db
 
 import (
-	"corsa-blog/util"
+	"blog-corsa/util"
 	"database/sql"
 	"fmt"
 	"log"

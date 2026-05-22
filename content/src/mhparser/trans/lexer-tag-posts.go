@@ -1,9 +1,9 @@
 package trans
 
 import (
+	"blog-corsa/idl"
 	"bytes"
 	"cmp"
-	"corsa-blog/idl"
 	"fmt"
 	"path"
 	"slices"

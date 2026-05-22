@@ -1,7 +1,7 @@
 package conf
 
 import (
-	"corsa-blog/crypto"
+	"blog-corsa/crypto"
 	"fmt"
 	"log"
 	"os"

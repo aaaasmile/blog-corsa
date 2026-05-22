@@ -1,9 +1,9 @@
 package watch
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/db"
-	"corsa-blog/idl"
+	"blog-corsa/conf"
+	"blog-corsa/db"
+	"blog-corsa/idl"
 	"fmt"
 	"log"
 	"os"

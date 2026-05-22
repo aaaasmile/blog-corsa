@@ -1,9 +1,9 @@
 package main
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/content/src/watch"
-	"corsa-blog/idl"
+	"blog-corsa/conf"
+	"blog-corsa/content/src/watch"
+	"blog-corsa/idl"
 	"flag"
 	"fmt"
 	"log"

@@ -1,11 +1,11 @@
 package app
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/db"
-	"corsa-blog/idl"
-	"corsa-blog/util"
-	"corsa-blog/web/app/comments"
+	"blog-corsa/conf"
+	"blog-corsa/db"
+	"blog-corsa/idl"
+	"blog-corsa/util"
+	"blog-corsa/web/app/comments"
 	"fmt"
 	"html/template"
 	"log"

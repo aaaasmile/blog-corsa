@@ -1,7 +1,7 @@
 package mhparser
 
 import (
-	"corsa-blog/idl"
+	"blog-corsa/idl"
 	"errors"
 	"fmt"
 	"strings"

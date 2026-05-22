@@ -1,10 +1,10 @@
 package watch
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/db"
+	"blog-corsa/util"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/db"
-	"corsa-blog/util"
 	"fmt"
 	"html/template"
 	"log"

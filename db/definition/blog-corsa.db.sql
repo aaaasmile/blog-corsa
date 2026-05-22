@@ -27,4 +27,29 @@ CREATE TABLE IF NOT EXISTS "post" (
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 CREATE VIRTUAL TABLE postsearch USING fts5(post_rowid, content);
+CREATE TABLE "race" (
+	"id"	INTEGER,
+	"name"	TEXT,
+	"title"	TEXT,
+	"meter_length"	INTEGER,
+	"ascending_meter"	INTEGER,
+	"descending_meter"	INTEGER,
+	"rank_global"	INTEGER,
+	"rank_gender"	INTEGER,
+	"rank_class"	INTEGER,
+	"class_name"	TEXT,
+	"race_start_datetime"	TEXT,
+	"sport_type_id"	INTEGER,
+	"result_time"	TEXT,
+	"pace_kmh"	REAL,
+	"pace_minkm"	TEXT,
+	"comment"	TEXT,
+	"race_subtype_id"	INTEGER,
+	"km_length"	REAL,
+	"loop_number"	INTEGER,
+	"loop_length"	REAL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("race_subtype_id") REFERENCES "race_subtype"("id"),
+	FOREIGN KEY("sport_type_id") REFERENCES "sport_type"("id")
+)
 COMMIT;

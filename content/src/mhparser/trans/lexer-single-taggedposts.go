@@ -1,9 +1,9 @@
 package trans
 
 import (
+	"blog-corsa/idl"
+	"blog-corsa/util"
 	"bytes"
-	"corsa-blog/idl"
-	"corsa-blog/util"
 	"fmt"
 	"log"
 	"path"

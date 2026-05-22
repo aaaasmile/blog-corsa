@@ -1,9 +1,9 @@
 package telegram
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/idl"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/idl"
 	"fmt"
 	"log"
 	"text/template"

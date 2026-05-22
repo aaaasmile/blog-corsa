@@ -1,7 +1,7 @@
 package datamgt
 
 import (
-	"corsa-blog/idl"
+	"blog-corsa/idl"
 	"encoding/json"
 	"fmt"
 	"log"

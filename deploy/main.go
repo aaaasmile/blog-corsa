@@ -1,7 +1,7 @@
 package main
 
 import (
-	"corsa-blog/deploy/depl"
+	"blog-corsa/deploy/depl"
 	"flag"
 	"fmt"
 	"log"

@@ -60,5 +60,42 @@ export default {
         Err()
       }
     });
+  },
+  GetRaces(that, Ok) {
+    let req = { method: 'DoRace', Params: { cmd: 'list' } }
+    this.CallDataService(that, req).then(result => {
+      console.log('GetRaces terminated ', result.data)
+      that.$store.commit('clearMsgText')
+      if (Ok) {
+        Ok(result.data.Races)
+      }
+    }, error => {
+      handleErrorMsg(that, error)
+    });
+  },
+  SaveRace(that, race, Ok) {
+    const cmd = race.Id && race.Id > 0 ? 'update' : 'insert'
+    let req = { method: 'DoRace', Params: { cmd: cmd, race: race } }
+    this.CallDataService(that, req).then(result => {
+      console.log('SaveRace terminated ', result.data)
+      that.$store.commit('clearMsgText')
+      if (Ok) {
+        Ok(result.data.Races)
+      }
+    }, error => {
+      handleErrorMsg(that, error)
+    });
+  },
+  DeleteRace(that, id, Ok) {
+    let req = { method: 'DoRace', Params: { cmd: 'delete', id: id } }
+    this.CallDataService(that, req).then(result => {
+      console.log('DeleteRace terminated ', result.data)
+      that.$store.commit('clearMsgText')
+      if (Ok) {
+        Ok(result.data.Races)
+      }
+    }, error => {
+      handleErrorMsg(that, error)
+    });
   }
 }

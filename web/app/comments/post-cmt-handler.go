@@ -1,11 +1,11 @@
 package comments
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/db"
+	"blog-corsa/idl"
+	"blog-corsa/util"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/db"
-	"corsa-blog/idl"
-	"corsa-blog/util"
 	"fmt"
 	"log"
 	"net/http"

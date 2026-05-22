@@ -1,10 +1,10 @@
 package mhproc
 
 import (
+	"blog-corsa/content/src/mhparser"
+	"blog-corsa/idl"
+	"blog-corsa/util"
 	"bytes"
-	"corsa-blog/content/src/mhparser"
-	"corsa-blog/idl"
-	"corsa-blog/util"
 	"encoding/json"
 	"fmt"
 	"log"

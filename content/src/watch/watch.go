@@ -1,11 +1,11 @@
 package watch
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/content/src/mhproc"
+	"blog-corsa/content/src/syncdir"
+	"blog-corsa/idl"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/content/src/mhproc"
-	"corsa-blog/content/src/syncdir"
-	"corsa-blog/idl"
 	"fmt"
 	"image"
 	"image/jpeg"

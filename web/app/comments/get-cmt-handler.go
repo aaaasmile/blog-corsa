@@ -1,9 +1,9 @@
 package comments
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/db"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/db"
 	"log"
 	"net/http"
 	"text/template"

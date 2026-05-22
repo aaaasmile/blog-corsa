@@ -1,7 +1,7 @@
 package idl
 
 import (
-	"corsa-blog/util"
+	"blog-corsa/util"
 	"fmt"
 )
 

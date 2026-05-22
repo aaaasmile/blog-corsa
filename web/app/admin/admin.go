@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/crypto"
-	"corsa-blog/db"
+	"blog-corsa/conf"
+	"blog-corsa/crypto"
+	"blog-corsa/db"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,14 +12,15 @@ import (
 )
 
 type AdminHandler struct {
-	_w      http.ResponseWriter
-	_req    *http.Request
-	rawbody []byte
-	liteDB  *db.LiteDB
+	_w         http.ResponseWriter
+	_req       *http.Request
+	rawbody    []byte
+	liteDB     *db.LiteDB
+	liteMainDB *db.LiteDB
 }
 
-func NewAdmin(w http.ResponseWriter, req *http.Request, liteDB *db.LiteDB) *AdminHandler {
-	ah := AdminHandler{_w: w, _req: req, liteDB: liteDB}
+func NewAdmin(w http.ResponseWriter, req *http.Request, liteDB *db.LiteDB, liteMainDB *db.LiteDB) *AdminHandler {
+	ah := AdminHandler{_w: w, _req: req, liteDB: liteDB, liteMainDB: liteMainDB}
 	return &ah
 }
 
@@ -46,6 +47,8 @@ func (ah *AdminHandler) HandleAdminRequest() error {
 		err = ah.doLogin()
 	case "DoComment":
 		err = ah.doComment()
+	case "DoRace":
+		err = ah.doRace()
 	default:
 		return fmt.Errorf("[HandleAdminRequest]%s is  not supported", scopeDef.Method)
 	}

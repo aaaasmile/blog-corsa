@@ -1,10 +1,10 @@
 package app
 
 import (
-	"corsa-blog/db"
-	"corsa-blog/idl"
-	"corsa-blog/web/app/admin"
-	"corsa-blog/web/app/comments"
+	"blog-corsa/db"
+	"blog-corsa/idl"
+	"blog-corsa/web/app/admin"
+	"blog-corsa/web/app/comments"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,6 +17,7 @@ type PostHandler struct {
 	lastPath    string
 	start       time.Time
 	liteDB      *db.LiteDB
+	liteMainDB  *db.LiteDB
 	newCmt      chan *idl.CmtItem
 	moderateCmt bool
 }
@@ -38,7 +39,7 @@ func (ph *PostHandler) handlePost(w http.ResponseWriter, req *http.Request) erro
 		return hc.HandleFormDeleteComment(w, req, id, post_id)
 	}
 	if ok := isAdminReq(ph.lastPath); ok {
-		ha := admin.NewAdmin(w, req, ph.liteDB)
+		ha := admin.NewAdmin(w, req, ph.liteDB, ph.liteMainDB)
 		return ha.HandleAdminRequest()
 	}
 
@@ -95,13 +96,3 @@ func isDeleteComment(lastPath, remPath string) (id int, post_id string, ok bool)
 	}
 	return
 }
-
-// func writeJsonResp(w http.ResponseWriter, resp interface{}) error {
-// 	blobresp, err := json.Marshal(resp)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	w.Write(blobresp)
-
-// 	return nil
-// }

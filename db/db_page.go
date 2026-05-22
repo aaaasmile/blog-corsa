@@ -1,7 +1,7 @@
 package db
 
 import (
-	"corsa-blog/idl"
+	"blog-corsa/idl"
 	"database/sql"
 	"log"
 	"time"

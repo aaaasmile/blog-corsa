@@ -1,8 +1,8 @@
 package watch
 
 import (
-	"corsa-blog/db"
-	"corsa-blog/idl"
+	"blog-corsa/db"
+	"blog-corsa/idl"
 	"log"
 )
 

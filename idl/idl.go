@@ -123,3 +123,26 @@ type TagItem struct {
 	Uri            string
 	Md5            string
 }
+
+type RaceItem struct {
+	Id                int64     `json:"Id"`
+	Name              string    `json:"Name"`
+	Title             string    `json:"Title"`
+	MeterLength       string    `json:"meter_length"`
+	AscendingMeter    int       `json:"ascending_meter"`
+	DescendingMeter   int       `json:"descending_meter"`
+	RankGlobal        int       `json:"rank_global"`
+	RankGender        int       `json:"rank_gender"`
+	RankClass         int       `json:"rank_class"`
+	ClassName         string    `json:"class_name"`
+	RaceStartDateTime time.Time `json:"race_start_datetime"`
+	SportTypeId       int       `json:"sport_type_id"`
+	ResultTime        string    `json:"result_time"`
+	PaceKmh           float64   `json:"pace_kmh"`
+	PaceMinkm         string    `json:"pace_minkm"`
+	Comment           string    `json:"comment"`
+	RaceSubtypeId     int       `json:"race_subtype_id"`
+	KmLength          float64   `json:"km_length"`
+	LoopNumber        int       `json:"loop_number"`
+	LoopLength        float64   `json:"loop_length"`
+}

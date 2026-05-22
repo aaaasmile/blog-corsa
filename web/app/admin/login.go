@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/crypto"
+	"blog-corsa/conf"
+	"blog-corsa/crypto"
 	"encoding/json"
 	"fmt"
 	"log"

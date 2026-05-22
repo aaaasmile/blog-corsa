@@ -1,9 +1,9 @@
 package mail
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/idl"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/idl"
 	"crypto/rand"
 	"crypto/tls"
 	"encoding/base64"

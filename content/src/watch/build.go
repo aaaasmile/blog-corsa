@@ -1,11 +1,11 @@
 package watch
 
 import (
+	"blog-corsa/conf"
+	"blog-corsa/content/src/mhproc"
+	"blog-corsa/db"
+	"blog-corsa/idl"
 	"bytes"
-	"corsa-blog/conf"
-	"corsa-blog/content/src/mhproc"
-	"corsa-blog/db"
-	"corsa-blog/idl"
 	"crypto/md5"
 	"database/sql"
 	"encoding/json"

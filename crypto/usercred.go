@@ -1,7 +1,7 @@
 package crypto
 
 import (
-	"corsa-blog/util"
+	"blog-corsa/util"
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/base64"

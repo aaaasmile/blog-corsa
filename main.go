@@ -1,9 +1,9 @@
 package main
 
 import (
-	"corsa-blog/crypto"
-	"corsa-blog/idl"
-	"corsa-blog/web"
+	"blog-corsa/crypto"
+	"blog-corsa/idl"
+	"blog-corsa/web"
 	"flag"
 	"fmt"
 	"log"

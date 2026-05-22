@@ -1,8 +1,8 @@
 package mhparser
 
 import (
-	"corsa-blog/content/src/mhparser/trans"
-	"corsa-blog/idl"
+	"blog-corsa/content/src/mhparser/trans"
+	"blog-corsa/idl"
 	"errors"
 	"fmt"
 	"log"

@@ -1,8 +1,8 @@
 package trans
 
 import (
+	"blog-corsa/idl"
 	"bytes"
-	"corsa-blog/idl"
 	"encoding/json"
 	"fmt"
 	"log"

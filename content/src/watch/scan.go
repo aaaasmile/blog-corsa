@@ -1,10 +1,10 @@
 package watch
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/content/src/mhproc"
-	"corsa-blog/db"
-	"corsa-blog/idl"
+	"blog-corsa/conf"
+	"blog-corsa/content/src/mhproc"
+	"blog-corsa/db"
+	"blog-corsa/idl"
 	"database/sql"
 	"fmt"
 	"log"

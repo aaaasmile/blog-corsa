@@ -1,7 +1,7 @@
 package idl
 
 import (
-	"corsa-blog/conf"
+	"blog-corsa/conf"
 	"fmt"
 	"log"
 	"strings"

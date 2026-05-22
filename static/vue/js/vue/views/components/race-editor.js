@@ -1,4 +1,3 @@
-import API from '../../apicaller.js?version=101'
 import RaceItem from './race-item.js?version=100'
 import RaceLapEditor from './race_lap_editor.js?version=100'
 
@@ -7,9 +6,18 @@ export default {
     RaceItem,
     RaceLapEditor
   },
+  props: {
+    races: {
+      type: Array,
+      default: () => []
+    },
+    loadingData: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
-      loadingData: false,
       search: '',
       showRaceItem: false,
       showLapEditor: false,
@@ -44,7 +52,6 @@ export default {
         { text: 'Date', value: 'Date' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      races: [],
       dialogDelete: false,
       raceToDelete: null,
     }
@@ -57,7 +64,7 @@ export default {
   methods: {
     addRace() {
       this.editedIndex = -1
-      this.editedRace = { Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
+      this.editedRace = { Id: 0, Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
       this.showRaceItem = true
       this.showLapEditor = false
     },
@@ -77,14 +84,7 @@ export default {
       this.showLapEditor = false
     },
     onSaveRace(race) {
-      if (this.editedIndex > -1) {
-        Object.assign(this.races[this.editedIndex], race)
-        console.log('Race updated', race)
-      } else {
-        race.Id = this.races.length + 1
-        this.races.push(race)
-        console.log('Race saved', race)
-      }
+      this.$emit('save-race', race)
       this.showRaceItem = false
       this.editedIndex = -1
     },
@@ -97,10 +97,8 @@ export default {
       this.dialogDelete = true
     },
     confirmDelete() {
-      const index = this.races.indexOf(this.raceToDelete)
-      if (index > -1) {
-        this.races.splice(index, 1)
-        console.log('Race deleted', this.raceToDelete)
+      if (this.raceToDelete && this.raceToDelete.Id) {
+        this.$emit('delete-race', this.raceToDelete.Id)
       }
       this.dialogDelete = false
       this.raceToDelete = null

@@ -1,12 +1,12 @@
 package web
 
 import (
-	"corsa-blog/conf"
-	"corsa-blog/idl"
-	"corsa-blog/mail"
-	"corsa-blog/telegram"
-	"corsa-blog/util"
-	"corsa-blog/web/app"
+	"blog-corsa/conf"
+	"blog-corsa/idl"
+	"blog-corsa/mail"
+	"blog-corsa/telegram"
+	"blog-corsa/util"
+	"blog-corsa/web/app"
 	"fmt"
 	"log"
 	"net/http"
