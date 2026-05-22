@@ -26,14 +26,14 @@ export default {
       editedRace: {
         Name: '',
         Title: '',
-        Distance: '',
-        Date: '',
+        meter_length: '',
         ascending_meter: 0,
         descending_meter: 0,
         rank_global: 0,
         rank_gender: 0,
         rank_class: 0,
         class_name: '',
+        race_start_datetime: '',
         sport_type_id: 0,
         result_time: '',
         pace_kmh: 0,
@@ -48,8 +48,8 @@ export default {
         { text: 'ID', value: 'Id' },
         { text: 'Name', value: 'Name' },
         { text: 'Title', value: 'Title' },
-        { text: 'Distance', value: 'Distance' },
-        { text: 'Date', value: 'Date' },
+        { text: 'Distance (Km)', value: 'meter_length' },
+        { text: 'Date', value: 'race_start_datetime' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
       dialogDelete: false,
@@ -64,7 +64,7 @@ export default {
   methods: {
     addRace() {
       this.editedIndex = -1
-      this.editedRace = { Id: 0, Name: '', Title: '', Distance: '', Date: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
+      this.editedRace = { Id: 0, Name: '', Title: '', meter_length: '', ascending_meter: 0, descending_meter: 0, rank_global: 0, rank_gender: 0, rank_class: 0, class_name: '', race_start_datetime: '', sport_type_id: 0, result_time: '', pace_kmh: 0, pace_minkm: '', comment: '', race_subtype_id: 0, km_length: 0, loop_number: 0, loop_length: 0 }
       this.showRaceItem = true
       this.showLapEditor = false
     },
@@ -133,6 +133,9 @@ export default {
           nextIcon: 'mdi-plus',
         }"
       >
+        <template v-slot:item.meter_length="{ item }">
+          <span>{{ item.meter_length ? Number(item.meter_length).toLocaleString() : '' }}</span>
+        </template>
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" color="blue" @click="editLaps(item)">mdi-format-list-numbered</v-icon>
           <v-icon small class="mr-2" @click="editRace(item)">mdi-pencil</v-icon>
