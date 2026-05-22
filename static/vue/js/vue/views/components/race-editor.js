@@ -96,6 +96,14 @@ export default {
       this.raceToDelete = item
       this.dialogDelete = true
     },
+    formatDate(isoStr) {
+      if (!isoStr) return ''
+      const d = new Date(isoStr)
+      const dd = String(d.getDate()).padStart(2, '0')
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const yyyy = d.getFullYear()
+      return `${dd}-${mm}-${yyyy}`
+    },
     confirmDelete() {
       if (this.raceToDelete && this.raceToDelete.Id) {
         this.$emit('delete-race', this.raceToDelete.Id)
@@ -135,6 +143,9 @@ export default {
       >
         <template v-slot:item.meter_length="{ item }">
           <span>{{ item.meter_length ? Number(item.meter_length).toLocaleString() : '' }}</span>
+        </template>
+        <template v-slot:item.race_start_datetime="{ item }">
+          <span>{{ item.race_start_datetime ? formatDate(item.race_start_datetime) : '' }}</span>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" color="blue" @click="editLaps(item)">mdi-format-list-numbered</v-icon>
