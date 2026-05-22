@@ -190,7 +190,7 @@ export default {
           <v-col cols="12" sm="4">
             <v-text-field
               v-model="item.meter_length"
-              label="Distance (in Km)"
+              label="Distance (in m)"
               outlined
               dense
             ></v-text-field>
