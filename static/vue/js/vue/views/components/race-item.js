@@ -5,14 +5,14 @@ export default {
       default: () => ({
         Name: '',
         Title: '',
-        Distance: '',
-        Date: '',
+        meter_length: '',
         ascending_meter: 0,
         descending_meter: 0,
         rank_global: 0,
         rank_gender: 0,
         rank_class: 0,
         class_name: '',
+        race_start_datetime: '',
         sport_type_id: 0,
         result_time: '',
         pace_kmh: 0,
@@ -30,14 +30,14 @@ export default {
       item: Object.assign({
         Name: '',
         Title: '',
-        Distance: '',
-        Date: '',
+        meter_length: '',
         ascending_meter: 0,
         descending_meter: 0,
         rank_global: 0,
         rank_gender: 0,
         rank_class: 0,
         class_name: '',
+        race_start_datetime: '',
         sport_type_id: 0,
         result_time: '',
         pace_kmh: 0,
@@ -55,15 +55,15 @@ export default {
         { text: 'duathlon', value: 1 },
       ],
       raceSubtypes: [
-        { text: 'Mountain', value: 0 },
-        { text: 'Up to 10 KM', value: 1 },
-        { text: 'Half Marathon', value: 2 },
-        { text: 'Marathon', value: 3 },
-        { text: 'Ultra Road', value: 4 },
-        { text: 'Ultra Trail', value: 5 },
-        { text: 'Short Trail', value: 6 },
-        { text: 'Road other distance', value: 7 },
-        { text: 'Backyard', value: 8 },
+        { text: 'Mountain', value: 1 },
+        { text: 'Up to 10 KM', value: 2 },
+        { text: 'Half Marathon', value: 3 },
+        { text: 'Marathon', value: 4 },
+        { text: 'Ultra Road', value: 5 },
+        { text: 'Ultra Trail', value: 6 },
+        { text: 'Short Trail', value: 7 },
+        { text: 'Road other distance', value: 8 },
+        { text: 'Backyard', value: 9 },
       ],
       timeRules: [
         v => !v || /^\d+:[0-5]\d:[0-5]\d$/.test(v) || 'Format must be hh:mm:ss'
@@ -106,24 +106,24 @@ export default {
   computed: {
     dateObj: {
       get() {
-        return this.item.Date ? this.item.Date.split(' ')[0] : ''
+        return this.item.race_start_datetime ? this.item.race_start_datetime.split(' ')[0] : ''
       },
       set(val) {
         let time = this.timeObj || '00:00:00'
-        this.item.Date = val ? `${val} ${time}` : ''
+        this.item.race_start_datetime = val ? `${val} ${time}` : ''
       }
     },
     timeObj: {
       get() {
-        if (!this.item.Date) return '00:00:00'
-        let parts = this.item.Date.split(' ')
+        if (!this.item.race_start_datetime) return '00:00:00'
+        let parts = this.item.race_start_datetime.split(' ')
         return parts.length > 1 ? parts[1] : '00:00:00'
       },
       set(val) {
         let date = this.dateObj || new Date().toISOString().substr(0, 10)
         let parts = val.split(':')
         if (parts.length === 2) val += ':00'
-        this.item.Date = `${date} ${val}`
+        this.item.race_start_datetime = `${date} ${val}`
       }
     }
   },
@@ -189,8 +189,8 @@ export default {
         <v-row>
           <v-col cols="12" sm="4">
             <v-text-field
-              v-model="item.Distance"
-              label="Distance (in meter)"
+              v-model="item.meter_length"
+              label="Distance (in Km)"
               outlined
               dense
             ></v-text-field>
