@@ -2,6 +2,7 @@ package db
 
 import (
 	"blog-corsa/idl"
+	"database/sql"
 	"log"
 	"time"
 )
@@ -26,6 +27,10 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 	for rows.Next() {
 		item := idl.RaceItem{}
 		var tsText string
+		var commentText sql.NullString
+		var loopInt sql.NullInt64
+		var loopLength sql.NullFloat64
+		var className sql.NullString
 		if err := rows.Scan(&item.Id,
 			&item.Name,
 			&item.Title,
@@ -35,18 +40,30 @@ func (ld *LiteDB) GetRaces() ([]idl.RaceItem, error) {
 			&item.RankGlobal,
 			&item.RankGender,
 			&item.RankClass,
-			&item.ClassName,
+			&className,
 			&tsText,
 			&item.SportTypeId,
 			&item.ResultTime,
 			&item.PaceKmh,
 			&item.PaceMinkm,
-			&item.Comment,
+			&commentText,
 			&item.RaceSubtypeId,
 			&item.KmLength,
-			&item.LoopNumber,
-			&item.LoopLength); err != nil {
+			&loopInt,
+			&loopLength); err != nil {
 			return nil, err
+		}
+		if commentText.Valid {
+			item.Comment = commentText.String
+		}
+		if loopInt.Valid {
+			item.LoopNumber = int(loopInt.Int64)
+		}
+		if loopLength.Valid {
+			item.LoopLength = loopLength.Float64
+		}
+		if className.Valid {
+			item.ClassName = className.String
 		}
 		if tsText != "" {
 			parsedTime, err := time.Parse("2006-01-02 15:04:05", tsText)
