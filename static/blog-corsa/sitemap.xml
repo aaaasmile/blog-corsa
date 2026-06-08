@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://igorrun.invido.it/</loc>
-        <lastmod>2026-06-01</lastmod>
+        <lastmod>2026-06-08</lastmod>
     </url>
     <url>
         <loc>https://igorrun.invido.it/tags/WRU/</loc>
@@ -47,6 +47,10 @@
     <url>
         <loc>https://igorrun.invido.it/pages/archivio/</loc>
         <lastmod>2025-05-04</lastmod>
+    </url>
+    <url>
+        <loc>https://igorrun.invido.it/posts/2026/06/08/26-06-08-BackyardaLoosdorf/</loc>
+        <lastmod>2026-06-08</lastmod>
     </url>
     <url>
         <loc>https://igorrun.invido.it/posts/2026/06/01/26-06-01-BackyardinTernberg/</loc>
