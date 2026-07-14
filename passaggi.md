@@ -421,7 +421,12 @@ Uso il flag -editpost. Per esempio:
 
 ### Tags
 Se cambi un tag in una pagina mdhmtl bisogna ricreare la pagina del tag.
-Il modo più semplice è quello di ricreare tutte le pagine dopo avere fatto uno scan
+A me è capitato di avere nella main pages i tags con il numero dei posts tutti a zero.
+Esempio
+
+    Adamello(0)
+Il modo più semplice per correggere l'errore è quello 
+di ricreare tutte le pagine dopo avere fatto uno scan
 per aggiornare il db con il nuovo post nel tag 
 
     .\src.exe -config ..\..\config.toml -scancontent
