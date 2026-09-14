@@ -52,7 +52,7 @@ func main() {
 	var buildpages = flag.Bool("buildpages", false, "create pages (all)")
 	var buildmain = flag.Bool("buildmain", false, "create main index.html")
 	var buildfeed = flag.Bool("buildfeed", false, "create feed.xml")
-	var buildtags = flag.Bool("buildtags", false, "create tags html")
+	var createMdHtmlTags = flag.Bool("createMdHtmlTags", false, "create tags mdhtml source file")
 	var force = flag.Bool("force", false, "force flag")
 	var debug = flag.Bool("debug", false, "debug flag")
 	var all4sync = flag.Bool("all4sync", false, "flag to prepare all stuff for the sync")
@@ -112,8 +112,8 @@ func main() {
 		if err := watch.BuildFeedAndSitemap(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
-	} else if *buildtags {
-		if err := watch.BuildTags(); err != nil {
+	} else if *createMdHtmlTags {
+		if err := watch.CreateMdHtmlTags(); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
 	} else if *all4sync {

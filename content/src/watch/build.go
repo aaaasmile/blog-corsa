@@ -74,7 +74,7 @@ func PrepareForRsync(debug bool) error {
 	if err := ScanContent(false, debug); err != nil {
 		return err
 	}
-	if err := BuildTags(); err != nil {
+	if err := CreateMdHtmlTags(); err != nil {
 		return err
 	}
 	if err := BuildPosts(); err != nil {
@@ -112,7 +112,7 @@ func BuildFeedAndSitemap() error {
 	return nil
 }
 
-func BuildTags() error {
+func CreateMdHtmlTags() error {
 	start := time.Now()
 	log.Println("[BuildTags] start")
 

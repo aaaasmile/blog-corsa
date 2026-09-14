@@ -56,9 +56,10 @@ Non ho idea se sia possibile usare un generatore come Hugo o Jeckill per la mia 
 Ho trovato più divertente crearne uno mio.
 
 ## Formato mdhtml
-È un file che ha una sezione per i dati come i files md e una con il contenuto.
+È un file che ha una sezione per i dati come i files md e una sezione per il contenuto html.
 Nella parte del contenuto uso il codice html. Per velocizzare la generazione dei tag, uso
-un preprocessor che mi genera un codice html. Esso supporta queste macro:
+un preprocessor che mi genera un codice html. 
+Esso supporta queste macro:
 
 - link
 - figstack
@@ -170,10 +171,10 @@ Esempio
 genera una list di post che hanno il tag 'MaratonaGara'.
 Questo di solito lo metto in una pagina dedicata apposta al tag in questione (esempio page-src/tags/WRU.mdhtml). 
 Nota che queste pagine di Tag servono poi per creare la pagina del singolo tag che si crea con buildpages.
-La pagina mdhtml del Tag (mdhtml source) singolo viene creata automaticamente con il flag buildtags.
+La pagina mdhtml del Tag (mdhtml source) singolo viene creata automaticamente con il flag createMdHtmlTags.
 Riassunto:
 - scancontent aggiorna il db
-- buildtags crea i sorgenti mshtml, ma non aggiorna il db
+- createMdHtmlTags crea i sorgenti mdhtml, ma non aggiorna il db
 - buildpages crea le pagine html di tutti i tags partendo dai sorgenti e il db (tabelle tags e tags_to_post)
 
 Se la tabella tags_to_post contiene dei dati invalidi per quanto riguarda post_id, allora i single_taggedposts 
@@ -425,16 +426,26 @@ A me è capitato di avere nella main pages i tags con il numero dei posts tutti 
 Esempio
 
     Adamello(0)
-Il modo più semplice per correggere l'errore è quello 
-di ricreare tutte le pagine dopo avere fatto uno scan
-per aggiornare il db con il nuovo post nel tag 
+Questo perché avevo messo il numero dei posts nella tabella tags e l'update avveniva nel 
+momento sbagliato, quando i post erano in costruzione. Meglio calcolare il numero
+dei post nel tag quando serve usando una select con i join e group by nella funzione
+GetTagList.
 
-    .\src.exe -config ..\..\config.toml -scancontent
-    .\src.exe -config ..\..\config.toml -buildpages -force
-
-Nota che il comando _-buildtags_ serve per creare il nuovo tag nel db e generare il file
+Nota che il comando _-createMdHtmlTags_ serve per creare una pagina per generare 
+i links di un tag. Esso crea il file 
 mdhtml (è una nuova page) che raccoglie tutti i posts che contengono il tag.
-Se il tag esiste già, nulla viene creato o modificato, tranne se la pagina ha un md5 obsoleto.
+Nota che  _-createMdHtmlTags_ esamina tutti i tags.
+Se il mdhtml del tag esiste già, nulla viene creato o modificato, tranne se la pagina ha un md5 obsoleto.
+
+Il tag viene inserito nella tabella tags del db quando viene riconosciuto in un sorgente di un post.mdhml.
+Per avere la pagina tipo /tags/AdamelloGara bisogna generare il sorgente della pagina AdamelloGara.mdhtml
+che si troverà sotto la dir tags. Non bisogna creare nulla manualmente, basta usare il comando 
+_-createMdHtmlTags_.
+
+Nella pagina main, invece, uso la macro tag_posts:
+
+    <p>[tag_posts]</p>
+Essa mi mette in lista tutti i tags riconosciuti e anche il numero di posts per tag.
 
 ## Gare
 Fino al 12.04.2026 ho inserito le mie gare nel sito https://www.membersclub.at/ccmc_chiptacho.php
