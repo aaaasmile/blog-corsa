@@ -155,7 +155,6 @@ func (mp *MdHtmlProcess) htmlFromTemplate(lines []string) error {
 	linesNoCr := []string{}
 	for _, item := range lines {
 		llnocr := strings.ReplaceAll(item, "\r", "")
-		llnocr = strings.ReplaceAll(llnocr, "\n", "")
 		if llnocr != "" {
 			linesNoCr = append(linesNoCr, llnocr)
 		}

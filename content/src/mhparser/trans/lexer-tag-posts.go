@@ -13,11 +13,11 @@ import (
 const tagPostsTemplate = `{{- define "tagposts" -}}
 <h3 class="centered subtitle">Tags</h3>
 <ul>
-    {{- range .Tags}}
+{{ range .Tags -}}
     <li>
         <a href="{{.Uri}}">{{.Title}} ({{.NumOfPosts}})</a>
     </li>
-    {{- end}}
+{{ end -}}
 </ul>
 {{- end -}}`
 
