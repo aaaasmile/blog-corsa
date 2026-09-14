@@ -31,7 +31,9 @@ func (ld *LiteDB) UpdateMd5Page(tx *sql.Tx, pageItem *idl.PageItem) error {
 }
 
 func (ld *LiteDB) GetPageList() ([]idl.PageItem, error) {
-	log.Println("[LiteDB - GetPageList] select all pages")
+	if ld.debugSQL {
+		log.Println("[LiteDB - GetPageList] select all pages")
+	}
 
 	q := `SELECT id,title,page_id,timestamp,uri,md5 from page ORDER BY page_id DESC;`
 	if ld.debugSQL {

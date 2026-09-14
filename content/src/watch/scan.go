@@ -185,7 +185,9 @@ func (bb *Builder) scanPostItem(mdHtmlFname string, tx *sql.Tx) error {
 				return err
 			}
 		} else {
-			log.Printf("[scanPostItem] ignore changes for Tag %s on post id %s", single_tag, postItem.PostId)
+			if bb.debug {
+				log.Printf("[scanPostItem] ignore changes for Tag %s on post id %s", single_tag, postItem.PostId)
+			}
 		}
 	}
 

@@ -70,22 +70,27 @@ func RebuildAll() error {
 
 func PrepareForRsync(debug bool) error {
 	start := time.Now()
-	log.Println("[PrepareForRsync] start")
+	log.Println("[PrepareForRsync] => 1) scan content")
 	if err := ScanContent(false, debug); err != nil {
 		return err
 	}
-	if err := CreateMdHtmlTags(); err != nil {
-		return err
-	}
+	log.Println("[PrepareForRsync] => 2) BuildPosts")
 	if err := BuildPosts(); err != nil {
 		return err
 	}
+	log.Println("[PrepareForRsync] => 3) CreateMdHtmlTags")
+	if err := CreateMdHtmlTags(); err != nil {
+		return err
+	}
+	log.Println("[PrepareForRsync] => 4) BuildPages")
 	if err := BuildPages(false); err != nil {
 		return err
 	}
+	log.Println("[PrepareForRsync] => 5) BuildFeedAndSitemap")
 	if err := BuildFeedAndSitemap(); err != nil {
 		return err
 	}
+	log.Println("[PrepareForRsync] => 6) BuildMain")
 	if err := BuildMain(); err != nil {
 		return err
 	}

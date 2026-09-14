@@ -10,7 +10,9 @@ import (
 )
 
 func (ld *LiteDB) GetTagPostMap(tags []idl.TagItem) (map[string][]*idl.PostItem, error) {
-	log.Println("[LiteDB - GetTagPostMap] map all tags")
+	if ld.debugSQL {
+		log.Println("[LiteDB - GetTagPostMap] map all tags")
+	}
 	res := map[string][]*idl.PostItem{}
 	for _, tag_key := range tags {
 		lst, err := ld.getPostlistWithTag(tag_key.Title)
@@ -58,12 +60,16 @@ func (ld *LiteDB) getPostlistWithTag(tag_title string) ([]*idl.PostItem, error) 
 		item.DateTimeRfC822 = item.DateTime.Format(time.RFC822Z)
 		res = append(res, &item)
 	}
-	log.Printf("[LiteDB - getPostlistWithTag] posts read %d with tag %s", len(res), tag_title)
+	if ld.debugSQL {
+		log.Printf("[LiteDB - getPostlistWithTag] posts read %d with tag %s", len(res), tag_title)
+	}
 	return res, nil
 }
 
 func (ld *LiteDB) GetTagList() ([]idl.TagItem, error) {
-	log.Println("[LiteDB - GetTagList] select all tags")
+	if ld.debugSQL {
+		log.Println("[LiteDB - GetTagList] select all tags")
+	}
 
 	q := `SELECT t.id,t.title,t.timestamp,t.uri,t.md5,COUNT(ttp.id)
 			FROM tags t

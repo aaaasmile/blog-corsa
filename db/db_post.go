@@ -140,8 +140,9 @@ func (ld *LiteDB) InsertNewPost(tx *sql.Tx, postItem *idl.PostItem) error {
 }
 
 func (ld *LiteDB) GetPostList() ([]idl.PostItem, error) {
-	log.Println("[LiteDB - GetPostList] select all post")
-
+	if ld.debugSQL {
+		log.Println("[LiteDB - GetPostList] select all post")
+	}
 	q := `SELECT id,title,post_id,timestamp,abstract,uri,title_img_uri,md5 from post ORDER BY post_id DESC;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
