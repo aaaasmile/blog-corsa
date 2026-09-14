@@ -65,7 +65,11 @@ func (ld *LiteDB) getPostlistWithTag(tag_title string) ([]*idl.PostItem, error) 
 func (ld *LiteDB) GetTagList() ([]idl.TagItem, error) {
 	log.Println("[LiteDB - GetTagList] select all tags")
 
-	q := `SELECT id,title,timestamp,uri,md5,numofposts from tags ORDER BY title DESC;`
+	q := `SELECT t.id,t.title,t.timestamp,t.uri,t.md5,COUNT(ttp.id)
+			FROM tags t
+			LEFT JOIN tags_to_post ttp ON ttp.tag_id = t.id
+			GROUP BY t.id,t.title,t.timestamp,t.uri,t.md5
+			ORDER BY t.title DESC;`
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
