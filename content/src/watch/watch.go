@@ -305,7 +305,10 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 	} else {
 		prc.RootStaticDir = fmt.Sprintf("..\\..\\static\\%s\\%s", wmh.staticBlogDir, wmh.staticSubDir)
 	}
-	log.Println("[processMdHtmlChange] Root dir is ", prc.RootStaticDir)
+	if wmh.debug {
+		log.Println("[processMdHtmlChange] Root dir is ", prc.RootStaticDir)
+	}
+
 	if wmh.is_page {
 		if err = prc.PageCreateOrUpdateStaticHtml(srcMdHtmlFname, src_path_name); err != nil {
 			return err
@@ -316,9 +319,12 @@ func (wmh *WatcherMdHtml) processMdHtmlChange(srcMdHtmlFname string) error {
 		}
 	}
 	wmh.CreatedHtmlFile = prc.CreatedFnHtml
-	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir); err != nil {
+	if err := syncdir.SynchTargetDirWithSrcDir(prc.TargetDir, prc.SourceDir, wmh.debug); err != nil {
 		return err
 	}
-	log.Printf("[processMdHtmlChange] update traget html with size %d, duration %s ", len(prc.HtmlGen), time.Since(start))
+	if wmh.debug {
+		log.Printf("[processMdHtmlChange] update traget html with size %d, duration %s ", len(prc.HtmlGen), time.Since(start))
+	}
+
 	return nil
 }

@@ -302,7 +302,9 @@ func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
 	if err := mp.checkOrCreateOutDir(dir_stack); err != nil {
 		return err
 	}
-	log.Println("target dir", mp.TargetDir)
+	if mp.debug {
+		log.Println("target dir", mp.TargetDir)
+	}
 	if err := mp.createIndexHtml(); err != nil {
 		return err
 	}
@@ -313,8 +315,9 @@ func (mp *MdHtmlProcess) PostCreateOrUpdateStaticHtml(sourceName string) error {
 	src_arr := make([]string, 0)
 	src_arr = append(src_arr, arr[0:last_ix]...)
 	mp.SourceDir = strings.Join(src_arr, "\\")
-	log.Println("source dir", mp.SourceDir)
-
+	if mp.debug {
+		log.Println("source dir", mp.SourceDir)
+	}
 	return nil
 }
 
@@ -329,7 +332,9 @@ func (mp *MdHtmlProcess) createIndexHtml() error {
 	if _, err := f.WriteString(mp.HtmlGen); err != nil {
 		return err
 	}
-	log.Println("file created ", fname)
+	if mp.debug {
+		log.Println("file created ", fname)
+	}
 	mp.CreatedFnHtml = fname
 	return nil
 }
@@ -348,7 +353,9 @@ func (mp *MdHtmlProcess) createImageGalleryJson() error {
 	if _, err := f.WriteString(mp.ImgJsonGen); err != nil {
 		return err
 	}
-	log.Println("[createImageGalleryJson] file created ", fname)
+	if mp.debug {
+		log.Println("[createImageGalleryJson] file created ", fname)
+	}
 	return nil
 }
 

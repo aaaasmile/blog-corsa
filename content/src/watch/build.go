@@ -385,13 +385,29 @@ func (bb *Builder) buildPosts(srcDir string) error {
 		return err
 	}
 	log.Printf("%d mdhtml posts  found ", len(bb.mdsFn))
+
+	if !bb.force {
+		log.Printf("[buildPosts] prescan for changes in linked items")
+		for _, item := range bb.mdsFn {
+			if err := bb.checkMd5(item); err != nil {
+				return err
+			}
+		}
+	}
+
+	log.Printf("[buildPosts] process posts")
+	built := 0
+	is_built := false
 	for _, item := range bb.mdsFn {
-		if err := bb.buildPost(item); err != nil {
+		if is_built, err = bb.buildPost(item); err != nil {
 			return err
+		}
+		if is_built {
+			built += 1
 		}
 	}
 	bb.tx.Commit()
-	log.Printf("%d posts processed ", len(bb.mdsFn))
+	log.Printf("%d posts processed, really built %d ", len(bb.mdsFn), built)
 	return nil
 }
 
@@ -439,7 +455,7 @@ func (bb *Builder) builMdHtmlInDir(srcDir string) error {
 	return nil
 }
 
-func (bb *Builder) buildPost(mdHtmlFname string) error {
+func (bb *Builder) buildPost(mdHtmlFname string) (bool, error) {
 	var err error
 	wmh := WatcherMdHtml{
 		debug:         conf.Current.Debug,
@@ -451,25 +467,25 @@ func (bb *Builder) buildPost(mdHtmlFname string) error {
 	postItem := &idl.PostItem{}
 	postItem, is_same, err = bb.getPostItemAndCheckMd5(mdHtmlFname)
 	if err != nil {
-		return err
+		return false, err
 	}
 	wmh.staticSubDir = conf.Current.PostSubDir
 	if !bb.force && is_same {
 		if bb.debug {
 			log.Println("[buildPost] ignore because unchanged", mdHtmlFname)
 		}
-		return nil
+		return false, nil
 	}
 	if err := wmh.BuildFromMdHtml(mdHtmlFname); err != nil {
-		return err
+		return false, err
 	}
 	if (postItem.PostId != "") && !is_same {
 		if err := bb.liteDB.UpdateMd5Post(bb.tx, postItem); err != nil {
-			return err
+			return false, err
 		}
 	}
 	log.Println("[buildPost] created HTML: ", wmh.CreatedHtmlFile)
-	return nil
+	return true, nil
 }
 
 func (bb *Builder) buildPage(mdHtmlFname string) error {
@@ -500,6 +516,34 @@ func (bb *Builder) buildPage(mdHtmlFname string) error {
 		}
 	}
 	log.Println("[buildPage] created HTML: ", wmh.CreatedHtmlFile)
+	return nil
+}
+
+func (bb *Builder) checkMd5(mdHtmlFname string) error {
+	postItem, is_same, err := bb.getPostItemAndCheckMd5(mdHtmlFname)
+	if err != nil {
+		return err
+	}
+	if is_same {
+		return nil
+	}
+	log.Printf("[checkMd5] %s will be built", postItem.PostId)
+
+	postLinks, ok := bb.mapLinks.MapPost[postItem.PostId]
+	if !ok {
+		return nil
+	}
+	for _, postID := range []string{postLinks.PrevPostID, postLinks.NextPostID} {
+		if postID == "" {
+			continue
+		}
+		linkedPost, ok := bb.mapLinks.MapPost[postID]
+		if ok && linkedPost.Item != nil {
+			log.Printf("[checkMd5] force rebuild %s", postID)
+			bb.mapLinks.MapPost[postID].Item.Md5 = ""
+		}
+	}
+
 	return nil
 }
 

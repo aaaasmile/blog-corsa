@@ -14,6 +14,7 @@ import (
 type SyncDir struct {
 	itemsInDir []os.FileInfo
 	dirName    string
+	debug      bool
 }
 
 func (sd *SyncDir) contains(fi os.FileInfo) (os.FileInfo, bool) {
@@ -105,11 +106,14 @@ func (sd *SyncDir) populateDir(dir string) error {
 		}
 		sd.itemsInDir = append(sd.itemsInDir, fi)
 	}
-	log.Printf("assets in dir %s count %d ", dir, len(sd.itemsInDir))
+	if sd.debug {
+		log.Printf("assets in dir %s count %d ", dir, len(sd.itemsInDir))
+	}
+
 	return nil
 }
 
-func SynchTargetDirWithSrcDir(targetDir string, srcDir string) error {
+func SynchTargetDirWithSrcDir(targetDir string, srcDir string, debug bool) error {
 	srcFiInfo, err := os.Stat(srcDir)
 	if err != nil {
 		return err
@@ -117,8 +121,8 @@ func SynchTargetDirWithSrcDir(targetDir string, srcDir string) error {
 	if !srcFiInfo.IsDir() {
 		return fmt.Errorf("cannot get src dir on %s", srcDir)
 	}
-	src := SyncDir{}
-	dst := SyncDir{}
+	src := SyncDir{debug: debug}
+	dst := SyncDir{debug: debug}
 	if err := src.populateDir(srcDir); err != nil {
 		return err
 	}
