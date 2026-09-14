@@ -5,11 +5,21 @@ import (
 	"bytes"
 	"cmp"
 	"fmt"
-	"path"
 	"slices"
 	"strings"
 	"text/template"
 )
+
+const tagPostsTemplate = `{{- define "tagposts" -}}
+<h3 class="centered subtitle">Tags</h3>
+<ul>
+    {{- range .Tags}}
+    <li>
+        <a href="{{.Uri}}">{{.Title}} ({{.NumOfPosts}})</a>
+    </li>
+    {{- end}}
+</ul>
+{{- end -}}`
 
 type mdhtTagPostsNode struct {
 	MdhtLineNode
@@ -40,14 +50,10 @@ func (ln *mdhtTagPostsNode) AddblockHtml(val string) error {
 }
 
 func (ln *mdhtTagPostsNode) Transform(templDir string) error {
-	if templDir == "" {
-		return fmt.Errorf("[Transform - TagPosts] templ dir is not set")
-	}
 	if ln.mapLinks == nil {
 		return fmt.Errorf("[Transform - TagPosts] map links are not set")
 	}
-	templName := path.Join(templDir, "transform.html")
-	tmplPage := template.Must(template.New("Trf").ParseFiles(templName))
+	tmplPage := template.Must(template.New("tagposts").Parse(tagPostsTemplate))
 	var partMerged bytes.Buffer
 
 	if len(ln.mapLinks.Tags) > 0 {
