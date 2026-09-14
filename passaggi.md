@@ -81,16 +81,18 @@ genera:
     <a href='https://wien-rundumadum-2024-130k.legendstracking.com/'>https://wien-rundumadum-2024-130k.legendstracking.com/ </a> 
 
 ### Link caption
-Un link che però ha anche la caption.
+Una macro per un link che ha anche la caption. 
+Viene aperto in una nuova page. Se non vuoi usare una nuova page,
+per esempio per un link interno, allora usa href direttamente in html.
 Esempio:
 
     [linkcap 'Tracker', 'https://wien-rundumadum-2024-130k.legendstracking.com/']
 genera:
 
-    <a href='https://wien-rundumadum-2024-130k.legendstracking.com/'>Tracker</a> 
+    <a href='https://wien-rundumadum-2024-130k.legendstracking.com/' target="_blank">Tracker</a> 
 
 ### figstack
-Serve per creare velocemente una galleria di immagini.
+Una macro che serve per creare velocemente una galleria di immagini.
 Esempio:
 
     [figstack
@@ -111,9 +113,20 @@ Nel figstack si mette:
     ]
 dove poi il _1280 viene sostituito con _320. Questo vale solo per la stringa _1280.
 Quindi 320 e 1280 sono numeri magici e non andrebbero usati nel nome dei files per non avere sorprese.
+Di solito però uso:
+
+    [figstack 
+        'foto02.jpg', 'Appena partiti',
+        'foto03.jpg', 'Arrivo',
+        'foto04.jpg', 'La medaglia'
+    ]
+dove rinomino in file explorer il file foto02_1280.jpg con foto02.jpg (automaticamente esegue il rename nel 
+target dir static).
+Avere foto02_1280.jpg crea dei problemi nella navigazione delle foto nella galleria (usa un nome
+di convenzione e il suffisso 1280 crea problemi).
 
 ### youtube
-Genera l'iframe che serve per contenere il video player di youtube.  
+Macro che genera l'iframe che serve per contenere il video player di youtube.  
 Esempio:
 
     [youtube 'IOP7RhDnLnw'] 
@@ -149,7 +162,7 @@ Qui si vede che le immagini sono nella stessa directory del post in quanto non r
 la stessa immagine in un altro post.
 
 ## latest_posts
-Nella pagina proncipale ho bisogno di un sommario degli ultimi post. Per questo uso la macro:
+Nella pagina principale ho bisogno di un sommario degli ultimi post. Per questo uso la macro:
 
     [latest_posts 'IgorRun Blog', '7']
 
@@ -158,23 +171,29 @@ Il risultato è un html con la lista degli ultimi 7 post. L'elenco viene creato 
 database.
 
 ## archive_posts
-Mi genera una pagina d'archivio con un link a tutti i posts.
+Macro che mi genera una pagina d'archivio con un link a tutti i posts (vedi _archivio.mdhtml_).
+
+    [archive_posts]
 
 ## tag_posts
-Mi genera un tratto di html con un link a tutti tags che ho utilizzato nei vari post.
-Questo lo metto di solito nella pagina main.
+Macro che mi genera un blocco html con un link a tutte le singole pagine di tags 
+che ho utilizzato nei vari post. Questa macro la metto di solito nella pagina main.
+
+    <p>[tag_posts]</p>
 
 ## single_taggedposts
+Macro che genera un list di link che hanno inserito il tag.
+
 Esempio
 
     [single_taggedposts 'MaratonaGara']
 genera una list di post che hanno il tag 'MaratonaGara'.
 Questo di solito lo metto in una pagina dedicata apposta al tag in questione (esempio page-src/tags/WRU.mdhtml). 
-Nota che queste pagine di Tag servono poi per creare la pagina del singolo tag che si crea con buildpages.
+Nota che queste pagine di Tag servono sono pagine che vengono generate in html con _buildpages_.
 La pagina mdhtml del Tag (mdhtml source) singolo viene creata automaticamente con il flag createMdHtmlTags.
 Riassunto:
 - scancontent aggiorna il db
-- createMdHtmlTags crea i sorgenti mdhtml, ma non aggiorna il db
+- createMdHtmlTags crea i sorgenti mdhtml pe il tag
 - buildpages crea le pagine html di tutti i tags partendo dai sorgenti e il db (tabelle tags e tags_to_post)
 
 Se la tabella tags_to_post contiene dei dati invalidi per quanto riguarda post_id, allora i single_taggedposts 
@@ -218,12 +237,13 @@ Il form compare quando l'utente apre il tag details attraverso htmx.
 L'altro step è quello della moderazione e dell'impossibilità di inviare html.
 
 ## Dashboard Admin
-La parte che riguarda l'amministrazione del blog è gestita con vue in modalità single page.
+La parte che riguarda l'amministrazione del blog è gestita con _vue_ in modalità single page.
 Per contro, la parte testuale dei vari post è generata staticamente in html.
 Al momento la Dashboard non gestisce i post, solo i commenti. 
 Successivamente potrebbe essere usata per
 creare anche dei nuovi contenuti. Questo vorrebbe dire gestire la generazione statica di html.
-La URL di riferimento è: http://localhost:5572/blog-admin/
+La URL di riferimento per amministrare i commenti ed inserire le gare è: 
+http://localhost:5572/blog-admin/
 
 ### TODO
 - Nei commenti va implementata la risposta, per avere commenti nei livelli inferiori [DONE]
