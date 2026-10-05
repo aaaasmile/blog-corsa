@@ -395,7 +395,7 @@ Il database sarebbe meglio scaricarlo da current su invido.it.
 Per il nuovo post:
 
     cd .\content\src\
-    .\src.exe -config ..\..\config.toml  -newpost "Backyard a Kirchschlag bei Linz" -date "2026-09-10" -watch
+    .\src.exe -config ..\..\config.toml  -newpost "Backyard in Tirolo" -date "2026-10-02" -watch
 
 Ora edito il nuovo file mdhtml e vedo subito il risultato (nell'esempio di sopra su http://localhost:5572/posts/2025/04/17/25-04-17-NuovoSito/).
 
@@ -430,7 +430,7 @@ In futuro, con la funzione "cerca", il sync del db con i dati della ricerca prob
 ### Edit di un post già pubblicato
 Uso il flag -editpost. Per esempio:
 
-    .\src.exe -config ..\..\config.toml -editpost -date "2024-07-11"
+    .\src.exe -config ..\..\config.toml -editpost -date "2026-10-02"
 
 ### Scan di un post già pubblicato (build abstract and post-tags)
 
