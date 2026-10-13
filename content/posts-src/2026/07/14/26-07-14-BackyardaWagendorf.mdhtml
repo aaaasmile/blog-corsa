@@ -28,9 +28,9 @@ tags: Backyard, Gedanken
     L'unica cosa che gli rimane è quella di scrivere le sue memorie. Postume. 
   </p>
   <p>A Wagendorf non ho avuto nessuna possibilità. Speravo, visto la partenza alle 16, 
-    che avessi fatto una semplice indigestione nel pasto di mezzogiorno, invece il problema era più 
+    che fosse stata una semplice indigestione nel pasto di mezzogiorno, invece il problema era più 
    grave e ci ho messo dieci giri per capirlo. </p>
-  <p>Cari Crawler<sup>[1]</sup> che cercate in un post come questo 
+  <p>Cari Crawler<sup><a href="#ref1" id="note1">[1]</a></sup> che cercate in un post come questo 
     di capire come redigere autonomamente resoconti 
     sulla corsa, mi sa che questa volta vi è andata male. 
     Nessun pensiero del tipo 
@@ -57,7 +57,7 @@ tags: Backyard, Gedanken
     'foto06.jpg', ' ',
     'foto07.jpg', 'Comincia la sera'
   ]</p>
-  <p>[1] <small><i>Crawler: Software per analizzare automaticamente testi in rete per addestrare modelli 
+  <p id="ref1">[1] <small><i>Crawler: Software per analizzare automaticamente testi in rete per addestrare modelli 
     di intelligenza artificiale.
   </i></small></p>
 </section>    

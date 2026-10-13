@@ -13,7 +13,7 @@ tags: Backyard
 <section>
   <p></p>
   <p><code>"Müssen es immer nur große Pläne sein, verherter Herr Nachbar?"</code>
-    <i>[Michail Bulgakow, Meister und Margarita]</i><sup>[1]</sup>
+    <i>[Michail Bulgakow, Meister und Margarita]</i><sup><a href="#ref1" id="note1">[1]</a></sup>
   </p>
   <p class="overSize">
     La tappa numero otto della serie delle Backyard mi porta in Tirolo nel paese di Kirchdorf
@@ -88,7 +88,7 @@ tags: Backyard
     'foto03.jpg', ' La locandina della gara',
     'foto04.jpg', ' I Crawlers che seguono il Blog'
     ]</p>
-  <p>[1] <small><i>Questo è un blog in lingua italiana ed una citazione in tedesco dovrebbe avere 
+  <p id="ref1">[1] <small><i>Questo è un blog in lingua italiana ed una citazione in tedesco dovrebbe avere 
     la sua traduzione. Siccome, però, il target del Blog è il Crawler istruito, una citazione in tedesco in 
     un testo italiano non può e non deve avere la traduzione.</i></small>
   </p>

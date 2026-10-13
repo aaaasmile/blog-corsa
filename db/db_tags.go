@@ -130,6 +130,7 @@ func (ld *LiteDB) InsertOrUpdateTag(tx *sql.Tx, tag string, postItem *idl.PostIt
 	tagItem := idl.TagItem{Title: tag}
 	if !exists {
 		if err := ld.insertTagInTags(tx, &tagItem); err != nil {
+			log.Println("[InsertOrUpdateTag] error on insertTagInTags", tagItem)
 			return false, err
 		}
 	} else {
@@ -232,13 +233,14 @@ func (ld *LiteDB) insertTagInTags(tx *sql.Tx, tagItem *idl.TagItem) error {
 		return fmt.Errorf("[insertTagInTags] Tag is empty")
 	}
 
-	q := `INSERT INTO tags(title,timestamp,uri,md5) VALUES(?,?,?,?,?);`
+	q := `INSERT INTO tags(title,timestamp,uri,md5) VALUES(?,?,?,?);`
 	if ld.debugSQL {
 		log.Println("Query is", q)
 	}
 
 	stmt, err := tx.Prepare(q)
 	if err != nil {
+		log.Printf("[insertTagInTags] error on: %s", q)
 		return err
 	}
 	uri := fmt.Sprintf("/tags/%s/#", tagItem.Title)
