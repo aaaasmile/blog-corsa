@@ -1,0 +1,30 @@
+title: Backyard a Seekirchen
+datetime: 2026-10-26
+id: 26-10-26-BackyardaSeekirchen-PS
+tags: Backyard
+---
+<header class="withimg">
+  <div>
+    <h1>Backyard a Seekirchen</h1>
+    <time>26 Ottobre 2026</time>
+  </div>
+  <img src="foto01.jpg" /> 
+</header>
+<section>
+  <p>A Seekirchen il mio miglior risultato stagionale con 22 giri.
+    Di cose che non c'entrano nulla con la gara ce ne sarebbero da dire, per esempio
+    come la TV generalista commerciale austrica Puls4 ha mostrato la gara ([linkcap 'tv report', 'https://www.joyn.at/play/clip/rennen-bis-zum-unfallen?from=%2Fserien%2Ftreffpunkt-oesterreich-zu-mittag%23clips']). 
+    Ritornerò di certo sull'argomento.
+  </p>
+
+  <p>
+    La classifica finale si trova [linkcap 'qui', 'https://my.raceresult.com/370815/results#0_564270'].
+  </p>
+  <p>[figstack
+    'foto02.jpg', ' '
+    ]</p>
+  <figure>
+    [youtube 'jWarAGU-LYc']
+    <figcaption>Il mio short della gara</figcaption>
+  </figure>
+</section>    
